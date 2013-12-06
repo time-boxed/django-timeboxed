@@ -29,6 +29,7 @@ class PomodoroCalendarView(View):
         c = connections[self.database].cursor()
 
         logger.info('Reading %d entries from %s', self.limit, settings.DATABASES[self.database]['NAME'])
+        # Cast ZWHEN as int to get around a bug? with django's query
         c.execute('SELECT Z_PK, cast(ZWHEN as integer), ZDURATIONMINUTES, ZNAME FROM ZPOMODOROS ORDER BY ZWHEN DESC LIMIT %s', [self.limit])
 
         for zpk, zwhen, zminutes, zname in c.fetchall():
