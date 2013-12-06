@@ -1,10 +1,11 @@
-import sqlite3
 import datetime
 import logging
 
 from django.http import HttpResponse
 from django.views.generic.base import View
 from django.conf import settings
+from django.db import connections
+
 
 from icalendar import Calendar, Event
 import pytz
@@ -25,12 +26,10 @@ class PomodoroCalendarView(View):
         cal.add('prodid', '-//My calendar product//mxm.dk//')
         cal.add('version', '2.0')
 
-        conn = sqlite3.connect(settings.DATABASES[self.database]['NAME'])
-        c = conn.cursor()
+        c = connections[self.database].cursor()
 
         logger.info('Reading %d entries from %s', self.limit, settings.DATABASES[self.database]['NAME'])
-        print 'Reading {0} entries from {1}'.format(self.limit, settings.DATABASES[self.database]['NAME'])
-        c.execute('SELECT Z_PK, ZWHEN, ZDURATIONMINUTES, ZNAME FROM ZPOMODOROS ORDER BY ZWHEN DESC LIMIT ?', (self.limit, ))
+        c.execute('SELECT Z_PK, cast(ZWHEN as integer), ZDURATIONMINUTES, ZNAME FROM ZPOMODOROS ORDER BY ZWHEN DESC LIMIT %s', [self.limit])
 
         for zpk, zwhen, zminutes, zname in c.fetchall():
             seconds = zminutes * 60
