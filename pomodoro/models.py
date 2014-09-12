@@ -28,4 +28,4 @@ class PomodoroBucket(object):
         for zpk, zwhen, zminutes, zname in c.fetchall():
             buckets[zname] += zminutes
             buckets['Unknown'] -= zminutes
-        return buckets
+        return sorted(buckets.items(), key=lambda x: x[1], reverse=True)

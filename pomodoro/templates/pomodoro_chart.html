@@ -2,20 +2,20 @@
 
 
 {% block content %}
-<h2>Pomodoro Chart</h2>
+<h2>Pomodoro Chart for {{ hours }} hours</h2>
 
 <table class="table table-condensed">
 <tr>
     <th>Pomodoro</th>
-    <th>Minutes</th>
+    <th>Time</th>
+    <th>Percent</th>
 </tr>
-{% for bucket in buckets %}
-{% for key, value in bucket.items %}
+{% for pomodoro, value in buckets.items %}
     <tr>
-        <td>{{ key }}</td>
-        <td>{{ value }}</td>
+        <td>{{ pomodoro }}</td>
+        <td>{{ value.hours }}:{{ value.minutes|stringformat:"02d" }}</td>
+        <td>{% widthratio value.total total 100 %}%</td>
     </tr>
-{% endfor %}
 {% endfor %}
 </table>
 {% endblock %}

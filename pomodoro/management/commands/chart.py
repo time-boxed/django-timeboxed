@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
         print 'Breakdown for {0} hours'.format(hours)
         print '-' * 80
-        for key, value in sorted(buckets.items(), key=lambda x: x[1], reverse=True):
+        for key, value in buckets:
             print u'{hours:0>2}:{minutes:0>2} {percent:>6.2%} {pomodoro}'.format(
                 pomodoro=key,
                 hours=value / 60,

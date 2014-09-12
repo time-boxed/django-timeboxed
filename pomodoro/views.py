@@ -1,5 +1,6 @@
 import datetime
 import logging
+import collections
 
 from django.conf import settings
 from django.db import connections
@@ -61,10 +62,17 @@ class ChartView(View):
         start = PomodoroBucket.midnight(
             datetime.datetime.now(pytz.timezone(settings.TIME_ZONE)))
 
-        buckets = dict(PomodoroBucket.get(self.database, start, minutes))
+        buckets = collections.OrderedDict()
+        for pomodoro, total in PomodoroBucket.get(self.database, start, minutes):
+            buckets[pomodoro] = {
+                'total': total,
+                'hours': total / 60,
+                'minutes': total % 60,
+                'percent': float(total) / float(minutes)
+            }
 
         return render(request, 'pomodoro_chart.html', {
-            'buckets': [buckets],
+            'buckets': buckets,
             'hours': hours,
-            'minutes': minutes,
+            'total': minutes,
         })
