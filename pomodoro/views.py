@@ -1,17 +1,17 @@
 import datetime
 import logging
 
-from django.http import HttpResponse
-from django.views.generic.base import View
 from django.conf import settings
 from django.db import connections
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.views.generic.base import View
 
+from pomodoro.models import PomodoroBucket, NSTIMEINTERVAL
 
 from icalendar import Calendar, Event
 import pytz
 
-
-NSTIMEINTERVAL = 978307200
 
 logger = logging.getLogger(__name__)
 
@@ -48,3 +48,23 @@ class PomodoroCalendarView(View):
             content=cal.to_ical(),
             content_type='text/plain; charset=utf-8'
             )
+
+
+class ChartView(View):
+    database = None
+
+    def get(self, request):
+        hours = 6
+        minutes = hours * 60
+
+        # Get midnight today (in the current timezone) as our query point
+        start = PomodoroBucket.midnight(
+            datetime.datetime.now(pytz.timezone(settings.TIME_ZONE)))
+
+        buckets = dict(PomodoroBucket.get(self.database, start, minutes))
+
+        return render(request, 'pomodoro_chart.html', {
+            'buckets': [buckets],
+            'hours': hours,
+            'minutes': minutes,
+        })

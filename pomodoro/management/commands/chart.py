@@ -1,15 +1,12 @@
-import time
 import datetime
-import collections
 
 import pytz
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.db import connections
 
 
-from pomodoro.views import NSTIMEINTERVAL
+from pomodoro.models import PomodoroBucket
 
 
 class Command(BaseCommand):
@@ -20,21 +17,14 @@ class Command(BaseCommand):
             raise CommandError('Missing path to pomodoro file')
 
         hours = 9
+        hours = 6
         minutes = hours * 60
 
         # Get midnight today (in the current timezone) as our query point
-        today = datetime.datetime.now(pytz.timezone(settings.TIME_ZONE)) \
-            .replace(hour=0, minute=0, second=0, microsecond=0)# \
-        today = time.mktime(today.timetuple()) - NSTIMEINTERVAL
+        start = PomodoroBucket.midnight(
+            datetime.datetime.now(pytz.timezone(settings.TIME_ZONE)))
 
-        c = connections[database].cursor()
-        c.execute('SELECT Z_PK, cast(ZWHEN as integer), ZDURATIONMINUTES, ZNAME FROM ZPOMODOROS WHERE ZWHEN > %s ORDER BY ZWHEN DESC', [today])
-
-        buckets = collections.defaultdict(int)
-        buckets['Unknown'] = minutes
-        for zpk, zwhen, zminutes, zname in c.fetchall():
-            buckets[zname] += zminutes
-            buckets['Unknown'] -= zminutes
+        buckets = PomodoroBucket.get(database, start, minutes)
 
         print 'Breakdown for {0} hours'.format(hours)
         print '-' * 80

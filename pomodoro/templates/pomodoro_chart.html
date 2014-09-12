@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<h2>Pomodoro Chart</h2>
+
+<table class="table table-condensed">
+<tr>
+    <th>Pomodoro</th>
+    <th>Minutes</th>
+</tr>
+{% for bucket in buckets %}
+{% for key, value in bucket.items %}
+    <tr>
+        <td>{{ key }}</td>
+        <td>{{ value }}</td>
+    </tr>
+{% endfor %}
+{% endfor %}
+</table>
+{% endblock %}
