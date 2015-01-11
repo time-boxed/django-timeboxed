@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class PomodoroCalendarView(View):
     database = None
     limit = 10
-    format = '{0}'
+    format = u'{0}'
 
     def get(self, request, *args, **kwargs):
         cal = Calendar()
