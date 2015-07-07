@@ -1,3 +1,8 @@
 from django.contrib import admin
+from pomodoro.models import Pomodoro
 
-# Register your models here.
+
+class PomodoroAdmin(admin.ModelAdmin):
+    list_display = ('title', 'owner', 'created')
+
+admin.site.register(Pomodoro, PomodoroAdmin)
