@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic.base import View
 
-from pomodoro.models import PomodoroBucket, NSTIMEINTERVAL
+from pomodoro.legacy import PomodoroBucket, NSTIMEINTERVAL
 
 from icalendar import Calendar, Event
 import pytz

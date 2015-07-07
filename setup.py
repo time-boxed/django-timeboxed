@@ -1,9 +1,4 @@
-#!/usr/bin/env python
-
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name='django-pomodoro',
@@ -11,7 +6,7 @@ setup(
     author='Paul Traylor',
     url='https://github.com/kfdm/django-pomodoro',
     version='0.0.1',
-    packages=['pomodoro'],
+    packages=find_packages(),
     install_requires=['icalendar'],
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -21,4 +16,9 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
     ],
+    entry_points={
+        'django.apps': [
+            'pomodoro = pomodoro',
+        ],
+    },
 )

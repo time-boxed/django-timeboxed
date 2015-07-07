@@ -12,6 +12,6 @@ class Command(BaseCommand):
 
         view = PomodoroCalendarView()
         view.database = database
-        view.limit = 250
+        view.limit = 100
         response = view.get(None)
         print response.content
