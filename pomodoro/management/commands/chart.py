@@ -1,12 +1,10 @@
 import datetime
 
 import pytz
+from pomodoro.models import PomodoroBucket
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-
-
-from pomodoro.models import PomodoroBucket
 
 
 class Command(BaseCommand):

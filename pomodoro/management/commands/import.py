@@ -4,9 +4,8 @@ import pytz
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db.backends.sqlite3.base import DatabaseWrapper
+from pomodoro.legacy import NSTIMEINTERVAL
 from pomodoro.models import Pomodoro
-
-NSTIMEINTERVAL = 978307200
 
 
 class Command(BaseCommand):
