@@ -39,5 +39,6 @@ class Command(BaseCommand):
             #  p.start = datetime.datetime.fromtimestamp(zwhen + NSTIMEINTERVAL - seconds, pytz.utc)
             #  p.end = datetime.datetime.fromtimestamp(zwhen + NSTIMEINTERVAL, pytz.utc)
             p.created = datetime.datetime.fromtimestamp(zwhen + NSTIMEINTERVAL - seconds, pytz.utc)
+            p.duration = zminutes
             p.save()
             print 'Added', p
