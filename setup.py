@@ -17,8 +17,7 @@ setup(
         'Programming Language :: Python',
     ],
     entry_points={
-        'django.apps': [
-            'pomodoro = pomodoro',
-        ],
+        'django.apps': ['pomodoro = pomodoro'],
+        'django.urls': ['pomodoro = pomodoro.urls'],
     },
 )
