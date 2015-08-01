@@ -1,4 +1,3 @@
-
 import datetime
 import logging
 
@@ -7,6 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic.base import View
 from icalendar import Calendar, Event
+
 from pomodoro.models import Pomodoro
 
 logger = logging.getLogger(__name__)
@@ -50,9 +50,6 @@ class ChartView(View):
 
         today = datetime.datetime.utcnow()
         today.replace(tzinfo=pytz.utc)
-        print dir(request)
-        print today
-        print request.user
 
         return render(request, 'pomodoro_chart.html', {
             'buckets': buckets,
