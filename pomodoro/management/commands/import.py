@@ -17,11 +17,11 @@ class Command(BaseCommand):
         user = User.objects.get(username=options['user'])
         pomodoros = Pomodoro.objects.filter(owner=user)
         while len(pomodoros):
-            print 'Delete ', len(pomodoros), 'pomodoros for', user, '?'
-            if raw_input('Confirm yes/no ').lower() == 'yes':
+            self.stdout.write('Delete %d pomodoros for %s' % (len(pomodoros), user))
+            if input('Confirm yes/no ').lower() == 'yes':
                 break
         pomodoros.delete()
-        print 'Importing Pomodoros'
+        self.stdout.write('Importing Pomodoros')
 
         cursor = DatabaseWrapper(settings_dict={
             'NAME': options['inputfile'],
@@ -41,4 +41,4 @@ class Command(BaseCommand):
             p.created = datetime.datetime.fromtimestamp(zwhen + NSTIMEINTERVAL - seconds, pytz.utc)
             p.duration = zminutes
             p.save()
-            print 'Added', p
+            self.stdout.write('Added %s' % p)
