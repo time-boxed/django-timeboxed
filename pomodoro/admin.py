@@ -1,8 +1,10 @@
 from django.contrib import admin
+
 from pomodoro.models import Pomodoro
 
 
 class PomodoroAdmin(admin.ModelAdmin):
-    list_display = ('title', 'owner', 'created')
+    list_display = ('title', 'category', 'owner', 'created')
+    list_filter = ('owner', 'category',)
 
 admin.site.register(Pomodoro, PomodoroAdmin)

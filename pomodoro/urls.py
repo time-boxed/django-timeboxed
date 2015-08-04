@@ -1,5 +1,6 @@
-import pomodoro.views
 from django.conf.urls import patterns, url
+
+import pomodoro.views
 
 urlpatterns = patterns(
     '',

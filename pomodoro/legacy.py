@@ -1,8 +1,7 @@
-from django.db import connections
-
 import collections
 import time
 
+from django.db import connections
 
 NSTIMEINTERVAL = 978307200
 
