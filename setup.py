@@ -1,11 +1,13 @@
 from setuptools import find_packages, setup
 
+from pomodoro import __version__
+
 setup(
     name='django-pomodoro',
     description='Render Pomodoro Calendars',
     author='Paul Traylor',
     url='https://github.com/kfdm/django-pomodoro',
-    version='0.0.1',
+    version=__version__,
     packages=find_packages(),
     install_requires=['icalendar'],
     classifiers=[
