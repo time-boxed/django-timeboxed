@@ -19,5 +19,6 @@ setup(
     entry_points={
         'django.apps': ['pomodoro = pomodoro'],
         'django.urls': ['pomodoro = pomodoro.urls'],
+        'rest.apps': ['pomodoro = pomodoro.rest:PomodoroViewSet']
     },
 )
