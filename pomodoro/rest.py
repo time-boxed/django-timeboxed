@@ -1,11 +1,17 @@
+import datetime
+import json
+import collections
+
+from django.http import HttpResponse
 from rest_framework import permissions, viewsets
 from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication,
                                            TokenAuthentication)
+from rest_framework.decorators import list_route
 
 from pomodoro.models import Pomodoro
-from pomodoro.serializers import PomodoroSerializer
 from pomodoro.permissions import IsOwner
+from pomodoro.serializers import PomodoroSerializer
 
 
 class PomodoroViewSet(viewsets.ModelViewSet):
@@ -26,3 +32,41 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         for the currently authenticated user.
         """
         return Pomodoro.objects.filter(owner=self.request.user)
+
+    @list_route()
+    def datatable(self, request):
+        def dateformat(date):
+            return "Date(%d,%d,%d)" % (
+                date.year, date.month - 1, date.day)
+        dataset = {'cols': [
+            {'id': 'Date', 'pattern': 'yyyy/MM/dd', 'type': 'date'},
+        ], 'rows': []}
+
+        lables = ['Unknown']
+        durations = collections.defaultdict(lambda: collections.defaultdict(int))
+        for pomodoro in Pomodoro.objects.filter(owner=self.request.user, created__gte=datetime.datetime.now() - datetime.timedelta(days=7)):
+            tag = pomodoro.tag()
+            if tag not in lables:
+                lables.append(tag)
+
+            durations[pomodoro.created.date()][tag] += pomodoro.duration
+            durations[pomodoro.created.date()]['Day'] -= pomodoro.duration
+        #lables.remove('Day')
+        for key in lables:
+            dataset['cols'].append({'id': key, 'label': key, 'type': 'number'})
+
+        for date in durations:
+            row = []
+            row.append({"v": dateformat(date)},)
+            for key in lables:
+                row.append({'v': durations[date][key] / 60})
+            dataset['rows'].append({'c': row})
+
+        response = HttpResponse(content_type='application/json')
+        response.write('google.visualization.Query.setResponse(' + json.dumps({
+            'version': '0.6',
+            'table': dataset,
+            'reqId': '0',
+            'status': 'ok',
+        }) + ');')
+        return response
