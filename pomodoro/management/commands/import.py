@@ -39,6 +39,12 @@ class Command(BaseCommand):
             #  p.start = datetime.datetime.fromtimestamp(zwhen + NSTIMEINTERVAL - seconds, pytz.utc)
             #  p.end = datetime.datetime.fromtimestamp(zwhen + NSTIMEINTERVAL, pytz.utc)
             p.created = datetime.datetime.fromtimestamp(zwhen + NSTIMEINTERVAL - seconds, pytz.utc)
+
+            for word in p.title.split():
+                if word.startswith('#'):
+                    p.category = word.strip('#')
+                    break
+
             p.duration = zminutes
             p.save()
             self.stdout.write('Added %s' % p)
