@@ -12,8 +12,16 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('user')
         parser.add_argument('inputfile')
+        parser.add_argument('tagfile', nargs='?')
 
     def handle(self, *args, **options):
+        tags = {}
+        if options['tagfile']:
+            with open(options['tagfile']) as fp:
+                for line in fp:
+                    key, value = line.strip().split('=')
+                    tags[key] = value
+
         user = User.objects.get(username=options['user'])
         pomodoros = Pomodoro.objects.filter(owner=user)
         while len(pomodoros):
@@ -44,6 +52,12 @@ class Command(BaseCommand):
                 if word.startswith('#'):
                     p.category = word.strip('#')
                     break
+
+            if not p.category:
+                for search, tag in tags.items():
+                    if search in p.title:
+                        p.category = tag
+                        break
 
             p.duration = zminutes
             p.save()
