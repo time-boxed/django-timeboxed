@@ -1,34 +1,24 @@
 <html>
     <head>
         <title>Pomodoro Bar Chart</title>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript">
-    // https://developers.google.com/chart/interactive/docs/gallery/annotationchart
-    google.load('visualization', '1', {'packages':['bar']});
-
-    // Set a callback to run when the Google Visualization API is loaded.
-    google.setOnLoadCallback(function drawGID() {
-        var queryString = encodeURIComponent('SELECT A, C, B, D');
-        var query = new google.visualization.Query(
-            '/api/pomodoro/datatable/?days=7&tq=' + queryString);
-        query.send(function handleQueryResponse(response) {
-            if (response.isError()) {
-                alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-                return;
-            }
-
-            var data = response.getDataTable();
-            var chart = new google.charts.Bar(document.getElementById('chart_div'));
-            var options = {
-                isStacked: true
-            };
-            chart.draw(data, options);
-        });
-    });
-</script>
-</head>
-<body>
-<div id="chart_div" style="width:800; height:400">Loading...</div>
-<div id='duration'></div>
-</body>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+            google.load("visualization", "1");
+            google.setOnLoadCallback(function() {
+                var wrap = new google.visualization.ChartWrapper({
+                    'chartType': 'BarChart',
+                    'dataSourceUrl': '/api/pomodoro/datatable/?days=7',
+                    'containerId': 'chart_div',
+                    //'query':'SELECT A,D WHERE D > 100 ORDER BY D',
+                    'options': {
+                        isStacked: true
+                    }
+                });
+                wrap.draw();
+            });
+        </script>
+    </head>
+    <body>
+        <div id="chart_div" style="width:800; height:400">Loading...</div>
+    </body>
 </html>
