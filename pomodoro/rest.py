@@ -42,16 +42,16 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             {'id': 'Date', 'pattern': 'yyyy/MM/dd', 'type': 'date'},
         ], 'rows': []}
 
-        lables = ['Unknown']
+        lables = ['Untracked']
         durations = collections.defaultdict(lambda: collections.defaultdict(int))
-        for pomodoro in Pomodoro.objects.filter(owner=self.request.user, created__gte=datetime.datetime.now() - datetime.timedelta(days=7)):
-            tag = pomodoro.tag()
-            if tag not in lables:
-                lables.append(tag)
+        for pomodoro in Pomodoro.objects.filter(owner=self.request.user, created__gte=datetime.datetime.now() - datetime.timedelta(days=30)):
+            if pomodoro.category not in lables:
+                lables.append(pomodoro.category)
 
-            durations[pomodoro.created.date()][tag] += pomodoro.duration
-            durations[pomodoro.created.date()]['Day'] -= pomodoro.duration
-        #lables.remove('Day')
+            durations[pomodoro.created.date()][pomodoro.category] += pomodoro.duration
+            durations[pomodoro.created.date()]['Untracked'] -= pomodoro.duration
+        # For now, ignore our untracked
+        lables.remove('Untracked')
         for key in lables:
             dataset['cols'].append({'id': key, 'label': key, 'type': 'number'})
 
@@ -59,7 +59,12 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             row = []
             row.append({"v": dateformat(date)},)
             for key in lables:
-                row.append({'v': durations[date][key] / 60})
+                if key == 'Untracked':
+                    # Subtrack our 'Tracked' time from 24 hours with a 7 hour
+                    # 'sleep' adjustment
+                    row.append({'v': durations[date][key] / 60 + 24 - 7})
+                else:
+                    row.append({'v': durations[date][key] / 60})
             dataset['rows'].append({'c': row})
 
         response = HttpResponse(content_type='application/json')
