@@ -43,8 +43,9 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         ], 'rows': []}
 
         lables = ['Untracked']
+        days = int(request.query_params.get('days', 30))
         durations = collections.defaultdict(lambda: collections.defaultdict(int))
-        for pomodoro in Pomodoro.objects.filter(owner=self.request.user, created__gte=datetime.datetime.now() - datetime.timedelta(days=30)):
+        for pomodoro in Pomodoro.objects.filter(owner=self.request.user, created__gte=datetime.datetime.now() - datetime.timedelta(days=days)):
             if pomodoro.category not in lables:
                 lables.append(pomodoro.category)
 

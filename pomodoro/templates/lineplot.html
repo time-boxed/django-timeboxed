@@ -10,7 +10,7 @@
     google.setOnLoadCallback(function drawGID() {
         var queryString = encodeURIComponent('SELECT A, C, B, D');
         var query = new google.visualization.Query(
-            '/api/pomodoro/datatable/?tq=' + queryString);
+            '/api/pomodoro/datatable/?days=30&tq=' + queryString);
         query.send(function handleQueryResponse(response) {
             if (response.isError()) {
                 alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
