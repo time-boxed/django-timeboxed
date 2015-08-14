@@ -10,6 +10,7 @@ from pomodoro.models import Pomodoro
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
+        parser.add_argument('--no-input', action='store_true')
         parser.add_argument('user')
         parser.add_argument('inputfile')
         parser.add_argument('tagfile', nargs='?')
@@ -24,10 +25,11 @@ class Command(BaseCommand):
 
         user = User.objects.get(username=options['user'])
         pomodoros = Pomodoro.objects.filter(owner=user)
-        while len(pomodoros):
-            self.stdout.write('Delete %d pomodoros for %s' % (len(pomodoros), user))
-            if input('Confirm yes/no ').lower() == 'yes':
-                break
+        if options['no_input'] is False:
+            while len(pomodoros):
+                self.stdout.write('Delete %d pomodoros for %s' % (len(pomodoros), user))
+                if input('Confirm yes/no ').lower() == 'yes':
+                    break
         pomodoros.delete()
         self.stdout.write('Importing Pomodoros')
 
