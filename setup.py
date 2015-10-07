@@ -19,8 +19,8 @@ setup(
         'Programming Language :: Python',
     ],
     entry_points={
-        'django.apps': ['pomodoro = pomodoro'],
-        'django.urls': ['pomodoro = pomodoro.urls'],
-        'rest.apps': ['pomodoro = pomodoro.rest:PomodoroViewSet']
+        'powerplug.apps': ['pomodoro = pomodoro'],
+        'powerplug.urls': ['pomodoro = pomodoro.urls'],
+        'powerplug.rest': ['pomodoro = pomodoro.rest:PomodoroViewSet']
     },
 )
