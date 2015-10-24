@@ -21,6 +21,9 @@ setup(
     entry_points={
         'powerplug.apps': ['pomodoro = pomodoro'],
         'powerplug.urls': ['pomodoro = pomodoro.urls'],
-        'powerplug.rest': ['pomodoro = pomodoro.rest:PomodoroViewSet']
+        'powerplug.rest': [
+            'pomodoro = pomodoro.rest:PomodoroViewSet',
+            'favorite = pomodoro.rest:FavoriteViewSet',
+            ]
     },
 )

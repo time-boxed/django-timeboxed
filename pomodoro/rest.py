@@ -1,6 +1,6 @@
+import collections
 import datetime
 import json
-import collections
 
 from django.http import HttpResponse
 from rest_framework import permissions, viewsets
@@ -9,10 +9,25 @@ from rest_framework.authentication import (BasicAuthentication,
                                            TokenAuthentication)
 from rest_framework.decorators import list_route
 
-from pomodoro.models import Pomodoro
+from pomodoro.models import Favorite, Pomodoro
 from pomodoro.permissions import IsOwner
-from pomodoro.serializers import PomodoroSerializer
+from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer
 
+
+class FavoriteViewSet(viewsets.ModelViewSet):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteSerializer
+    permission_classes = (IsOwner,)
+    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def get_queryset(self):
+        """
+        Return Favorites owned by current user only
+        """
+        return Favorite.objects.filter(owner=self.request.user)
 
 class PomodoroViewSet(viewsets.ModelViewSet):
     """

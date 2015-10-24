@@ -13,3 +13,10 @@ class Pomodoro(models.Model):
 
     class Meta:
         ordering = ('-created',)
+
+
+class Favorite(models.Model):
+    duration = models.IntegerField()
+    title = models.TextField()
+    category = models.TextField(blank=True)
+    owner = models.ForeignKey('auth.User', related_name='favorite')

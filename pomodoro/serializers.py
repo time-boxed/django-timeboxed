@@ -1,6 +1,15 @@
 import datetime
 from rest_framework import serializers
-from pomodoro.models import Pomodoro
+from pomodoro.models import Pomodoro, Favorite
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Favorite
+        fields = ('title', 'duration', 'category', 'owner')
+
 
 
 class PomodoroSerializer(serializers.ModelSerializer):
