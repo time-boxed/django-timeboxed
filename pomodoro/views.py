@@ -6,8 +6,16 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic.base import View
 from icalendar import Calendar, Event
+from django.conf import settings
+from django.shortcuts import redirect
+
 
 from pomodoro.models import Pomodoro
+
+try:
+    from rest_framework.authtoken.models import Token
+except ImportError:
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +24,17 @@ class PomodoroCalendarView(View):
     limit = 7
 
     def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            try:
+                token = Token.objects.select_related('user').get(key=request.GET.get('token'))
+                if token:
+                    request.user = token.user
+                else:
+                    return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+            except Exception:
+                logger.error('Invalid Token')
+                return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
         cal = Calendar()
         cal.add('prodid', '-//My calendar product//mxm.dk//')
         cal.add('version', '2.0')
