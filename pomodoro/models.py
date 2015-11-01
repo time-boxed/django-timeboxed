@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 
@@ -7,6 +9,10 @@ class Pomodoro(models.Model):
     title = models.TextField()
     category = models.TextField(blank=True)
     owner = models.ForeignKey('auth.User', related_name='pomodoros')
+
+    @property
+    def completed(self):
+        return self.created + datetime.timedelta(minutes=self.duration)
 
     def __str__(self):
         return '{}:{}'.format(self.created, self.title)

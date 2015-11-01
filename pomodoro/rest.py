@@ -2,12 +2,14 @@ import collections
 import datetime
 import json
 
-from django.http import HttpResponse
-from rest_framework import permissions, viewsets
+from django.http import Http404, HttpResponse
+from django.utils import timezone
+from rest_framework import permissions, status, viewsets
 from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication,
                                            TokenAuthentication)
 from rest_framework.decorators import list_route
+from rest_framework.response import Response
 
 from pomodoro.models import Favorite, Pomodoro
 from pomodoro.permissions import IsOwner
@@ -91,3 +93,32 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             'status': 'ok',
         }) + ');')
         return response
+
+    @list_route(methods=['post'])
+    def append(self, request, *args, **kwargs):
+        '''
+        Log time spent on a pomodoro
+
+        This route is intended as a quick time logger. If there is an existing match for the pomodoro,
+        time will be appended, otherwise a new pomodoro object will be created
+        '''
+        self.object = None
+        self.created = False
+
+        # Check to see if we have an active pomodoro already
+        for pomodoro in Pomodoro.objects.filter(owner=self.request.user, title=request.data['title']):
+            if pomodoro.completed + datetime.timedelta(minutes=2 * int(request.data['duration'])) > timezone.now():
+                self.object = pomodoro
+                self.created = True
+
+        serializer = self.get_serializer(self.object, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            # Make sure we don't lose our existing time
+            if self.object:
+                serializer.validated_data['duration'] += self.object.duration
+
+            self.object = serializer.save(owner=self.request.user)
+            status_code = self.created and status.HTTP_201_CREATED or status.HTTP_200_OK
+            return Response(serializer.validated_data, status=status_code)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
