@@ -4,7 +4,11 @@ from pomodoro.models import Favorite, Pomodoro
 
 
 class PomodoroAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'duration', 'owner', 'created')
+    def _completed(self, obj):
+        return obj.completed
+    _completed.short_description = 'completed'
+
+    list_display = ('title', 'category', 'duration', 'created', '_completed', 'owner',)
     list_filter = ('owner', 'category',)
 
 
