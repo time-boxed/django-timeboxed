@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Pomodoro(models.Model):
-    created = models.DateTimeField(default=True)
+    created = models.DateTimeField(default=datetime.datetime.now)
     duration = models.IntegerField()
     title = models.TextField()
     category = models.TextField(blank=True)
