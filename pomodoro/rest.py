@@ -2,6 +2,7 @@ import collections
 import datetime
 import json
 
+import pytz
 from django.http import Http404, HttpResponse
 from django.utils import timezone
 from rest_framework import permissions, status, viewsets
@@ -52,6 +53,8 @@ class PomodoroViewSet(viewsets.ModelViewSet):
 
     @list_route()
     def datatable(self, request):
+        tzname = request.session.get('django_timezone')
+
         def dateformat(date):
             return "Date(%d,%d,%d)" % (
                 date.year, date.month - 1, date.day)
@@ -62,12 +65,14 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         lables = ['Untracked']
         days = int(request.query_params.get('days', 30))
         durations = collections.defaultdict(lambda: collections.defaultdict(int))
-        for pomodoro in Pomodoro.objects.filter(owner=self.request.user, created__gte=datetime.datetime.now() - datetime.timedelta(days=days)):
+        for pomodoro in Pomodoro.objects.filter(owner=self.request.user, created__gte=timezone.now() - datetime.timedelta(days=days)):
             if pomodoro.category not in lables:
                 lables.append(pomodoro.category)
 
-            durations[pomodoro.created.date()][pomodoro.category] += pomodoro.duration
-            durations[pomodoro.created.date()]['Untracked'] -= pomodoro.duration
+            date = pomodoro.created.astimezone(pytz.timezone(tzname)).date() if tzname else pomodoro.created.date()
+
+            durations[date][pomodoro.category] += pomodoro.duration
+            durations[date]['Untracked'] -= pomodoro.duration
         # For now, ignore our untracked
         lables.remove('Untracked')
         for key in lables:
