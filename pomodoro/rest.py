@@ -62,7 +62,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             {'id': 'Date', 'pattern': 'yyyy/MM/dd', 'type': 'date'},
         ], 'rows': []}
 
-        lables = ['Untracked']
+        lables = ['']
         days = int(request.query_params.get('days', 30))
         durations = collections.defaultdict(lambda: collections.defaultdict(int))
         for pomodoro in Pomodoro.objects.filter(owner=self.request.user, created__gte=timezone.now() - datetime.timedelta(days=days)):
@@ -74,8 +74,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             durations[date][pomodoro.category] += pomodoro.duration
             durations[date]['Untracked'] -= pomodoro.duration
         # For now, ignore our untracked
-        lables.remove('Untracked')
-        for key in lables:
+        for key in sorted(lables):
             dataset['cols'].append({'id': key, 'label': key, 'type': 'number'})
 
         for date in durations:
