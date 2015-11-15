@@ -2,13 +2,11 @@ import datetime
 import logging
 
 import pytz
+from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.generic.base import View
 from icalendar import Calendar, Event
-from django.conf import settings
-from django.shortcuts import redirect
-
 
 from pomodoro.models import Pomodoro
 
@@ -58,20 +56,3 @@ class PomodoroCalendarView(View):
             content=cal.to_ical(),
             content_type='text/plain; charset=utf-8'
         )
-
-
-class ChartView(View):
-    def get(self, request):
-        hours = 6
-        minutes = hours * 60
-
-        buckets = {}
-
-        today = datetime.datetime.utcnow()
-        today.replace(tzinfo=pytz.utc)
-
-        return render(request, 'pomodoro_chart.html', {
-            'buckets': buckets,
-            'hours': hours,
-            'total': minutes,
-        })

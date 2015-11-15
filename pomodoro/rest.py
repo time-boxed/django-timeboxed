@@ -1,6 +1,7 @@
 import collections
 import datetime
 import json
+import operator
 
 import pytz
 from django.http import Http404, HttpResponse
@@ -50,6 +51,35 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         for the currently authenticated user.
         """
         return Pomodoro.objects.filter(owner=self.request.user)
+
+    @list_route()
+    def pie(self, request):
+        '''
+        Create a Google DataView suitable for being rendered as a pie chart
+        '''
+        days = int(request.query_params.get('days', 7))
+        created_after = timezone.now() - datetime.timedelta(days=days)
+
+        dataset = {'cols': [
+            {'id': 'Category', 'type': 'string'},
+            {'id': 'Duration', 'type': 'number'},
+        ], 'rows': []}
+
+        durations = collections.defaultdict(int)
+        for pomodoro in self.get_queryset().filter(created__gte=created_after):
+            durations[pomodoro.category] += pomodoro.duration
+
+        for category, value in sorted(durations.items(), key=operator.itemgetter(1), reverse=True):
+            dataset['rows'].append({'c': [{'v': category}, {'v': value}]})
+
+        response = HttpResponse(content_type='application/json')
+        response.write('google.visualization.Query.setResponse(' + json.dumps({
+            'version': '0.6',
+            'table': dataset,
+            'reqId': '0',
+            'status': 'ok',
+        }) + ');')
+        return response
 
     @list_route()
     def datatable(self, request):
