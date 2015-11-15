@@ -70,7 +70,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             durations[pomodoro.category] += pomodoro.duration
 
         for category, value in sorted(durations.items(), key=operator.itemgetter(1), reverse=True):
-            dataset['rows'].append({'c': [{'v': category}, {'v': value}]})
+            dataset['rows'].append({'c': [{'v': category}, {'v': round(value / 60, 2)}]})
 
         response = HttpResponse(content_type='application/json')
         response.write('google.visualization.Query.setResponse(' + json.dumps({
@@ -116,7 +116,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                     # 'sleep' adjustment
                     row.append({'v': durations[date][key] / 60 + 24 - 7})
                 else:
-                    row.append({'v': durations[date][key] / 60})
+                    row.append({'v': round(durations[date][key] / 60, 2)})
             dataset['rows'].append({'c': row})
 
         response = HttpResponse(content_type='application/json')
