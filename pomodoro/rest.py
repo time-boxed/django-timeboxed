@@ -80,7 +80,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         for date in durations:
             row = []
             row.append({"v": dateformat(date)},)
-            for key in lables:
+            for key in sorted(lables):
                 if key == 'Untracked':
                     # Subtrack our 'Tracked' time from 24 hours with a 7 hour
                     # 'sleep' adjustment
