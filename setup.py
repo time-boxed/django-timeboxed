@@ -1,12 +1,12 @@
 from setuptools import find_packages, setup
 
-from pomodoro import __version__
+from pomodoro import __version__, __homepage__
 
 setup(
     name='django-pomodoro',
     description='Render Pomodoro Calendars',
     author='Paul Traylor',
-    url='https://github.com/kfdm/django-pomodoro',
+    url=__homepage__,
     version=__version__,
     packages=find_packages(),
     install_requires=['icalendar'],
@@ -24,6 +24,6 @@ setup(
         'powerplug.rest': [
             'pomodoro = pomodoro.rest:PomodoroViewSet',
             'favorite = pomodoro.rest:FavoriteViewSet',
-            ]
+        ]
     },
 )

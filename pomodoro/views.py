@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views.generic.base import View
 from icalendar import Calendar, Event
+from pomodoro import __version__, __homepage__
 
 from pomodoro.models import Pomodoro
 
@@ -34,8 +35,12 @@ class PomodoroCalendarView(View):
                 return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
         cal = Calendar()
-        cal.add('prodid', '-//My calendar product//mxm.dk//')
+        cal.add('prodid', '-//Pomodoro Calendar//')
         cal.add('version', '2.0')
+        cal.add('X-WR-CALNAME', 'Pomodoro for {0}'.format(request.user.username))
+        cal.add('X-ORIGINAL-URL', request.build_absolute_uri())
+        cal.add('X-GENERATOR', __homepage__)
+        cal.add('X-GENERATOR-VERSION', __version__)
 
         today = datetime.datetime.utcnow()
         query = today - datetime.timedelta(days=self.limit)
@@ -46,7 +51,7 @@ class PomodoroCalendarView(View):
 
         for pomodoro in pomodoros:
             event = Event()
-            event.add('summary', pomodoro.title)
+            event.add('summary', '{0} #{1}'.format(pomodoro.title, pomodoro.category))
             event.add('dtstart', pomodoro.created)
             event.add('dtend', pomodoro.created + datetime.timedelta(minutes=pomodoro.duration))
             event['uid'] = pomodoro.id
