@@ -50,15 +50,27 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         This view should return a list of all the purchases
         for the currently authenticated user.
         """
-        return Pomodoro.objects.filter(owner=self.request.user)
+        qs = Pomodoro.objects.filter(owner=self.request.user)
+        date = self.request.query_params.get('date')
+        if date:
+            if date == 'today':
+                today = timezone.now().replace(hour=0, minute=0, second=0)
+                return qs.filter(created__gte=today)
+            if date == 'yesterday':
+                yesterday = timezone.now().replace(hour=0, minute=0, second=0) - datetime.timedelta(days=1)
+                today = timezone.now().date()
+                return qs.filter(created__gte=yesterday, created__lte=today)
+        else:
+            days = int(self.request.query_params.get('days', 7))
+            created_after = timezone.now() - datetime.timedelta(days=days)
+            return qs.filter(created__gte=created_after)
+        return qs
 
     @list_route()
     def pie(self, request):
         '''
         Create a Google DataView suitable for being rendered as a pie chart
         '''
-        days = int(request.query_params.get('days', 7))
-        created_after = timezone.now() - datetime.timedelta(days=days)
 
         dataset = {'cols': [
             {'id': 'Category', 'type': 'string'},
@@ -66,13 +78,13 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         ], 'rows': []}
 
         durations = collections.defaultdict(int)
-        for pomodoro in self.get_queryset().filter(created__gte=created_after):
+        for pomodoro in self.get_queryset():
             durations[pomodoro.category] += pomodoro.duration
 
         for category, value in sorted(durations.items(), key=operator.itemgetter(1), reverse=True):
             dataset['rows'].append({'c': [{'v': category}, {'v': round(value / 60, 2)}]})
 
-        response = HttpResponse(content_type='application/json')
+        response = HttpResponse(content_type='application/javascript')
         response.write('google.visualization.Query.setResponse(' + json.dumps({
             'version': '0.6',
             'table': dataset,
@@ -119,7 +131,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                     row.append({'v': round(durations[date][key] / 60, 2)})
             dataset['rows'].append({'c': row})
 
-        response = HttpResponse(content_type='application/json')
+        response = HttpResponse(content_type='application/javascript')
         response.write('google.visualization.Query.setResponse(' + json.dumps({
             'version': '0.6',
             'table': dataset,

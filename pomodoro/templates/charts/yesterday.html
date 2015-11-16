@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>Yesterday</title>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+            // https://developers.google.com/chart/interactive/docs/gallery/annotationchart
+            google.load("visualization", "1");
+            google.setOnLoadCallback(function() {
+                var wrap = new google.visualization.ChartWrapper({
+                    'chartType': 'PieChart',
+                    'dataSourceUrl': '/api/pomodoro/pie/?date=yesterday',
+                    'containerId': 'chart_div',
+                    'options': {
+                        pieHole: false,
+                    }
+                });
+                wrap.draw();
+            });
+        </script>
+    </head>
+    <body>
+        <div id="chart_div" style="width:800; height:400">Loading...</div>
+    </body>
+</html>
