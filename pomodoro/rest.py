@@ -81,8 +81,14 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         ], 'rows': []}
 
         durations = collections.defaultdict(int)
+        date = self.request.query_params.get('date')
+        if date:
+            durations['Remaining'] = 17 * 60
+
         for pomodoro in self.get_queryset():
             durations[pomodoro.category] += pomodoro.duration
+            if date:
+                durations['Remaining'] -= pomodoro.duration
 
         for category, value in sorted(durations.items(), key=operator.itemgetter(1), reverse=True):
             dataset['rows'].append({'c': [{'v': category}, {'v': round(value / 60, 2)}]})
