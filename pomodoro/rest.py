@@ -65,7 +65,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                 return qs.filter(created__gte=yesterday, created__lte=today)
         else:
             days = int(self.request.query_params.get('days', 7))
-            created_after = timezone.now() - datetime.timedelta(days=days)
+            created_after = self.get_today() - datetime.timedelta(days=days)
             return qs.filter(created__gte=created_after)
         return qs
 
