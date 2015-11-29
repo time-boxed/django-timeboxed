@@ -45,6 +45,9 @@ class PomodoroViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    def get_today(self):
+        return timezone.localtime(timezone.now()).replace(hour=0, minute=0, second=0, microsecond=0)
+
     def get_queryset(self):
         """
         This view should return a list of all the purchases
@@ -54,11 +57,11 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         date = self.request.query_params.get('date')
         if date:
             if date == 'today':
-                today = timezone.now().replace(hour=0, minute=0, second=0)
+                today = self.get_today()
                 return qs.filter(created__gte=today)
             if date == 'yesterday':
-                yesterday = timezone.now().replace(hour=0, minute=0, second=0) - datetime.timedelta(days=1)
-                today = timezone.now().date()
+                today = self.get_today()
+                yesterday = today - datetime.timedelta(days=1)
                 return qs.filter(created__gte=yesterday, created__lte=today)
         else:
             days = int(self.request.query_params.get('days', 7))
