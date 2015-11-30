@@ -1,7 +1,6 @@
-<html>
-    <head>
-        <title>Pomodoro Pie Chart</title>
-        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+{% extends "charts/base.html" %}
+{% block title %}Pie Chart{% endblock %}
+{% block javascript %}
         <script type="text/javascript">
             // https://developers.google.com/chart/interactive/docs/gallery/annotationchart
             google.load("visualization", "1");
@@ -17,8 +16,4 @@
                 wrap.draw();
             });
         </script>
-    </head>
-    <body>
-        <div id="chart_div" style="width:800; height:400">Loading...</div>
-    </body>
-</html>
+{% endblock %}

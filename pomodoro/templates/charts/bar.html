@@ -1,7 +1,6 @@
-<html>
-    <head>
-        <title>Pomodoro Bar Chart</title>
-        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+{% extends "charts/base.html" %}
+{% block title %}Bar Graph{% endblock %}
+{% block javascript %}
         <script type="text/javascript">
             google.load("visualization", "1");
             google.setOnLoadCallback(function() {
@@ -17,8 +16,5 @@
                 wrap.draw();
             });
         </script>
-    </head>
-    <body>
-        <div id="chart_div" style="width:800; height:400">Loading...</div>
-    </body>
-</html>
+    </script>
+{% endblock %}
