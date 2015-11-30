@@ -83,7 +83,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         durations = collections.defaultdict(int)
         date = self.request.query_params.get('date')
         if date:
-            durations['Remaining'] = 17 * 60
+            durations['Remaining'] = 24 * 60
 
         for pomodoro in self.get_queryset():
             durations[pomodoro.category] += pomodoro.duration
