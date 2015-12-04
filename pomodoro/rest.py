@@ -15,6 +15,7 @@ from rest_framework.response import Response
 
 from pomodoro.models import Favorite, Pomodoro
 from pomodoro.permissions import IsOwner
+from pomodoro.renderers import CalendarRenderer
 from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer
 
 
@@ -41,6 +42,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
     serializer_class = PomodoroSerializer
     permission_classes = (IsOwner,)
     authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
+    renderer_classes = viewsets.ModelViewSet.renderer_classes + [CalendarRenderer]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

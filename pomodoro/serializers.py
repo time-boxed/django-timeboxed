@@ -22,4 +22,5 @@ class PomodoroSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pomodoro
-        fields = ('title', 'duration', 'category', 'owner', 'created')
+        fields = ('id', 'title', 'duration', 'category', 'owner', 'created')
+        read_only_fields = ('id',)
