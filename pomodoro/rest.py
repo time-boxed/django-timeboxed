@@ -45,6 +45,12 @@ class PomodoroViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    def get_now(self):
+        return timezone.localtime(timezone.now())
+
+    def get_tomorrow(self):
+        return self.get_today() + datetime.timedelta(days=1)
+
     def get_today(self):
         return timezone.localtime(timezone.now()).replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -83,12 +89,15 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         durations = collections.defaultdict(int)
         date = self.request.query_params.get('date')
         if date:
-            durations['Remaining'] = 24 * 60
+            durations['Unaccounted'] = 24 * 60
+            if date == 'today':
+                durations['Remainder'] = (self.get_tomorrow() - self.get_now()).seconds / 60
+                durations['Unaccounted'] -= durations['Remainder']
 
         for pomodoro in self.get_queryset():
             durations[pomodoro.category] += pomodoro.duration
             if date:
-                durations['Remaining'] -= pomodoro.duration
+                durations['Unaccounted'] -= pomodoro.duration
 
         for category, value in sorted(durations.items(), key=operator.itemgetter(1), reverse=True):
             dataset['rows'].append({'c': [{'v': category}, {'v': round(value / 60, 2)}]})
