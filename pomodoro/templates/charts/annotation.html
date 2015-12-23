@@ -1,0 +1,23 @@
+{% extends "charts/base.html" %}
+{% block title %}Annotation Chart{% endblock %}
+{% block javascript %}
+        <script type="text/javascript">
+            // https://developers.google.com/chart/interactive/docs/gallery/annotationchart
+            google.load("visualization", "1");
+            google.setOnLoadCallback(function() {
+                var wrap = new google.visualization.ChartWrapper({
+                    'chartType': 'AnnotationChart',
+                    'dataSourceUrl': '/api/pomodoro/datatable/?days=30',
+                    'containerId': 'chart_div',
+                    //'query':'SELECT A,D WHERE D > 100 ORDER BY D',
+                    'options': {
+                        timeline: {
+                            colorByRowLabel: true
+                        },
+                        legendPosition: 'newRow',
+                    }
+                });
+                wrap.draw();
+            });
+        </script>
+{% endblock %}

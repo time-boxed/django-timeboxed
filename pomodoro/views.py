@@ -1,78 +1,63 @@
 import datetime
 import logging
-import collections
 
-from django.conf import settings
-from django.db import connections
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.views.generic.base import View
-
-from pomodoro.models import PomodoroBucket, NSTIMEINTERVAL
-
-from icalendar import Calendar, Event
 import pytz
+from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.views.generic.base import View
+from icalendar import Calendar, Event
+from pomodoro import __version__, __homepage__
 
+from pomodoro.models import Pomodoro
+
+try:
+    from rest_framework.authtoken.models import Token
+except ImportError:
+    pass
 
 logger = logging.getLogger(__name__)
 
 
 class PomodoroCalendarView(View):
-    database = None
-    limit = 10
-    format = u'{0}'
+    limit = 7
 
     def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            try:
+                token = Token.objects.select_related('user').get(key=request.GET.get('token'))
+                if token:
+                    request.user = token.user
+                else:
+                    return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+            except Exception:
+                logger.error('Invalid Token')
+                return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
         cal = Calendar()
-        cal.add('prodid', '-//My calendar product//mxm.dk//')
+        cal.add('prodid', '-//Pomodoro Calendar//')
         cal.add('version', '2.0')
+        cal.add('X-WR-CALNAME', 'Pomodoro for {0}'.format(request.user.username))
+        cal.add('X-ORIGINAL-URL', request.build_absolute_uri())
+        cal.add('X-GENERATOR', __homepage__)
+        cal.add('X-GENERATOR-VERSION', __version__)
 
-        c = connections[self.database].cursor()
+        today = datetime.datetime.utcnow()
+        query = today - datetime.timedelta(days=self.limit)
+        pomodoros = Pomodoro.objects.order_by('-created').filter(
+            owner=request.user,
+            created__gte=query,
+        )
 
-        logger.info('Reading %d entries from %s', self.limit, settings.DATABASES[self.database]['NAME'])
-        # Cast ZWHEN as int to get around a bug? with django's query
-        c.execute('SELECT Z_PK, cast(ZWHEN as integer), ZDURATIONMINUTES, ZNAME FROM ZPOMODOROS ORDER BY ZWHEN DESC LIMIT %s', [self.limit])
-
-        for zpk, zwhen, zminutes, zname in c.fetchall():
-            seconds = zminutes * 60
-            start = datetime.datetime.fromtimestamp(zwhen + NSTIMEINTERVAL - seconds, pytz.utc)
-            end = datetime.datetime.fromtimestamp(zwhen + NSTIMEINTERVAL, pytz.utc)
-
+        for pomodoro in pomodoros:
             event = Event()
-            event.add('summary', self.format.format(zname, zminutes))
-            event.add('dtstart', start)
-            event.add('dtend', end)
-            event['uid'] = zpk
+            event.add('summary', '{0} #{1}'.format(pomodoro.title, pomodoro.category))
+            event.add('dtstart', pomodoro.created)
+            event.add('dtend', pomodoro.created + datetime.timedelta(minutes=pomodoro.duration))
+            event['uid'] = pomodoro.id
             cal.add_component(event)
 
         return HttpResponse(
             content=cal.to_ical(),
             content_type='text/plain; charset=utf-8'
-            )
-
-
-class ChartView(View):
-    database = None
-
-    def get(self, request):
-        hours = 6
-        minutes = hours * 60
-
-        # Get midnight today (in the current timezone) as our query point
-        start = PomodoroBucket.midnight(
-            datetime.datetime.now(pytz.timezone(settings.TIME_ZONE)))
-
-        buckets = collections.OrderedDict()
-        for pomodoro, total in PomodoroBucket.get(self.database, start, minutes):
-            buckets[pomodoro] = {
-                'total': total,
-                'hours': total / 60,
-                'minutes': total % 60,
-                'percent': float(total) / float(minutes)
-            }
-
-        return render(request, 'pomodoro_chart.html', {
-            'buckets': buckets,
-            'hours': hours,
-            'total': minutes,
-        })
+        )

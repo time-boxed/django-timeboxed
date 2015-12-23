@@ -1,17 +1,14 @@
-#!/usr/bin/env python
+from setuptools import find_packages, setup
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from pomodoro import __version__, __homepage__
 
 setup(
     name='django-pomodoro',
     description='Render Pomodoro Calendars',
     author='Paul Traylor',
-    url='https://github.com/kfdm/django-pomodoro',
-    version='0.0.1',
-    packages=['pomodoro'],
+    url=__homepage__,
+    version=__version__,
+    packages=find_packages(),
     install_requires=['icalendar'],
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -21,4 +18,12 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
     ],
+    entry_points={
+        'powerplug.apps': ['pomodoro = pomodoro'],
+        'powerplug.urls': ['pomodoro = pomodoro.urls'],
+        'powerplug.rest': [
+            'pomodoro = pomodoro.rest:PomodoroViewSet',
+            'favorite = pomodoro.rest:FavoriteViewSet',
+        ]
+    },
 )

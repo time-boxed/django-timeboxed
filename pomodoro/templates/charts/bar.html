@@ -1,0 +1,20 @@
+{% extends "charts/base.html" %}
+{% block title %}Bar Graph{% endblock %}
+{% block javascript %}
+        <script type="text/javascript">
+            google.load("visualization", "1");
+            google.setOnLoadCallback(function() {
+                var wrap = new google.visualization.ChartWrapper({
+                    'chartType': 'BarChart',
+                    'dataSourceUrl': '/api/pomodoro/datatable/?days=7',
+                    'containerId': 'chart_div',
+                    //'query':'SELECT A,D WHERE D > 100 ORDER BY D',
+                    'options': {
+                        isStacked: true
+                    }
+                });
+                wrap.draw();
+            });
+        </script>
+    </script>
+{% endblock %}
