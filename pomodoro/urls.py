@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView
 from django.core.urlresolvers import reverse
+from django.views.generic import TemplateView
+
 import pomodoro.views
 
 urlpatterns = [
@@ -15,13 +16,13 @@ urlpatterns = [
 
 
 def subnav(namespace, request):
-    if not request.user.logged_in():
+    if not request.user.is_authenticated():
         return {}
     return {
-        'Pomodoro': {
-            'Bar Chart': reverse('%s:bar'%namespace),
-            'Pie Chart': reverse('%s:pie'%namespace),
-            'Calendar': reverse('%s:calendar'%namespace),
-            'Line Chart': reverse('%s:line'%namespace),
-        }
+        'Pomodoro': [
+            ('Bar Chart', reverse(namespace + ':bar')),
+            ('Pie Chart', reverse(namespace + ':pie')),
+            ('Line Chart', reverse(namespace + ':line')),
+            ('Calendar', reverse(namespace + ':calendar')),
+        ]
     }
