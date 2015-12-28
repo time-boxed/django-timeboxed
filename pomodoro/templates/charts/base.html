@@ -1,51 +1,9 @@
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>{% block title %}Pomodoro Graphs{% endblock %}</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
-        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-{% block javascript %}{% endblock %}
-<style>
-body {
-padding-top: 50px;
-}
-.starter-template {
-padding: 40px 15px;
-text-align: center;
-}
-</style>
-    </head>
-    <body>
-        <header class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">Tsun.co</a>
-                </div>
-                <nav class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="{% url 'pomodoro:today' %}">Today</a></li>
-                        <li><a href="{% url 'pomodoro:yesterday' %}">Yesterday</a></li>
-                        <li><a href="{% url 'pomodoro:pie' %}">Week</a></li>
-                        <li><a href="{% url 'pomodoro:bar' %}">Bar</a></li>
-                        <li><a href="{% url 'pomodoro:line' %}">Line</a></li>
-                </nav>
-            </div>
-        </header>
+{% extends "base.html" %}
+{% block javascript %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+{% endblock %}
+{% block content %}
         <div class="container">
-            <div id="chart_div" style="width:800; height:400">Loading...</div>
+            <div id="chart_div" style="width:800px; height:400px">Loading...</div>
         </div>
-        <footer class="container" id="footer">
-            Copyright &copy; Paul Traylor 2004-2015
-        </footer>
-        <script src="https://code.jquery.com/jquery.js"></script>
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-    </body>
-</html>
+{% endblock %}

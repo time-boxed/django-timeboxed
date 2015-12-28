@@ -1,6 +1,7 @@
 {% extends "charts/base.html" %}
 {% block title %}Bar Graph{% endblock %}
 {% block javascript %}
+{{ block.super }}
         <script type="text/javascript">
             google.load("visualization", "1");
             google.setOnLoadCallback(function() {

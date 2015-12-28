@@ -24,6 +24,7 @@ setup(
         'powerplug.rest': [
             'pomodoro = pomodoro.rest:PomodoroViewSet',
             'favorite = pomodoro.rest:FavoriteViewSet',
-        ]
+        ],
+        'powerplug.subnav': ['pomodoro = pomodoro.urls:subnav'],
     },
 )
