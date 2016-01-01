@@ -6,8 +6,8 @@ from django.db import models
 class Pomodoro(models.Model):
     created = models.DateTimeField(default=datetime.datetime.now)
     duration = models.IntegerField()
-    title = models.TextField()
-    category = models.TextField(blank=True)
+    title = models.CharField(max_length=32)
+    category = models.CharField(max_length=32, blank=True)
     owner = models.ForeignKey('auth.User', related_name='pomodoros')
 
     @property
@@ -23,6 +23,6 @@ class Pomodoro(models.Model):
 
 class Favorite(models.Model):
     duration = models.IntegerField()
-    title = models.TextField()
-    category = models.TextField(blank=True)
+    title = models.CharField(max_length=32)
+    category = models.CharField(max_length=32, blank=True)
     owner = models.ForeignKey('auth.User', related_name='favorite')
