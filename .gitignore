@@ -11,3 +11,4 @@ sdist
 .coverage
 .tox
 nosetests.xml
+*.mo

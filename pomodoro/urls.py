@@ -1,9 +1,10 @@
+import pomodoro.views
+
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView
-
-import pomodoro.views
 
 urlpatterns = [
     url(r'^bar', login_required(TemplateView.as_view(template_name="charts/bar.html")), name='bar'),
@@ -20,9 +21,11 @@ def subnav(namespace, request):
         return {}
     return {
         'Pomodoro': [
-            ('Bar Chart', reverse(namespace + ':bar')),
-            ('Pie Chart', reverse(namespace + ':pie')),
-            ('Line Chart', reverse(namespace + ':line')),
-            ('Calendar', reverse(namespace + ':calendar')),
+            (_('today'), reverse(namespace + ':today')),
+            (_('yesterday'), reverse(namespace + ':yesterday')),
+            (_('bar chart'), reverse(namespace + ':bar')),
+            (_('pie chart'), reverse(namespace + ':pie')),
+            (_('line chart'), reverse(namespace + ':line')),
+            (_('calendar'), reverse(namespace + ':calendar')),
         ]
     }

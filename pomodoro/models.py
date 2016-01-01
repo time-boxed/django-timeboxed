@@ -1,14 +1,15 @@
 import datetime
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class Pomodoro(models.Model):
-    created = models.DateTimeField(default=datetime.datetime.now)
-    duration = models.IntegerField()
-    title = models.CharField(max_length=32)
-    category = models.CharField(max_length=32, blank=True)
-    owner = models.ForeignKey('auth.User', related_name='pomodoros')
+    created = models.DateTimeField(default=datetime.datetime.now, verbose_name=_('start time'))
+    duration = models.IntegerField(verbose_name=_('duration'))
+    title = models.CharField(max_length=32, verbose_name=_('title'))
+    category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
+    owner = models.ForeignKey('auth.User', related_name='pomodoros', verbose_name=_('owner'))
 
     @property
     def completed(self):
@@ -22,7 +23,7 @@ class Pomodoro(models.Model):
 
 
 class Favorite(models.Model):
-    duration = models.IntegerField()
-    title = models.CharField(max_length=32)
-    category = models.CharField(max_length=32, blank=True)
-    owner = models.ForeignKey('auth.User', related_name='favorite')
+    duration = models.IntegerField(verbose_name=_('duration'))
+    title = models.CharField(max_length=32, verbose_name=_('title'))
+    category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
+    owner = models.ForeignKey('auth.User', related_name='favorite', verbose_name=_('owner'))
