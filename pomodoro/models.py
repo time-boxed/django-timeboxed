@@ -27,3 +27,4 @@ class Favorite(models.Model):
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
     owner = models.ForeignKey('auth.User', related_name='favorite', verbose_name=_('owner'))
+    icon = models.ImageField(upload_to='pomodoro/favorites', blank=True)

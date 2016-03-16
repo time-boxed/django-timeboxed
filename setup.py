@@ -9,7 +9,7 @@ setup(
     url=__homepage__,
     version=__version__,
     packages=find_packages(),
-    install_requires=['icalendar'],
+    install_requires=['icalendar', 'Pillow'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Django',
