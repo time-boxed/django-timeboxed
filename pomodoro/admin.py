@@ -13,7 +13,12 @@ class PomodoroAdmin(admin.ModelAdmin):
 
 
 class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'duration', 'owner')
+    def _icon(self, obj):
+        return True if obj.icon else False
+    _icon.short_description = _('icon')
+    _icon.boolean = True
+
+    list_display = ('title', 'category', 'duration', 'owner', '_icon')
     list_filter = ('owner', 'category',)
 
 admin.site.register(Pomodoro, PomodoroAdmin)
