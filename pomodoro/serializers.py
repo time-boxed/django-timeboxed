@@ -1,6 +1,6 @@
-import datetime
 from rest_framework import serializers
-from pomodoro.models import Pomodoro, Favorite
+from pomodoro.models import Favorite, Pomodoro
+from django.utils import timezone
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -18,7 +18,7 @@ class PomodoroSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         if 'created' not in validated_data:
-            validated_data['created'] = datetime.datetime.utcnow()
+            validated_data['created'] = timezone.now()
         return Pomodoro.objects.create(**validated_data)
 
     class Meta:
