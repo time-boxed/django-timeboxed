@@ -12,3 +12,4 @@ sdist
 .tox
 nosetests.xml
 *.mo
+venv

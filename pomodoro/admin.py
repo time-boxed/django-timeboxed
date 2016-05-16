@@ -8,6 +8,7 @@ class PomodoroAdmin(admin.ModelAdmin):
         return obj.completed
     _completed.short_description = _('end time')
 
+    date_hierarchy = 'created'
     list_display = ('title', 'category', 'duration', 'created', '_completed', 'owner',)
     list_filter = ('owner', 'category',)
 
