@@ -4,9 +4,7 @@ import json
 import operator
 
 import pytz
-from django.http import Http404, HttpResponse
-from django.utils import timezone
-from rest_framework import permissions, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication,
                                            TokenAuthentication)
@@ -17,6 +15,9 @@ from pomodoro.models import Favorite, Pomodoro
 from pomodoro.permissions import IsOwner
 from pomodoro.renderers import CalendarRenderer
 from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer
+
+from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
@@ -55,6 +56,17 @@ class PomodoroViewSet(viewsets.ModelViewSet):
 
     def get_today(self):
         return timezone.localtime(timezone.now()).replace(hour=0, minute=0, second=0, microsecond=0)
+
+
+    @list_route(methods=['post'])
+    def search(self, request):
+        return JsonResponse(list(Pomodoro.objects
+            .filter(owner=self.request.user)
+            .exclude(category='')
+            .order_by('category')
+            .values_list('category', flat=True)
+            .distinct('category')
+            ), safe=False)
 
     def get_queryset(self):
         """
