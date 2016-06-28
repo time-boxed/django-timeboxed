@@ -2,6 +2,7 @@ import collections
 import datetime
 import json
 import operator
+import time
 
 import pytz
 from rest_framework import status, viewsets
@@ -18,6 +19,9 @@ from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer
 
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
+from django.utils.timezone import make_aware
+
+DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
@@ -57,6 +61,34 @@ class PomodoroViewSet(viewsets.ModelViewSet):
     def get_today(self):
         return timezone.localtime(timezone.now()).replace(hour=0, minute=0, second=0, microsecond=0)
 
+    @list_route(methods=['post'])
+    def query(self, request):
+        body = json.loads(request.body.decode("utf-8"))
+        start = make_aware(datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT))
+        end = make_aware(datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT))
+
+        results = []
+        durations = collections.defaultdict(lambda: collections.defaultdict(int))
+
+        for target in body['targets']:
+            for pomodoro in Pomodoro.objects\
+                    .filter(owner=self.request.user)\
+                    .filter(category=target['target'])\
+                    .filter(created__gte=start)\
+                    .filter(created__lte=end)\
+                    .order_by('created'):
+                ts = time.mktime(pomodoro.created.replace(minute=0, hour=0, second=0).timetuple())
+                durations[ts][target['target']] = pomodoro.duration
+
+        for target in body['targets']:
+            response = {
+                'target': target['target'],
+                'datapoints': []
+            }
+            for ts in sorted(durations.keys()):
+                response['datapoints'].append([durations[ts][target['target']], ts  * 1000])
+            results.append(response)
+        return JsonResponse(results, safe=False)
 
     @list_route(methods=['post'])
     def search(self, request):
