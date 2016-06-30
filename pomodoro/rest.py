@@ -78,7 +78,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                     .filter(created__lte=end)\
                     .order_by('created'):
                 ts = time.mktime(pomodoro.created.replace(minute=0, hour=0, second=0).timetuple())
-                durations[ts][target['target']] = pomodoro.duration
+                durations[ts][target['target']] += pomodoro.duration
 
         for target in body['targets']:
             response = {
