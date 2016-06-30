@@ -64,8 +64,8 @@ class PomodoroViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'])
     def query(self, request):
         body = json.loads(request.body.decode("utf-8"))
-        start = make_aware(datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT))
-        end = make_aware(datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT))
+        start = make_aware(datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT), pytz.utc)
+        end = make_aware(datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT), pytz.utc)
 
         results = []
         durations = collections.defaultdict(lambda: collections.defaultdict(int))
@@ -77,7 +77,8 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                     .filter(created__gte=start)\
                     .filter(created__lte=end)\
                     .order_by('created'):
-                ts = time.mktime(pomodoro.created.replace(minute=0, hour=0, second=0).timetuple())
+                # Bucket by midnight
+                ts = pomodoro.created.replace(minute=0, hour=0, second=0, microsecond=0)
                 durations[ts][target['target']] += pomodoro.duration
 
         for target in body['targets']:
@@ -86,7 +87,8 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                 'datapoints': []
             }
             for ts in sorted(durations.keys()):
-                response['datapoints'].append([durations[ts][target['target']], ts  * 1000])
+                unixtimestamp = time.mktime(ts.timetuple()) * 1000
+                response['datapoints'].append([durations[ts][target['target']], unixtimestamp])
             results.append(response)
         return JsonResponse(results, safe=False)
 
