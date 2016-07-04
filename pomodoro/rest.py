@@ -21,6 +21,11 @@ from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.timezone import make_aware
 
+try:
+    from timezone.models import Timezone
+except ImportError:
+    Timezone = None
+
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
@@ -70,6 +75,11 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         results = []
         durations = collections.defaultdict(lambda: collections.defaultdict(int))
 
+        if Timezone:
+            tzname = Timezone.objects.filter(owner=request.user)
+            timezone.activate(pytz.timezone(tzname[0].timezone))
+            tzinfo = pytz.timezone(tzname[0].timezone)
+
         for target in body['targets']:
             for pomodoro in Pomodoro.objects\
                     .filter(owner=self.request.user)\
@@ -78,7 +88,10 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                     .filter(created__lte=end)\
                     .order_by('created'):
                 # Bucket by midnight
-                ts = pomodoro.created.replace(minute=0, hour=0, second=0, microsecond=0)
+                if Timezone:
+                    ts = pomodoro.created.replace(minute=0, hour=0, second=0, microsecond=0, tzinfo=tzinfo)
+                else:
+                    ts = pomodoro.created.replace(minute=0, hour=0, second=0, microsecond=0)
                 durations[ts][target['target']] += pomodoro.duration
 
         for target in body['targets']:
