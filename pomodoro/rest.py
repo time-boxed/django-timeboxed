@@ -69,8 +69,12 @@ class PomodoroViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'])
     def query(self, request):
         body = json.loads(request.body.decode("utf-8"))
-        start = make_aware(datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT), pytz.utc)
-        end = make_aware(datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT), pytz.utc)
+        start = make_aware(
+            datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT),
+            pytz.utc)
+        end = make_aware(
+            datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT),
+            pytz.utc)
 
         results = []
         durations = collections.defaultdict(lambda: collections.defaultdict(int))
@@ -85,11 +89,10 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                     .filter(owner=self.request.user)\
                     .filter(category=target['target'])\
                     .filter(created__gte=start)\
-                    .filter(created__lte=end)\
-                    .order_by('created'):
-                # Bucket by midnight
+                    .filter(created__lte=end):
+                # Bucket by midnight. If we have a timezone object, ensure we're in the right timezone
                 if Timezone:
-                    ts = pomodoro.created.replace(minute=0, hour=0, second=0, microsecond=0, tzinfo=tzinfo)
+                    ts = pomodoro.created.astimezone(tzinfo).replace(minute=0, hour=0, second=0, microsecond=0)
                 else:
                     ts = pomodoro.created.replace(minute=0, hour=0, second=0, microsecond=0)
                 durations[ts][target['target']] += pomodoro.duration
