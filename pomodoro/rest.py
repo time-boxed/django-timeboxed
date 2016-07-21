@@ -1,7 +1,6 @@
 import collections
 import datetime
 import json
-import operator
 import time
 
 import pytz
@@ -17,7 +16,7 @@ from pomodoro.permissions import IsOwner
 from pomodoro.renderers import CalendarRenderer
 from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer
 
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.timezone import make_aware
 
@@ -60,12 +59,6 @@ class PomodoroViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-
-    def get_now(self):
-        return timezone.localtime(timezone.now())
-
-    def get_tomorrow(self):
-        return self.get_today() + datetime.timedelta(days=1)
 
     def get_today(self):
         return floorts(timezone.localtime(timezone.now()))
@@ -159,89 +152,6 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             created_after = self.get_today() - datetime.timedelta(days=days)
             return qs.filter(created__gte=created_after)
         return qs
-
-    @list_route()
-    def pie(self, request):
-        '''
-        Create a Google DataView suitable for being rendered as a pie chart
-        '''
-
-        dataset = {'cols': [
-            {'id': 'Category', 'type': 'string'},
-            {'id': 'Duration', 'type': 'number'},
-        ], 'rows': []}
-
-        durations = collections.defaultdict(int)
-        date = self.request.query_params.get('date')
-        if date:
-            durations['Unaccounted'] = 24 * 60
-            if date == 'today':
-                durations['Remainder'] = (self.get_tomorrow() - self.get_now()).seconds / 60
-                durations['Unaccounted'] -= durations['Remainder']
-
-        for pomodoro in self.get_queryset():
-            durations[pomodoro.category] += pomodoro.duration
-            if date:
-                durations['Unaccounted'] -= pomodoro.duration
-
-        for category, value in sorted(durations.items(), key=operator.itemgetter(1), reverse=True):
-            dataset['rows'].append({'c': [{'v': category}, {'v': round(value / 60, 2)}]})
-
-        response = HttpResponse(content_type='application/javascript')
-        response.write('google.visualization.Query.setResponse(' + json.dumps({
-            'version': '0.6',
-            'table': dataset,
-            'reqId': '0',
-            'status': 'ok',
-        }) + ');')
-        return response
-
-    @list_route()
-    def datatable(self, request):
-        tzname = request.session.get('django_timezone')
-
-        def dateformat(date):
-            return "Date(%d,%d,%d)" % (
-                date.year, date.month - 1, date.day)
-        dataset = {'cols': [
-            {'id': 'Date', 'pattern': 'yyyy/MM/dd', 'type': 'date'},
-        ], 'rows': []}
-
-        lables = ['']
-        days = int(request.query_params.get('days', 30))
-        durations = collections.defaultdict(lambda: collections.defaultdict(int))
-        for pomodoro in Pomodoro.objects.filter(owner=self.request.user, created__gte=timezone.now() - datetime.timedelta(days=days)):
-            if pomodoro.category not in lables:
-                lables.append(pomodoro.category)
-
-            date = pomodoro.created.astimezone(pytz.timezone(tzname)).date() if tzname else pomodoro.created.date()
-
-            durations[date][pomodoro.category] += pomodoro.duration
-            durations[date]['Untracked'] -= pomodoro.duration
-        # For now, ignore our untracked
-        for key in sorted(lables):
-            dataset['cols'].append({'id': key, 'label': key, 'type': 'number'})
-
-        for date in durations:
-            row = []
-            row.append({"v": dateformat(date)},)
-            for key in sorted(lables):
-                if key == 'Untracked':
-                    # Subtrack our 'Tracked' time from 24 hours with a 7 hour
-                    # 'sleep' adjustment
-                    row.append({'v': durations[date][key] / 60 + 24 - 7})
-                else:
-                    row.append({'v': round(durations[date][key] / 60, 2)})
-            dataset['rows'].append({'c': row})
-
-        response = HttpResponse(content_type='application/javascript')
-        response.write('google.visualization.Query.setResponse(' + json.dumps({
-            'version': '0.6',
-            'table': dataset,
-            'reqId': '0',
-            'status': 'ok',
-        }) + ');')
-        return response
 
     @list_route(methods=['post'])
     def append(self, request, *args, **kwargs):
