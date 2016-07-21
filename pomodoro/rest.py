@@ -88,6 +88,14 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             timezone.activate(pytz.timezone(tzname[0].timezone))
             tzinfo = pytz.timezone(tzname[0].timezone)
 
+            start = start.astimezone(tzinfo)
+            end = end.astimezone(tzinfo)
+
+        _ts = floorts(start)
+        dates = []
+        for offset in range(0, (end - start).days + 1):
+            dates.append(_ts + datetime.timedelta(days=offset))
+
         for target in body['targets']:
             for pomodoro in Pomodoro.objects\
                     .filter(owner=self.request.user)\
@@ -114,7 +122,8 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                 'target': target['target'],
                 'datapoints': []
             }
-            for ts in sorted(durations.keys()):
+
+            for ts in dates:
                 unixtimestamp = time.mktime(ts.timetuple()) * 1000
                 response['datapoints'].append([durations[ts][target['target']], unixtimestamp])
             results.append(response)
