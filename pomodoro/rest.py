@@ -68,7 +68,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         return self.get_today() + datetime.timedelta(days=1)
 
     def get_today(self):
-        return timezone.localtime(timezone.now()).replace(hour=0, minute=0, second=0, microsecond=0)
+        return floorts(timezone.localtime(timezone.now()))
 
     @list_route(methods=['post'])
     def query(self, request):
