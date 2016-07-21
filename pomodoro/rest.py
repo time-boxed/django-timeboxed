@@ -29,6 +29,10 @@ except ImportError:
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
+def floorts(ts):
+    return ts.replace(minute=0, hour=0, second=0, microsecond=0)
+
+
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
@@ -92,10 +96,18 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                     .filter(created__lte=end):
                 # Bucket by midnight. If we have a timezone object, ensure we're in the right timezone
                 if Timezone:
-                    ts = pomodoro.created.astimezone(tzinfo).replace(minute=0, hour=0, second=0, microsecond=0)
+                    started = pomodoro.created.astimezone(tzinfo)
+                    completed = pomodoro.completed.astimezone(tzinfo)
                 else:
-                    ts = pomodoro.created.replace(minute=0, hour=0, second=0, microsecond=0)
-                durations[ts][target['target']] += pomodoro.duration
+                    started = pomodoro.created
+                    completed = pomodoro.completed
+
+                if started.date() == completed.date():
+                    durations[floorts(started)][target['target']] += pomodoro.duration
+                else:
+                    midnight = floorts(completed)
+                    durations[floorts(started)][target['target']] += (midnight - started).total_seconds() / 60
+                    durations[floorts(completed)][target['target']] += (completed - midnight).total_seconds() / 60
 
         for target in body['targets']:
             response = {
