@@ -26,6 +26,7 @@ except ImportError:
     Timezone = None
 
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
+NOCATEGORY = '{Uncategorized}'
 
 
 def floorts(ts):
@@ -90,9 +91,10 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             dates.append(_ts + datetime.timedelta(days=offset))
 
         for target in body['targets']:
+            _search = '' if target['target'] == NOCATEGORY else target['target']
             for pomodoro in Pomodoro.objects\
                     .filter(owner=self.request.user)\
-                    .filter(category=target['target'])\
+                    .filter(category=_search)\
                     .filter(created__gte=start)\
                     .filter(created__lte=end):
                 # Bucket by midnight. If we have a timezone object, ensure we're in the right timezone
@@ -124,13 +126,14 @@ class PomodoroViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['post'])
     def search(self, request):
-        return JsonResponse(list(Pomodoro.objects
+        categories = list(Pomodoro.objects
             .filter(owner=self.request.user)
             .exclude(category='')
             .order_by('category')
             .values_list('category', flat=True)
             .distinct('category')
-            ), safe=False)
+        )
+        return JsonResponse([NOCATEGORY] + categories, safe=False)
 
     def get_queryset(self):
         """
