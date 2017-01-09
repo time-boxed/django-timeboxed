@@ -47,16 +47,16 @@ class PomodoroCalendarView(View):
         # Query today based on the local timezone then strip the timestamps to set it to 00:00
         today = timezone.localtime(timezone.now()).replace(hour=0, minute=0, second=0, microsecond=0)
         query = today - datetime.timedelta(days=self.limit)
-        pomodoros = Pomodoro.objects.order_by('-created').filter(
+        pomodoros = Pomodoro.objects.order_by('-start').filter(
             owner=request.user,
-            created__gte=query,
+            start__gte=query,
         )
 
         for pomodoro in pomodoros:
             event = Event()
             event.add('summary', '{0} #{1}'.format(pomodoro.title, pomodoro.category))
             event.add('dtstart', pomodoro.start)
-            event.add('dtend', pomodoro.start + datetime.timedelta(minutes=pomodoro.duration))
+            event.add('dtend', pomodoro.end)
             event['uid'] = pomodoro.id
             cal.add_component(event)
 
