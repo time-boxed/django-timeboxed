@@ -110,11 +110,11 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                     completed = pomodoro.end
 
                 if started.date() == completed.date():
-                    durations[floorts(started)][target['target']] += pomodoro.duration
+                    durations[floorts(started)][target['target']] += pomodoro.duration.total_seconds()
                 else:
                     midnight = floorts(completed)
-                    durations[floorts(started)][target['target']] += (midnight - started).total_seconds() / 60
-                    durations[floorts(completed)][target['target']] += (completed - midnight).total_seconds() / 60
+                    durations[floorts(started)][target['target']] += (midnight - started).total_seconds()
+                    durations[floorts(completed)][target['target']] += (completed - midnight).total_seconds()
 
         for target in body['targets']:
             response = {
