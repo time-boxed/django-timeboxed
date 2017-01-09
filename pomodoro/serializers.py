@@ -12,7 +12,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
         read_only = ('id', 'icon',)
 
 
-
 class PomodoroSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
 
@@ -20,6 +19,13 @@ class PomodoroSerializer(serializers.ModelSerializer):
         if 'created' not in validated_data:
             validated_data['created'] = timezone.now()
         return Pomodoro.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.duration = validated_data.get('duration', instance.duration)
+        instance.category = validated_data.get('category', instance.category)
+        instance.save()
+        return instance
 
     class Meta:
         model = Pomodoro

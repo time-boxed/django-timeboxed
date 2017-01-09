@@ -1,6 +1,7 @@
 import collections
 import datetime
 import json
+import logging
 import time
 
 import pytz
@@ -16,6 +17,7 @@ from pomodoro.permissions import IsOwner
 from pomodoro.renderers import CalendarRenderer
 from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.timezone import make_aware
@@ -27,6 +29,8 @@ except ImportError:
 
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 NOCATEGORY = '{Uncategorized}'
+
+logger = logging.getLogger(__name__)
 
 
 def floorts(ts):
@@ -164,23 +168,27 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         This route is intended as a quick time logger. If there is an existing match for the pomodoro,
         time will be appended, otherwise a new pomodoro object will be created
         '''
-        self.object = None
-        self.created = False
-
-        # Check to see if we have an active pomodoro already
-        for pomodoro in Pomodoro.objects.filter(owner=self.request.user, title=request.data['title']):
-            if pomodoro.completed + datetime.timedelta(minutes=2 * int(request.data['duration'])) > timezone.now():
-                self.object = pomodoro
-                self.created = True
-
-        serializer = self.get_serializer(self.object, data=request.data, partial=True)
-
+        serializer = self.get_serializer(data=request.data, partial=True)
         if serializer.is_valid():
-            # Make sure we don't lose our existing time
-            if self.object:
-                serializer.validated_data['duration'] += self.object.duration
+            logger.debug('Valid serializer %s', serializer.validated_data)
+            try:
+                created = serializer.validated_data['created'] -\
+                    datetime.timedelta(minutes=serializer.validated_data['duration'])
+                pomodoro = Pomodoro.objects.filter(owner=self.request.user)\
+                    .filter(title=serializer.validated_data['title'])\
+                    .filter(created__gte=created)\
+                    .get()
+                print(pomodoro)
+            except ObjectDoesNotExist:
+                logger.debug('Creating new object')
+                obj = serializer.save(owner=self.request.user)
+                return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+            else:
+                logger.debug('Updating old object')
+                serializer = self.get_serializer(pomodoro, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.validated_data['duration'] += pomodoro.duration
+                    obj = serializer.save(owner=self.request.user)
+                    return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
-            self.object = serializer.save(owner=self.request.user)
-            status_code = self.created and status.HTTP_201_CREATED or status.HTTP_200_OK
-            return Response(serializer.validated_data, status=status_code)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
