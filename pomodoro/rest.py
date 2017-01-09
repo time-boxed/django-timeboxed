@@ -149,15 +149,15 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         if date:
             if date == 'today':
                 today = self.get_today()
-                return qs.filter(created__gte=today)
+                return qs.filter(start__gte=today)
             if date == 'yesterday':
                 today = self.get_today()
                 yesterday = today - datetime.timedelta(days=1)
-                return qs.filter(created__gte=yesterday, created__lt=today)
+                return qs.filter(start__gte=yesterday, end__lt=today)
         else:
             days = int(self.request.query_params.get('days', 7))
             created_after = self.get_today() - datetime.timedelta(days=days)
-            return qs.filter(created__gte=created_after)
+            return qs.filter(start__gte=created_after)
         return qs
 
     @list_route(methods=['post'])
