@@ -1,7 +1,6 @@
 import datetime
 import logging
 
-import pytz
 from icalendar import Calendar, Event
 
 from pomodoro import __homepage__, __version__
@@ -9,7 +8,7 @@ from pomodoro.models import Pomodoro
 
 from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.generic.base import View
 
