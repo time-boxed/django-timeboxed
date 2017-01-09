@@ -55,8 +55,8 @@ class PomodoroCalendarView(View):
         for pomodoro in pomodoros:
             event = Event()
             event.add('summary', '{0} #{1}'.format(pomodoro.title, pomodoro.category))
-            event.add('dtstart', pomodoro.created)
-            event.add('dtend', pomodoro.created + datetime.timedelta(minutes=pomodoro.duration))
+            event.add('dtstart', pomodoro.start)
+            event.add('dtend', pomodoro.start + datetime.timedelta(minutes=pomodoro.duration))
             event['uid'] = pomodoro.id
             cal.add_component(event)
 

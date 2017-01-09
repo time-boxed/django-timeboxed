@@ -17,50 +17,56 @@ class ApiTest(TestCase):
         self.timeformat = '%Y-%m-%dT%H:%M:%SZ'
 
     def test_single_append(self):
-        duration = 1337
-        now = datetime.datetime.utcnow()
+        duration =  datetime.timedelta(minutes=1337)
+        end = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+        start = end - duration
 
         response = self.client.post(
             reverse('api:pomodoro-append'),
             data={
-                'created': (now - datetime.timedelta(minutes=duration)).strftime(self.timeformat),
+                'start': start.strftime(self.timeformat),
+                'end': end.strftime(self.timeformat),
                 'category': 'tags',
-                'duration': duration,
                 'title': 'title',
             },
         )
         self.assertEqual(response.status_code, 201)
         pomodoro = Pomodoro.objects.get()
-        self.assertEquals(pomodoro.duration, 1337)
+        self.assertEquals(pomodoro.duration, duration, 'Duration mismatch')
 
     def test_double_append(self):
-        duration = 1337
-        second = datetime.datetime.utcnow().replace(microsecond=0)
-        first = second - datetime.timedelta(minutes=duration)
+        duration = datetime.timedelta(minutes=1337)
+        appended = datetime.timedelta(minutes=1338)
+
+        middle = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+        start = middle - duration
+        end = middle + datetime.timedelta(minutes=1)
 
         response = self.client.post(
             reverse('api:pomodoro-append'),
             data={
-                'created': first.strftime(self.timeformat),
+                'start': start.strftime(self.timeformat),
+                'end': middle.strftime(self.timeformat),
                 'category': 'tags',
-                'duration': duration,
                 'title': 'title',
             },
         )
         self.assertEqual(response.status_code, 201, 'First pomodoro created')
         pomodoro = Pomodoro.objects.get()
-        self.assertEquals(pomodoro.duration, 1337)
+        self.assertEquals(pomodoro.duration, duration)
 
         response = self.client.post(
             reverse('api:pomodoro-append'),
             data={
-                'created': second.strftime(self.timeformat),
+                'start': middle.strftime(self.timeformat),
+                'end': end.strftime(self.timeformat),
                 'category': 'tags',
-                'duration': 1,
                 'title': 'title',
             },
         )
 
         self.assertEqual(response.status_code, 200, 'Appended to Pomodoro')
         pomodoro = Pomodoro.objects.get()
-        self.assertEquals(pomodoro.duration, 1338)
+        self.assertEquals(pomodoro.duration, appended, 'Duration mismatch')
+        self.assertEquals(pomodoro.start, start, 'Start mismatch')
+        self.assertEquals(pomodoro.end, end, 'End mismatch')

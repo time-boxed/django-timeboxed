@@ -99,15 +99,15 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             for pomodoro in Pomodoro.objects\
                     .filter(owner=self.request.user)\
                     .filter(category=_search)\
-                    .filter(created__gte=start)\
-                    .filter(created__lte=end):
+                    .filter(start__gte=start)\
+                    .filter(end__lte=end):
                 # Bucket by midnight. If we have a timezone object, ensure we're in the right timezone
                 if Timezone:
-                    started = pomodoro.created.astimezone(tzinfo)
-                    completed = pomodoro.completed.astimezone(tzinfo)
+                    started = pomodoro.start.astimezone(tzinfo)
+                    completed = pomodoro.end.astimezone(tzinfo)
                 else:
-                    started = pomodoro.created
-                    completed = pomodoro.completed
+                    started = pomodoro.start
+                    completed = pomodoro.end
 
                 if started.date() == completed.date():
                     durations[floorts(started)][target['target']] += pomodoro.duration
@@ -172,13 +172,11 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             logger.debug('Valid serializer %s', serializer.validated_data)
             try:
-                created = serializer.validated_data['created'] -\
-                    datetime.timedelta(minutes=serializer.validated_data['duration'])
+                start = serializer.validated_data['start']
                 pomodoro = Pomodoro.objects.filter(owner=self.request.user)\
                     .filter(title=serializer.validated_data['title'])\
-                    .filter(created__gte=created)\
+                    .filter(end=start)\
                     .get()
-                print(pomodoro)
             except ObjectDoesNotExist:
                 logger.debug('Creating new object')
                 obj = serializer.save(owner=self.request.user)
@@ -187,7 +185,8 @@ class PomodoroViewSet(viewsets.ModelViewSet):
                 logger.debug('Updating old object')
                 serializer = self.get_serializer(pomodoro, data=request.data, partial=True)
                 if serializer.is_valid():
-                    serializer.validated_data['duration'] += pomodoro.duration
+                    # Make sure we keep the original start time
+                    serializer.validated_data['start'] = pomodoro.start
                     obj = serializer.save(owner=self.request.user)
                     return Response(serializer.validated_data, status=status.HTTP_200_OK)
 

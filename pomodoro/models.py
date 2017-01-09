@@ -5,21 +5,23 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Pomodoro(models.Model):
-    created = models.DateTimeField(default=datetime.datetime.now, verbose_name=_('start time'))
-    duration = models.IntegerField(verbose_name=_('duration'))
+    start = models.DateTimeField(default=datetime.datetime.now, verbose_name=_('start time'))
+    end = models.DateTimeField(default=datetime.datetime.now, verbose_name=_('end time'))
+
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
     owner = models.ForeignKey('auth.User', related_name='pomodoros', verbose_name=_('owner'))
 
     @property
-    def completed(self):
-        return self.created + datetime.timedelta(minutes=self.duration)
+    def duration(self):
+        return self.end - self.start
+    duration.fget.short_description = _('duration')
 
     def __str__(self):
-        return '{}:{}'.format(self.created, self.title)
+        return '{}:{}'.format(self.start, self.title)
 
     class Meta:
-        ordering = ('-created',)
+        ordering = ('-start',)
 
 
 class Favorite(models.Model):
