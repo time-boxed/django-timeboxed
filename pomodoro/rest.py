@@ -172,10 +172,13 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             logger.debug('Valid serializer %s', serializer.validated_data)
             try:
-                start = serializer.validated_data['start']
+                # We fuzz our search by about 15 seconds to account for clock
+                # drift between computers
+                search_start = serializer.validated_data['start'] - datetime.timedelta(seconds=15)
+                logger.debug('Searching from %s', search_start)
                 pomodoro = Pomodoro.objects.filter(owner=self.request.user)\
                     .filter(title=serializer.validated_data['title'])\
-                    .filter(end=start)\
+                    .filter(end__gte=search_start)\
                     .get()
             except ObjectDoesNotExist:
                 logger.debug('Creating new object')
