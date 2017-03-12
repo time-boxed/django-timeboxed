@@ -7,6 +7,7 @@ from pomodoro import __homepage__, __version__, forms
 from pomodoro.models import Pomodoro
 
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -22,7 +23,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-class Dashboard(FormView):
+class Dashboard(LoginRequiredMixin, FormView):
     template_name = 'pomodoro/dashboard.html'
     form_class = forms.PomodoroForm
 
