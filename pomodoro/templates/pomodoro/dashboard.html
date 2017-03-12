@@ -3,7 +3,7 @@
 {% block content %}
 <h2>Pomodoro</h2>
 <div class="panel {% if active %}panel-success{% else %}panel-warning{% endif %}">
-    <div class="panel-heading">{{ pomodoro.title }} {% if pomodoro.category %}- {{ pomodoro.category}}{% endif %}  <div class="pull-right">{{ pomodoro.start }} - {{ pomodoro.end }}</div></div>
+    <div class="panel-heading">{{ pomodoro.title }} {% if pomodoro.category %}- {{ pomodoro.category}}{% endif %}</div>
     <div class="panel-body" id="clockdiv">
         <div>
             <span class="bg-{{ hilite }} days"></span>
@@ -22,6 +22,10 @@
             <div class="text-{{ hilite }} smalltext">Seconds</div>
         </div>
     </div>
+    <table class="table">
+        <tr><td>Start</td><td>{{ pomodoro.start }}</td></tr>
+        <tr><td>End</td><td>{{ pomodoro.end }}</td></tr>
+    </table>
     <div class="panel-body">
         <form action="" method="post">{% csrf_token %}
 {% if not active %}
@@ -45,7 +49,7 @@
     display: inline-block;
     font-weight: 100;
     text-align: center;
-    font-size: 30px;
+    font-size: 1em;
 }
 
 #clockdiv > div{
@@ -62,7 +66,7 @@
 }
 .smalltext{
     padding-top: 5px;
-    font-size: 16px;
+    font-size: 0.75em;
 }
 
 </style>
