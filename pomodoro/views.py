@@ -3,14 +3,16 @@ import logging
 
 from icalendar import Calendar, Event
 
-from pomodoro import __homepage__, __version__
+from pomodoro import __homepage__, __version__, forms
 from pomodoro.models import Pomodoro
 
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils import timezone
 from django.views.generic.base import View
+from django.views.generic.edit import FormView
 
 try:
     from rest_framework.authtoken.models import Token
@@ -18,6 +20,45 @@ except ImportError:
     pass
 
 logger = logging.getLogger(__name__)
+
+
+class Dashboard(FormView):
+    template_name = 'pomodoro/dashboard.html'
+    form_class = forms.PomodoroForm
+
+    def get_context_data(self, **kwargs):
+        context = super(Dashboard, self).get_context_data(**kwargs)
+        context['pomodoro'] = Pomodoro.objects.latest('start')
+        context['now'] = timezone.now()
+        context['active'] = context['pomodoro'].end > context['now']
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            data = form.clean()
+            data['owner'] = request.user
+            data['start'] = timezone.now()
+            if 'pomodoro' in request.POST:
+                data['end'] = data['start'] + datetime.timedelta(minutes=25)
+            if 'hour' in request.POST:
+                data['end'] = data['start'] + datetime.timedelta(hours=1)
+            Pomodoro.objects.create(**data)
+            return redirect(reverse('pomodoro:dashboard'))
+        else:
+            if 'plus-five' in request.POST:
+                pomodoro = Pomodoro.objects.latest('start')
+                pomodoro.end += datetime.timedelta(minutes=5)
+                pomodoro.save()
+                return redirect(reverse('pomodoro:dashboard'))
+
+            if 'stop' in request.POST:
+                pomodoro = Pomodoro.objects.latest('start')
+                pomodoro.end = timezone.now()
+                pomodoro.save()
+                return redirect(reverse('pomodoro:dashboard'))
+
+            return self.form_invalid(form)
 
 
 class PomodoroCalendarView(View):

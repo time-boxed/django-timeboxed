@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Pomodoro</h2>
+<div class="panel panel-default">
+    <div class="panel-heading">{{ pomodoro.title }} - {{ pomodoro.start }}</div>
+    <div class="panel-body">
+        {{ pomodoro.end }}
+    </div>
+    <div class="panel-body">
+        <form action="" method="post">{% csrf_token %}
+{% if not active %}
+        {{ form.as_p }}
+        <button name="pomodoro" type="submit" class="btn btn-primary btn-block">25 Minute</button>
+        <button name="hour" type="submit" class="btn btn-primary btn-block">1 Hour</button>
+{% else %}
+        <button name="plus-five" type="submit" class="btn btn-primary btn-block">+5</button>
+        <button name="stop" type="submit " class="btn btn-warning btn-block">Stop</button>
+{% endif %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}
