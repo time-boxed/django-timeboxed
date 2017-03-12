@@ -2,10 +2,25 @@
 
 {% block content %}
 <h2>Pomodoro</h2>
-<div class="panel panel-default">
-    <div class="panel-heading">{{ pomodoro.title }} - {{ pomodoro.start }}</div>
-    <div class="panel-body">
-        {{ pomodoro.end }}
+<div class="panel {% if active %}panel-success{% else %}panel-warning{% endif %}">
+    <div class="panel-heading">{{ pomodoro.title }} {% if pomodoro.category %}- {{ pomodoro.category}}{% endif %}  <div class="pull-right">{{ pomodoro.start }} - {{ pomodoro.end }}</div></div>
+    <div class="panel-body" id="clockdiv">
+        <div>
+            <span class="bg-{{ hilite }} days"></span>
+            <div class="text-{{ hilite }} smalltext">Days</div>
+        </div>
+        <div>
+            <span class="bg-{{ hilite }} hours"></span>
+            <div class="text-{{ hilite }} smalltext">Hours</div>
+        </div>
+        <div>
+            <span class="bg-{{ hilite }} minutes"></span>
+            <div class="text-{{ hilite }} smalltext">Minutes</div>
+        </div>
+        <div>
+            <span class="bg-{{ hilite }} seconds"></span>
+            <div class="text-{{ hilite }} smalltext">Seconds</div>
+        </div>
     </div>
     <div class="panel-body">
         <form action="" method="post">{% csrf_token %}
@@ -21,4 +36,79 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block styles %}
+<style type="text/css">
+#clockdiv{
+    font-family: sans-serif;
+    display: inline-block;
+    font-weight: 100;
+    text-align: center;
+    font-size: 30px;
+}
+
+#clockdiv > div{
+    padding: 10px;
+    border-radius: 3px;
+    display: inline-block;
+    background-color:#eee;
+}
+
+#clockdiv div > span{
+    padding: 15px;
+    border-radius: 3px;
+    display: inline-block;
+}
+.smalltext{
+    padding-top: 5px;
+    font-size: 16px;
+}
+
+</style>
+{% endblock %}
+
+{% block javascript %}
+<script>
+/*
+Based on code from
+https://www.sitepoint.com/build-javascript-countdown-timer-no-dependencies/
+*/
+var deadline = new Date("{{ pomodoro.end.isoformat }}")
+
+function getTimeRemaining(endtime, current){
+    t = Math.abs(endtime - current);
+
+    return {
+        'total': t,
+        'days': Math.floor( t/(1000*60*60*24) ),
+        'hours': Math.floor( (t/(1000*60*60)) % 24 ),
+        'minutes': Math.floor( (t/1000/60) % 60 ),
+        'seconds': Math.floor( (t/1000) % 60 )
+    };
+}
+
+function initializeClock(id, endtime){
+    var clock = document.getElementById(id);
+    var daysSpan = clock.querySelector('.days');
+    var hoursSpan = clock.querySelector('.hours');
+    var minutesSpan = clock.querySelector('.minutes');
+    var secondsSpan = clock.querySelector('.seconds');
+
+    function updateClock(){
+        var current = Date.now()
+        var t = getTimeRemaining(endtime, current);
+
+        daysSpan.innerHTML = t.days
+        hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+        minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+        secondsSpan.innerHTML =('0' + t.seconds).slice(-2);
+    }
+
+    updateClock(); // run function once at first to avoid delay
+    var timeinterval = setInterval(updateClock, 1000);
+}
+
+initializeClock('clockdiv', deadline);
+</script>
 {% endblock %}

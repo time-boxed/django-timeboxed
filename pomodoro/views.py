@@ -31,6 +31,7 @@ class Dashboard(FormView):
         context['pomodoro'] = Pomodoro.objects.latest('start')
         context['now'] = timezone.now()
         context['active'] = context['pomodoro'].end > context['now']
+        context['hilite'] = 'success' if context['active'] else 'warning'
         return context
 
     def post(self, request, *args, **kwargs):
