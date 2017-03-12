@@ -34,10 +34,29 @@
         <button name="hour" type="submit" class="btn btn-primary btn-block">1 Hour</button>
 {% else %}
         <button name="plus-five" type="submit" class="btn btn-primary btn-block">+5</button>
-        <button name="stop" type="submit " class="btn btn-warning btn-block">Stop</button>
+        <button name="stop" type="submit " class="btn btn-danger btn-block">Stop</button>
 {% endif %}
+        <button class="btn btn-default btn-block" type="button" data-toggle="collapse" data-target="#pomodoro-history" aria-expanded="false" aria-controls="collapseExample">
+            History
+        </button>
         </form>
     </div>
+    <table class="table collapse" id="pomodoro-history">
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Start</th>
+            <th>End</th>
+        </tr>
+{% for p in pomodoro_set %}
+        <tr>
+            <td>{{p.title}}</td>
+            <td>{{p.category}}</td>
+            <td>{{p.start}}</td>
+            <td>{{p.end}}</td>
+        </tr>
+{% endfor %}
+    </table>
 </div>
 
 {% endblock %}

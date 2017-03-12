@@ -32,6 +32,9 @@ class Dashboard(FormView):
         context['now'] = timezone.now()
         context['active'] = context['pomodoro'].end > context['now']
         context['hilite'] = 'success' if context['active'] else 'warning'
+        context['today'] = timezone.localtime(timezone.now())\
+            .replace(minute=0, hour=0, second=0, microsecond=0)
+        context['pomodoro_set'] = Pomodoro.objects.filter(end__gte=context['today'])
         return context
 
     def post(self, request, *args, **kwargs):
