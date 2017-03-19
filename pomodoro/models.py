@@ -40,3 +40,10 @@ class Favorite(models.Model):
         pomodoro.end = ts + datetime.timedelta(minutes=self.duration)
         pomodoro.save()
         return pomodoro
+
+
+class Notification(models.Model):
+    owner = models.ForeignKey('auth.User', related_name='notification', verbose_name=_('owner'))
+    type = models.CharField(max_length=32)
+    key = models.CharField(max_length=128)
+    enabled = models.BooleanField(default=True)

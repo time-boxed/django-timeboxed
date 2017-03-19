@@ -19,7 +19,7 @@ setup(
         'Programming Language :: Python',
     ],
     entry_points={
-        'powerplug.apps': ['pomodoro = pomodoro'],
+        'powerplug.apps': ['pomodoro = pomodoro.apps.PomodoroConfig'],
         'powerplug.urls': ['pomodoro = pomodoro.urls'],
         'powerplug.rest': [
             'pomodoro = pomodoro.rest:PomodoroViewSet',
