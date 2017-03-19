@@ -1,0 +1,19 @@
+<div class="panel panel-default">
+    <div class="panel-heading">History</div>
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Start</th>
+            <th>End</th>
+        </tr>
+{% for p in pomodoro_set %}
+        <tr>
+            <td>{{p.title}}</td>
+            <td>{{p.category}}</td>
+            <td>{{p.start}}</td>
+            <td>{{p.end}}</td>
+        </tr>
+{% endfor %}
+    </table>
+</div>
