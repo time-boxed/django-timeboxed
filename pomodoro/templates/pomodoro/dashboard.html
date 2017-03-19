@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 <ul class="nav nav-pills">
     <li role="presentation" class="active">
@@ -27,6 +27,10 @@
 {% endblock %}
 
 {% block styles %}
+<link rel="apple-touch-icon" href="{% static "images/pomodoro.png" %}">
+<meta name="apple-mobile-web-app-title" content="Pomodoro">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <style type="text/css">
 #clockdiv{
     font-family: sans-serif;
