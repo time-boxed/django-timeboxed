@@ -30,3 +30,13 @@ class Favorite(models.Model):
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
     owner = models.ForeignKey('auth.User', related_name='favorite', verbose_name=_('owner'))
     icon = models.ImageField(upload_to='pomodoro/favorites', blank=True)
+
+    def start(self, ts):
+        pomodoro = Pomodoro()
+        pomodoro.title = self.title
+        pomodoro.category = self.category
+        pomodoro.owner = self.owner
+        pomodoro.start = ts
+        pomodoro.end = ts + datetime.timedelta(minutes=self.duration)
+        pomodoro.save()
+        return pomodoro

@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 urlpatterns = [
     url(r'^$', pomodoro.views.Dashboard.as_view(), name='dashboard'),
     url(r'^calendar$', pomodoro.views.PomodoroCalendarView.as_view(), name='calendar'),
+    url(r'^favorite/(?P<pk>.*)$', pomodoro.views.Favorite.as_view(), name='favorite'),
 ]
 
 

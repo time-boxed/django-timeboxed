@@ -1,0 +1,29 @@
+{% load static %}
+{% get_media_prefix as MEDIA_PREFIX %}
+<div class="panel panel-primary">
+    <div class="panel-heading">Favorites</div>
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Duration</th>
+        </tr>
+{% for f in favorite_set %}
+        <tr>
+            <td>
+                <form action="{% url 'pomodoro:favorite' f.pk %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-primary btn-block btn-social">
+                        {% if f.icon %}
+                        <img src="{{ MEDIA_PREFIX }}{{ f.icon }}" />
+                        {% endif %}
+                        {{f.title}}
+                    </button>
+                </form>
+            </td>
+            <td>{{f.category}}</td>
+            <td>{{f.duration}}</td>
+        </tr>
+{% endfor %}
+    </table>
+</div>
