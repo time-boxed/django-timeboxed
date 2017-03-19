@@ -1,0 +1,56 @@
+<div class="panel panel-{{ hilite }}">
+    <div class="panel-heading">{{ pomodoro.title }} {% if pomodoro.category %}- {{ pomodoro.category}}{% endif %}</div>
+    <div class="panel-body" id="clockdiv">
+        <div>
+            <span class="bg-{{ hilite }} days"></span>
+            <div class="text-{{ hilite }} smalltext">Days</div>
+        </div>
+        <div>
+            <span class="bg-{{ hilite }} hours"></span>
+            <div class="text-{{ hilite }} smalltext">Hours</div>
+        </div>
+        <div>
+            <span class="bg-{{ hilite }} minutes"></span>
+            <div class="text-{{ hilite }} smalltext">Minutes</div>
+        </div>
+        <div>
+            <span class="bg-{{ hilite }} seconds"></span>
+            <div class="text-{{ hilite }} smalltext">Seconds</div>
+        </div>
+    </div>
+    <table class="table">
+        <tr><td>Start</td><td>{{ pomodoro.start }}</td></tr>
+        <tr><td>End</td><td>{{ pomodoro.end }}</td></tr>
+    </table>
+    <div class="panel-body">
+        <form action="" method="post">{% csrf_token %}
+{% if not active %}
+        {{ form.as_p }}
+        <button name="pomodoro" type="submit" class="btn btn-primary btn-block">25 Minute</button>
+        <button name="hour" type="submit" class="btn btn-primary btn-block">1 Hour</button>
+{% else %}
+        <button name="plus-five" type="submit" class="btn btn-primary btn-block">+5</button>
+        <button name="stop" type="submit " class="btn btn-danger btn-block">Stop</button>
+{% endif %}
+        <button class="btn btn-default btn-block" type="button" data-toggle="collapse" data-target="#pomodoro-history" aria-expanded="false" aria-controls="collapseExample">
+            History
+        </button>
+        </form>
+    </div>
+    <table class="table collapse" id="pomodoro-history">
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Start</th>
+            <th>End</th>
+        </tr>
+{% for p in pomodoro_set %}
+        <tr>
+            <td>{{p.title}}</td>
+            <td>{{p.category}}</td>
+            <td>{{p.start}}</td>
+            <td>{{p.end}}</td>
+        </tr>
+{% endfor %}
+    </table>
+</div>
