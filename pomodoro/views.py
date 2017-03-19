@@ -70,7 +70,7 @@ class Dashboard(LoginRequiredMixin, FormView):
 
             if 'stop' in request.POST:
                 pomodoro = models.Pomodoro.objects.latest('start')
-                pomodoro.end = timezone.now()
+                pomodoro.end = timezone.now().replace(microsecond=0)
                 pomodoro.save()
                 return redirect(reverse('pomodoro:dashboard'))
 

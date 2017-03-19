@@ -6,6 +6,7 @@
             <th>Category</th>
             <th>Start</th>
             <th>End</th>
+            <th>Duration</th>
         </tr>
 {% for p in pomodoro_set %}
         <tr>
@@ -13,6 +14,7 @@
             <td>{{p.category}}</td>
             <td>{{p.start}}</td>
             <td>{{p.end}}</td>
+            <td>{{p.duration}}</td>
         </tr>
 {% endfor %}
     </table>
