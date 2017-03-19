@@ -31,11 +31,19 @@ class Dashboard(LoginRequiredMixin, FormView):
         context = super(Dashboard, self).get_context_data(**kwargs)
         context['pomodoro'] = Pomodoro.objects\
             .filter(owner=self.request.user).latest('start')
-        context['now'] = timezone.now()
+        context['now'] = timezone.now().replace(microsecond=0)
         context['active'] = context['pomodoro'].end > context['now']
-        context['hilite'] = 'success' if context['active'] else 'warning'
-        context['today'] = timezone.localtime(timezone.now())\
-            .replace(minute=0, hour=0, second=0, microsecond=0)
+        context['diff'] = context['now'] - context['pomodoro'].end
+
+        if context['active']:
+            context['hilite'] = 'success'
+        elif context['diff'].total_seconds() < 5 * 60 * 60:
+            context['hilite'] = 'warning'
+        else:
+            context['hilite'] = 'danger'
+
+        context['today'] = timezone.localtime(context['now'])\
+            .replace(minute=0, hour=0, second=0)
         context['pomodoro_set'] = Pomodoro.objects\
             .filter(owner=self.request.user, end__gte=context['today'])
         return context
