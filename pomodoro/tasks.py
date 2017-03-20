@@ -2,6 +2,8 @@ import logging
 
 import requests
 from celery import shared_task
+from celery.schedules import crontab
+from celery.task.base import periodic_task
 
 from pomodoro import models
 
@@ -10,6 +12,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 logger = logging.getLogger(__name__)
+
+
+@periodic_task(run_every=crontab(hour=0, minute=0))
+def refresh_counts():
+    for favorite in models.Favorite.objects.all():
+        favorite.refresh()
 
 
 @shared_task

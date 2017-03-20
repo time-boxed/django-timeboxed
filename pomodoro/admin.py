@@ -17,7 +17,7 @@ class FavoriteAdmin(admin.ModelAdmin):
     _icon.short_description = _('icon')
     _icon.boolean = True
 
-    list_display = ('title', 'category', 'duration', 'owner', '_icon')
+    list_display = ('title', 'category', 'duration', 'owner', '_icon', 'count')
     list_filter = ('owner', 'category',)
 
 

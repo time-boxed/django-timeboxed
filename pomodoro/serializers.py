@@ -8,8 +8,8 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Favorite
-        fields = ('id', 'title', 'duration', 'category', 'owner', 'icon')
-        read_only = ('id', 'icon',)
+        fields = ('id', 'title', 'duration', 'category', 'owner', 'icon', 'count',)
+        read_only = ('id', 'icon', 'count',)
 
 
 class PomodoroSerializer(serializers.ModelSerializer):

@@ -30,6 +30,15 @@ class Favorite(models.Model):
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
     owner = models.ForeignKey('auth.User', related_name='favorite', verbose_name=_('owner'))
     icon = models.ImageField(upload_to='pomodoro/favorites', blank=True)
+    count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ('-count',)
+
+    def refresh(self):
+        self.count = Pomodoro.objects\
+            .filter(title=self.title, category=self.category).count()
+        self.save()
 
     def start(self, ts):
         pomodoro = Pomodoro()
