@@ -77,7 +77,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         now = timezone.now().replace(microsecond=0)
 
         if pomodoro.end > now:
-            return JsonResponse({'message': 'Existing Pomodoro'}, safe=False)
+            return JsonResponse(self.serializer_class(pomodoro).data, status=409)
 
         pomodoro = Pomodoro()
         pomodoro.title = body['title']
@@ -86,7 +86,8 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         pomodoro.start = now
         pomodoro.end = now + datetime.timedelta(minutes=body['duration'])
         pomodoro.save()
-        return JsonResponse({'message': 'Starting Pomodoro {0.title} until {0.end}'.format(pomodoro)}, safe=False)
+
+        return JsonResponse(self.serializer_class(pomodoro).data, status=201)
 
     @list_route(methods=['post'])
     def query(self, request):
