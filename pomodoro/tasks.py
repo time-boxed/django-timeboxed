@@ -8,8 +8,10 @@ from celery.task.base import periodic_task
 from pomodoro import models
 
 import django.utils.timezone
+from django.contrib.sites.shortcuts import get_current_site
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +27,11 @@ def send_notification(pomodoro_id):
     def prowl(key, pomodoro):
         requests.post('https://api.prowlapp.com/publicapi/add', data={
             'apikey': key,
-            'application': 'Pomodoro',
+            'application': 'Pomodoro - {}'.format(get_current_site(None)),
             'event': 'Pomodoro Complete',
+            'url': 'https://{}{}'.format(
+                get_current_site(None),
+                reverse('pomodoro:dashboard')),
             'description': '{} - {} - {}'.format(
                 pomodoro.title,
                 pomodoro.category,
