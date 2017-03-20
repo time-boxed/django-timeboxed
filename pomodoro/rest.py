@@ -69,6 +69,26 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         return floorts(timezone.localtime(timezone.now()))
 
     @list_route(methods=['post'])
+    def start(self, request):
+        body = json.loads(request.body.decode("utf-8"))
+
+        pomodoro = Pomodoro.objects\
+            .filter(owner=request.user).latest('start')
+        now = timezone.now().replace(microsecond=0)
+
+        if pomodoro.end > now:
+            return JsonResponse({'message': 'Existing Pomodoro'}, safe=False)
+
+        pomodoro = Pomodoro()
+        pomodoro.title = body['title']
+        pomodoro.category = body.get('category', '')
+        pomodoro.owner = request.user
+        pomodoro.start = now
+        pomodoro.end = now + datetime.timedelta(minutes=body['duration'])
+        pomodoro.save()
+        return JsonResponse({'message': 'Starting Pomodoro {0.title} until {0.end}'.format(pomodoro)}, safe=False)
+
+    @list_route(methods=['post'])
     def query(self, request):
         body = json.loads(request.body.decode("utf-8"))
         start = make_aware(
