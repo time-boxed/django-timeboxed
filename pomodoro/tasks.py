@@ -39,10 +39,25 @@ def send_notification(pomodoro_id):
             ),
         }).raise_for_status()
 
+    def line(key, pomodoro):
+        requests.post('https://notify-api.line.me/api/notify', data={
+            'message': '{} - {} - {}\n{}{}'.format(
+                pomodoro.title,
+                pomodoro.category,
+                pomodoro.duration,
+                get_current_site(None),
+                reverse('pomodoro:dashboard'),
+            )
+        }, headers={
+            'Authoriziation': 'Bearer {}'.format(key)
+        }).raise_for_status()
+
     pomodoro = models.Pomodoro.objects.get(pk=pomodoro_id)
     for notification in models.Notification.objects.filter(owner=pomodoro.owner):
         if notification.type == 'prowl':
             prowl(notification.key, pomodoro)
+        if notification.type == 'line':
+            line(notification.key, pomodoro)
 
 
 @receiver(post_save, sender=models.Pomodoro)
