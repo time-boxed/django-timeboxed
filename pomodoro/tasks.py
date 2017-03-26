@@ -49,7 +49,7 @@ def send_notification(pomodoro_id):
                 reverse('pomodoro:dashboard'),
             )
         }, headers={
-            'Authoriziation': 'Bearer {}'.format(key)
+            'Authorization': 'Bearer {}'.format(key)
         }).raise_for_status()
 
     pomodoro = models.Pomodoro.objects.get(pk=pomodoro_id)
