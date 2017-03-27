@@ -1,7 +1,13 @@
 import datetime
+import os
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
+
+def _upload_to_path(instance, filename):
+    root, ext = os.path.splitext(filename)
+    return 'pomodoro/favorites/{}{}'.format(instance.pk, ext)
 
 
 class Pomodoro(models.Model):
@@ -29,7 +35,7 @@ class Favorite(models.Model):
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
     owner = models.ForeignKey('auth.User', related_name='favorite', verbose_name=_('owner'))
-    icon = models.ImageField(upload_to='pomodoro/favorites', blank=True)
+    icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     count = models.PositiveIntegerField(default=0)
 
     class Meta:
