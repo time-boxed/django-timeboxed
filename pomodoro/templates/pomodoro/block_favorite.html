@@ -7,6 +7,7 @@
             <th>Title</th>
             <th>Category</th>
             <th>Duration</th>
+            <th>Count</th>
         </tr>
 {% for f in favorite_set %}
         <tr>
@@ -22,7 +23,8 @@
                 </form>
             </td>
             <td>{{f.category}}</td>
-            <td>{{f.duration}}</td>
+            <td>{{f.timedelta}}</td>
+            <td>{{f.count}}</td>
         </tr>
 {% endfor %}
     </table>

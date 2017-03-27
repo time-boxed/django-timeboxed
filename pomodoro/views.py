@@ -46,7 +46,8 @@ class Dashboard(LoginRequiredMixin, FormView):
             .replace(minute=0, hour=0, second=0)
         context['pomodoro_set'] = models.Pomodoro.objects\
             .filter(owner=self.request.user, end__gte=context['today'])
-        context['favorite_set'] = models.Favorite.objects.filter(owner=self.request.user)
+        context['favorite_set'] = models.Favorite.objects\
+            .filter(owner=self.request.user).order_by('-count')
         return context
 
     def post(self, request, *args, **kwargs):
