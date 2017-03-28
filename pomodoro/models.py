@@ -43,9 +43,12 @@ class Favorite(models.Model):
 
     def refresh(self):
         duration = datetime.datetime.utcnow() - datetime.timedelta(days=30)
-        self.count = Pomodoro.objects\
-            .filter(start__gte=duration)\
-            .filter(title=self.title, category=self.category).count()
+        self.count = Pomodoro.objects.filter(
+            start__gte=duration,
+            owner=self.owner,
+            title=self.title,
+            category=self.category
+        ).count()
         self.save()
 
     def timedelta(self):
