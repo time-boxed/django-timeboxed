@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<ul class="nav nav-pills">
-    <li role="presentation" class="active">
-        <a href="#pomodoro-tab" aria-controls="pomodoro-tab" data-toggle="tab">Pomodoro</a>
+<ul class="nav nav-pills" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" href="#pomodoro-tab" aria-controls="pomodoro-tab" data-toggle="tab">Pomodoro</a>
     </li>
-    <li role="presentation">
-        <a href="#favorite-tab" aria-controls="favorite-tab" data-toggle="tab">Favorites</a>
+    <li class="nav-item">
+        <a class="nav-link" href="#favorite-tab" aria-controls="favorite-tab" data-toggle="tab">Favorites</a>
     </li>
-    <li role="presentation">
-        <a href="#history-tab" aria-controls="history-tab" data-toggle="tab">History</a>
+    <li class="nav-item">
+        <a class="nav-link" href="#history-tab" aria-controls="history-tab" data-toggle="tab">History</a>
     </li>
 </ul>
 
