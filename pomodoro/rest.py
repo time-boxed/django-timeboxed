@@ -9,12 +9,10 @@ from rest_framework import viewsets
 from rest_framework.authentication import (SessionAuthentication,
                                            TokenAuthentication)
 from rest_framework.decorators import list_route, detail_route
-
 from pomodoro.models import Favorite, Pomodoro
 from pomodoro.permissions import IsOwner
 from pomodoro.renderers import CalendarRenderer
 from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer
-from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.timezone import make_aware
@@ -56,12 +54,11 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         now = timezone.now().replace(microsecond=0)
         pomodoro = Pomodoro.objects\
             .filter(owner=request.user).latest('start')
-        now = timezone.now().replace(microsecond=0)
 
         if pomodoro.end > now:
             return JsonResponse({
                 'message': 'Cannot replace active pomodoro',
-                'data': self.serializer_class(pomodoro).data
+                'data': PomodoroSerializer(pomodoro).data
             }, status=409)
 
         pomodoro = Pomodoro()
@@ -69,10 +66,10 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         pomodoro.category = favorite.category
         pomodoro.owner = request.user
         pomodoro.start = now
-        pomodoro.end = now + datetime.timedelta(minutes=favorite.duration)
+        pomodoro.end = pomodoro.start + datetime.timedelta(minutes=favorite.duration)
         pomodoro.save()
 
-        return JsonResponse(self.serializer_class(pomodoro).data, status=201)
+        return JsonResponse(PomodoroSerializer(pomodoro).data, status=201)
 
 
 class PomodoroViewSet(viewsets.ModelViewSet):
