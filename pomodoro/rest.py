@@ -77,7 +77,10 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         now = timezone.now().replace(microsecond=0)
 
         if pomodoro.end > now:
-            return JsonResponse(self.serializer_class(pomodoro).data, status=409)
+            return JsonResponse({
+                'message': 'Cannot replace active pomodoro',
+                'data': self.serializer_class(pomodoro).data
+            }, status=409)
 
         pomodoro = Pomodoro()
         pomodoro.title = body['title']
@@ -88,6 +91,26 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         pomodoro.save()
 
         return JsonResponse(self.serializer_class(pomodoro).data, status=201)
+
+    @list_route(methods=['post'])
+    def stop(self, request):
+        pomodoro = Pomodoro.objects\
+            .filter(owner=request.user).latest('end')
+        now = timezone.now().replace(microsecond=0)
+
+        if pomodoro.end < now:
+            return JsonResponse({
+                'message': 'No active Pomodoro',
+                'data': self.serializer_class(pomodoro).data
+            }, status=409)
+
+        pomodoro.end = now
+        pomodoro.save()
+
+        return JsonResponse({
+            'message': 'Stopped active Pomodoro',
+            'data': self.serializer_class(pomodoro).data
+        }, status=201)
 
     @list_route(methods=['post'])
     def query(self, request):
