@@ -2,8 +2,6 @@ import logging
 
 import requests
 from celery import shared_task
-from celery.schedules import crontab
-from celery.task.base import periodic_task
 
 from pomodoro import models
 
@@ -16,9 +14,9 @@ from django.urls import reverse
 logger = logging.getLogger(__name__)
 
 
-@periodic_task(run_every=crontab(hour=0, minute=0))
-def refresh_counts():
-    for favorite in models.Favorite.objects.all():
+@shared_task
+def refresh_favorite(**kwargs):
+    for favorite in models.Favorite.objects.filter(**kwargs):
         favorite.refresh()
 
 
@@ -61,7 +59,7 @@ def send_notification(pomodoro_id):
 
 
 @receiver(post_save, sender=models.Pomodoro)
-def my_callback(sender, instance, created, **kwargs):
+def schedule_notification(sender, instance, created, **kwargs):
     if created is False:
         logger.debug('Skipping notification for modified pomodoro')
         return
@@ -79,3 +77,8 @@ def my_callback(sender, instance, created, **kwargs):
 
     logger.debug('Queuring notification for %s', instance)
     send_notification.s(instance.id).apply_async(eta=instance.end)
+
+
+@receiver(post_save, sender=models.Pomodoro)
+def refresh_count_from_pomodoro(sender, instance, **kwargs):
+    refresh_favorite.delay(category=instance.category, owner_id=instance.owner_id)
