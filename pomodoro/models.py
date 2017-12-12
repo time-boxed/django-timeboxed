@@ -16,7 +16,7 @@ class Pomodoro(models.Model):
 
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
-    owner = models.ForeignKey('auth.User', related_name='pomodoros', verbose_name=_('owner'))
+    owner = models.ForeignKey('auth.User', related_name='pomodoros', verbose_name=_('owner'), on_delete=models.CASCADE)
 
     @property
     def duration(self):
@@ -34,7 +34,7 @@ class Favorite(models.Model):
     duration = models.IntegerField(verbose_name=_('duration'))
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
-    owner = models.ForeignKey('auth.User', related_name='favorite', verbose_name=_('owner'))
+    owner = models.ForeignKey('auth.User', related_name='favorite', verbose_name=_('owner'), on_delete=models.CASCADE)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     count = models.PositiveIntegerField(default=0)
 
@@ -66,7 +66,7 @@ class Favorite(models.Model):
 
 
 class Notification(models.Model):
-    owner = models.ForeignKey('auth.User', related_name='notification', verbose_name=_('owner'))
+    owner = models.ForeignKey('auth.User', related_name='notification', verbose_name=_('owner'), on_delete=models.CASCADE)
     type = models.CharField(max_length=32)
     key = models.CharField(max_length=128)
     enabled = models.BooleanField(default=True)
