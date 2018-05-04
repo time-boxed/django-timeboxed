@@ -13,3 +13,5 @@ sdist
 nosetests.xml
 *.mo
 venv
+.env
+test-results
