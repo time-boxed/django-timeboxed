@@ -18,7 +18,7 @@ setup(
         'standalone': [
             'celery[redis]==4.0.2',
             'dj_database_url',
-            'Django==1.11.7',
+            'Django==2.0.5',
             'envdir',
             'prometheus_client',
             'psycopg2',

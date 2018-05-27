@@ -1,9 +1,10 @@
 import pomodoro.views
 
 from django.conf.urls import url
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
+app_name = 'pomodoro'
 urlpatterns = [
     url(r'^$', pomodoro.views.Dashboard.as_view(), name='dashboard'),
     url(r'^calendar$', pomodoro.views.PomodoroCalendarView.as_view(), name='calendar'),
