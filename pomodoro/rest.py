@@ -52,14 +52,19 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         '''Quickstart a Pomodoro'''
         favorite = self.get_object()
         now = timezone.now().replace(microsecond=0)
-        pomodoro = Pomodoro.objects\
-            .filter(owner=request.user).latest('start')
-
-        if pomodoro.end > now:
-            return JsonResponse({
-                'message': 'Cannot replace active pomodoro',
-                'data': PomodoroSerializer(pomodoro).data
-            }, status=409)
+        try:
+            pomodoro = Pomodoro.objects\
+                .filter(owner=request.user).latest('start')
+        except Pomodoro.DoesNotExist:
+            # Handle the case for a new user that does not have any
+            # pomodoros at all
+            pass
+        else:
+            if pomodoro.end > now:
+                return JsonResponse({
+                    'message': 'Cannot replace active pomodoro',
+                    'data': PomodoroSerializer(pomodoro).data
+                }, status=409)
 
         pomodoro = Pomodoro()
         pomodoro.title = favorite.title

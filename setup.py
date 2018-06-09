@@ -9,7 +9,26 @@ setup(
     url=__homepage__,
     version=__version__,
     packages=find_packages(),
-    install_requires=['icalendar', 'Pillow'],
+    install_requires=[
+        'djangorestframework',
+        'icalendar',
+        'Pillow',
+        ],
+    extras_require={
+        'standalone': [
+            'celery[redis]==4.0.2',
+            'dj_database_url',
+            'Django==2.0.5',
+            'envdir',
+            'prometheus_client',
+            'psycopg2',
+            'raven',
+            'social-auth-app-django==2.1.0',
+        ],
+        'dev': [
+            'unittest-xml-reporting',
+        ]
+    },
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Django',
@@ -25,6 +44,8 @@ setup(
             'pomodoro = pomodoro.rest:PomodoroViewSet',
             'favorite = pomodoro.rest:FavoriteViewSet',
         ],
-        'powerplug.subnav': ['pomodoro = pomodoro.urls:subnav'],
+        'console_scripts': [
+            'pomodoro = pomodoro.standalone.manage:main[standalone]',
+        ],
     },
 )

@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('duration', models.IntegerField()),
                 ('title', models.TextField()),
                 ('category', models.TextField(blank=True)),
-                ('owner', models.ForeignKey(related_name='favorite', to=settings.AUTH_USER_MODEL)),
+                ('owner', models.ForeignKey(related_name='favorite', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
     ]

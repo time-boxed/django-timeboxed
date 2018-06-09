@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('duration', models.IntegerField()),
                 ('title', models.TextField()),
                 ('category', models.TextField(blank=True)),
-                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='pomodoros')),
+                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='pomodoros', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('-created',),
