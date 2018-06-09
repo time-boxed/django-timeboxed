@@ -98,7 +98,7 @@ class PomodoroCalendarView(View):
     limit = 14
 
     def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             try:
                 token = Token.objects.select_related('user').get(key=request.GET.get('token'))
                 if token:

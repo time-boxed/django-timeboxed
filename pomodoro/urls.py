@@ -13,7 +13,7 @@ urlpatterns = [
 
 
 def subnav(namespace, request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return {}
     return {
         'Pomodoro': [
