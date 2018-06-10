@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic.base import View
 from django.views.generic.edit import FormView
+from django.views.generic.list import ListView
 
 try:
     from rest_framework.authtoken.models import Token
@@ -44,10 +45,12 @@ class Dashboard(LoginRequiredMixin, FormView):
 
         context['today'] = timezone.localtime(context['now'])\
             .replace(minute=0, hour=0, second=0)
-        context['pomodoro_set'] = models.Pomodoro.objects\
+        context['pomodoro_list'] = models.Pomodoro.objects\
             .filter(owner=self.request.user, end__gte=context['today'])
         context['favorite_set'] = models.Favorite.objects\
             .filter(owner=self.request.user).order_by('-count')
+
+        context['yesterday'] = context['today'] - datetime.timedelta(days=1)
         return context
 
     def post(self, request, *args, **kwargs):
@@ -92,6 +95,34 @@ class Favorite(LoginRequiredMixin, View):
         pomodoro = favorite.start(now)
         messages.warning(request, 'Starting Pomodoro {}'.format(pomodoro.title))
         return redirect(reverse('pomodoro:dashboard'))
+
+
+class PomodoroHistory(LoginRequiredMixin, ListView):
+    model = models.Pomodoro
+
+    def get_queryset(self):
+        # TODO: May need to check timezone here
+        self.today = timezone.make_aware(
+            datetime.datetime.strptime(self.kwargs['date'], '%Y%m%d')
+        )
+        self.start = self.today.replace(hour=0, minute=0, second=0, microsecond=0)
+        end = self.start + datetime.timedelta(days=1)
+
+        return self.model.objects\
+            .filter(start__gte=self.start)\
+            .filter(end__lte=end)\
+            .filter(owner=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(PomodoroHistory, self).get_context_data(**kwargs)
+        context['today'] = timezone.now()
+        context['date'] = self.start
+        context['date_prev'] = self.start - datetime.timedelta(days=1)
+        next = self.start + datetime.timedelta(days=1)
+        if next < context['today']:
+            context['date_next'] = next
+
+        return context
 
 
 class PomodoroCalendarView(View):

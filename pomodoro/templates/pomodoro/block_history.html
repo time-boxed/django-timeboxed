@@ -1,3 +1,28 @@
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if date_prev %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:history' date_prev|date:"Ymd" %}">
+                <span aria-hidden="true">&laquo; {{date_prev|date}}</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% if date_next %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:history' date_next|date:"Ymd" %}">
+                <span aria-hidden="true">{{date_next|date}} &raquo;</span>
+            </a>
+        </li>
+        {% endif %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:history' today|date:"Ymd" %}">
+                <span aria-hidden="true">{{today|date}}</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
 <div class="card">
     <h4 class="card-heading">History</h4>
     <table class="table">
@@ -8,7 +33,7 @@
             <th>End</th>
             <th>Duration</th>
         </tr>
-{% for p in pomodoro_set %}
+{% for p in pomodoro_list %}
         <tr>
             <td>{{p.title}}</td>
             <td>{{p.category}}</td>
