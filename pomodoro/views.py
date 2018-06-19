@@ -172,6 +172,6 @@ class PomodoroCalendarView(View):
         )
 
 
-class PomodoroDetailView(DetailView):
+class PomodoroDetailView(LoginRequiredMixin, DetailView):
 
     model = models.Pomodoro
