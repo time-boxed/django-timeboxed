@@ -3,8 +3,6 @@ import logging
 
 from icalendar import Calendar, Event
 
-from pomodoro import __homepage__, __version__, forms, models
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,8 +11,11 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic.base import View
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
+
+from pomodoro import __homepage__, __version__, forms, models
 
 try:
     from rest_framework.authtoken.models import Token
@@ -144,7 +145,7 @@ class PomodoroCalendarView(View):
         cal.add('prodid', '-//Pomodoro Calendar//')
         cal.add('version', '2.0')
         cal.add('X-WR-CALNAME', 'Pomodoro for {0}'.format(request.user.username))
-        cal.add('X-ORIGINAL-URL', request.build_absolute_uri())
+        cal.add('X-ORIGINAL-URL', request.build_absolute_uri(reverse('pomodoro:calendar')))
         cal.add('X-GENERATOR', __homepage__)
         cal.add('X-GENERATOR-VERSION', __version__)
 
@@ -161,6 +162,7 @@ class PomodoroCalendarView(View):
             event.add('summary', '{0} #{1}'.format(pomodoro.title, pomodoro.category))
             event.add('dtstart', pomodoro.start)
             event.add('dtend', pomodoro.end)
+            event.add('url', request.build_absolute_uri(pomodoro.get_absolute_url()))
             event['uid'] = pomodoro.id
             cal.add_component(event)
 
@@ -168,3 +170,8 @@ class PomodoroCalendarView(View):
             content=cal.to_ical(),
             content_type='text/plain; charset=utf-8'
         )
+
+
+class PomodoroDetailView(DetailView):
+
+    model = models.Pomodoro

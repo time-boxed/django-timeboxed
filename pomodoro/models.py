@@ -2,6 +2,7 @@ import datetime
 import os
 
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -25,6 +26,9 @@ class Pomodoro(models.Model):
 
     def __str__(self):
         return '{}:{}'.format(self.start, self.title)
+
+    def get_absolute_url(self):
+        return reverse('pomodoro:pomodoro-detail', kwargs={'pk': self.pk})
 
     class Meta:
         ordering = ('-start',)

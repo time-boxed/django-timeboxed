@@ -35,7 +35,7 @@
         </tr>
 {% for p in pomodoro_list %}
         <tr>
-            <td>{{p.title}}</td>
+            <td><a href="{% url 'pomodoro:pomodoro-detail' p.pk %}">{{p.title}}</a></td>
             <td>{{p.category}}</td>
             <td>{{p.start}}</td>
             <td>{{p.end}}</td>
