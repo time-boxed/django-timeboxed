@@ -29,12 +29,12 @@ def send_notification(pomodoro_id):
             'event': 'Pomodoro Complete',
             'url': 'https://{}{}'.format(
                 get_current_site(None),
-                reverse('pomodoro:dashboard')),
+                pomodoro.get_absolute_url()),
             'description': '{} - {} - {}'.format(
                 pomodoro.title,
                 pomodoro.category,
                 pomodoro.duration,
-            ),
+            ), 
         }).raise_for_status()
 
     def line(key, pomodoro):
@@ -44,7 +44,7 @@ def send_notification(pomodoro_id):
                 pomodoro.category,
                 pomodoro.duration,
                 get_current_site(None),
-                reverse('pomodoro:dashboard'),
+                pomodoro.get_absolute_url(),
             )
         }, headers={
             'Authorization': 'Bearer {}'.format(key)
