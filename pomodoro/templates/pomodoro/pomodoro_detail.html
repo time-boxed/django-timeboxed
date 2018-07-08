@@ -3,12 +3,25 @@
 {% block content %}
 
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
-      <li class="breadcrumb-item active" aria-current="page">{{object.title}} #{{object.category}}</li>
-    </ol>
-  </nav>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{object.title}} #{{object.category}}</li>
+  </ol>
+</nav>
 
-{{object}}
+<dl class="row">
+  <dt class="col-sm-2">Title</dt>
+  <dd class="col-sm-9">{{object.title}}</dd>
+  <dt class="col-sm-2">Category</dt>
+  <dd class="col-sm-9">{{object.category}}</dd>
+
+  <dt class="col-sm-2">Start</dt>
+  <dd class="col-sm-9">{{object.start}}</dd>
+  <dt class="col-sm-2">End</dt>
+  <dd class="col-sm-9">{{object.end}}</dd>
+
+  <dt class="col-sm-2">Duration</dt>
+  <dd class="col-sm-9">{{object.duration}}</dd>
+</dl>
 
 {% endblock %}

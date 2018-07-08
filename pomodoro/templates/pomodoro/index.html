@@ -11,6 +11,9 @@
     <li class="nav-item">
         <a class="nav-link" href="{% url 'pomodoro:history' yesterday|date:"Ymd" %}" aria-controls="history-tab">History</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'pomodoro:calendar' %}" aria-controls="history-tab">Calendar</a>
+    </li>
 </ul>
 
 <div class="tab-content">

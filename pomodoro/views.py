@@ -3,9 +3,11 @@ import logging
 
 from icalendar import Calendar, Event
 
+from pomodoro import __homepage__, __version__, forms, models
+
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -15,8 +17,6 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 
-from pomodoro import __homepage__, __version__, forms, models
-
 try:
     from rest_framework.authtoken.models import Token
 except ImportError:
@@ -25,12 +25,12 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-class Dashboard(LoginRequiredMixin, FormView):
-    template_name = 'pomodoro/dashboard.html'
+class Index(LoginRequiredMixin, FormView):
+    template_name = 'pomodoro/index.html'
     form_class = forms.PomodoroForm
 
     def get_context_data(self, **kwargs):
-        context = super(Dashboard, self).get_context_data(**kwargs)
+        context = super(Index, self).get_context_data(**kwargs)
         context['pomodoro'] = models.Pomodoro.objects\
             .filter(owner=self.request.user).latest('start')
         context['now'] = timezone.now().replace(microsecond=0)
@@ -172,6 +172,12 @@ class PomodoroCalendarView(View):
         )
 
 
-class PomodoroDetailView(LoginRequiredMixin, DetailView):
-
+class PomodoroDetailView(UserPassesTestMixin, DetailView):
     model = models.Pomodoro
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+
+        return self.get_object().owner == self.request.user
+
