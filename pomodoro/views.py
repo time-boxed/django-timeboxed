@@ -46,10 +46,6 @@ class Index(LoginRequiredMixin, FormView):
 
         context['today'] = timezone.localtime(context['now'])\
             .replace(minute=0, hour=0, second=0)
-        context['pomodoro_list'] = models.Pomodoro.objects\
-            .filter(owner=self.request.user, end__gte=context['today'])
-        context['favorite_set'] = models.Favorite.objects\
-            .filter(owner=self.request.user).order_by('-count')
 
         context['yesterday'] = context['today'] - datetime.timedelta(days=1)
         return context
@@ -98,14 +94,25 @@ class Favorite(LoginRequiredMixin, View):
         return redirect(reverse('pomodoro:dashboard'))
 
 
+class FavoriteList(LoginRequiredMixin, ListView):
+    model = models.Favorite
+
+    def get_queryset(self):
+        print(dir(self))
+        return self.model.objects.filter(owner=self.request.user)
+
+
 class PomodoroHistory(LoginRequiredMixin, ListView):
     model = models.Pomodoro
 
     def get_queryset(self):
         # TODO: May need to check timezone here
-        self.today = timezone.make_aware(
-            datetime.datetime.strptime(self.kwargs['date'], '%Y%m%d')
-        )
+        if self.kwargs.get('date'):
+            self.today = timezone.make_aware(
+                datetime.datetime.strptime(self.kwargs['date'], '%Y%m%d')
+            )
+        else:
+            self.today = timezone.now()
         self.start = self.today.replace(hour=0, minute=0, second=0, microsecond=0)
         end = self.start + datetime.timedelta(days=1)
 

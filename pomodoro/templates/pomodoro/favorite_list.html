@@ -1,4 +1,7 @@
+{% extends "base.html" %}
 {% load static %}
+{% block content %}
+{% include 'pomodoro/nav.inc.html' %}
 {% get_media_prefix as MEDIA_PREFIX %}
 <div class="card">
     <h4 class="card-heading">Favorites</h4>
@@ -9,7 +12,7 @@
             <th>Duration</th>
             <th>Count</th>
         </tr>
-{% for f in favorite_set %}
+{% for f in favorite_list %}
         <tr>
             <td>
                 <form action="{% url 'pomodoro:favorite' f.pk %}" method="post">
@@ -29,3 +32,4 @@
 {% endfor %}
     </table>
 </div>
+{% endblock %}
