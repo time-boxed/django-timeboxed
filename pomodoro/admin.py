@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 @admin.register(Pomodoro)
 class PomodoroAdmin(admin.ModelAdmin):
+    date_hierarchy = 'start'
     list_display = ('title', 'category', 'start', 'end', 'duration', 'owner',)
     list_filter = ('owner', 'start', 'category',)
 
