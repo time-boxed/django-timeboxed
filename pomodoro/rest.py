@@ -36,7 +36,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
     permission_classes = (IsOwner,)
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -84,7 +84,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
     queryset = Pomodoro.objects.all()
     serializer_class = PomodoroSerializer
     permission_classes = (IsOwner,)
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
     renderer_classes = viewsets.ModelViewSet.renderer_classes + [CalendarRenderer]
 
     def perform_create(self, serializer):
