@@ -16,9 +16,9 @@ setup(
         ],
     extras_require={
         'standalone': [
-            'celery[redis]==4.0.2',
+            'celery[redis]==4.2.1',
             'dj_database_url',
-            'Django==2.0.5',
+            'Django==2.1.2',
             'envdir',
             'prometheus_client',
             'psycopg2',
