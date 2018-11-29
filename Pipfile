@@ -10,4 +10,7 @@ verify_ssl = true
 python_version = "3.6"
 
 [dev-packages]
-"pomodoro" = {extras = ["standalone", "dev"], editable = true, path = "."}
+"pomodoro" = {extras = ["standalone"], editable = true, path = "."}
+black = "==18.9b0"
+unittest-xml-reporting = "*"
+psycopg2-binary = "*"
