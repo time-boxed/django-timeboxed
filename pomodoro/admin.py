@@ -1,7 +1,13 @@
-from pomodoro.models import Favorite, Notification, Pomodoro
+from pomodoro.models import Favorite, Notification, Pomodoro, Tag
 
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ("title", "owner")
+    list_filter = (("owner", admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(Pomodoro)
