@@ -45,7 +45,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         """
         Return Favorites owned by current user only
         """
-        return Favorite.objects.filter(owner=self.request.user)
+        return Favorite.objects.filter(owner=self.request.user).prefetch_related('tags')
 
     @detail_route(methods=['post'])
     def start(self, request, pk):
@@ -167,4 +167,4 @@ class PomodoroViewSet(viewsets.ModelViewSet):
         return JsonResponse([NOCATEGORY] + categories, safe=False)
 
     def get_queryset(self):
-        return Pomodoro.objects.filter(owner=self.request.user)
+        return Pomodoro.objects.filter(owner=self.request.user).prefetch_related('tags')

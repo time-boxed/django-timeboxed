@@ -1,34 +1,58 @@
 from rest_framework import serializers
-from pomodoro.models import Favorite, Pomodoro
-from django.utils import timezone
+
+from pomodoro.models import Favorite, Pomodoro, Tag
+
+
+class TagSeralizer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("title",)
+
+
+class _TagTitleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("title",)
+
+    def to_representation(self, instance):
+        return instance.title
+
+    def to_internal_value(self, data):
+        return {"title": data}
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
+    owner = serializers.ReadOnlyField(source="owner.username")
+    tags = _TagTitleSerializer(many=True, required=False)
 
     class Meta:
         model = Favorite
-        fields = ('id', 'title', 'duration', 'category', 'owner', 'icon', 'count',)
-        read_only = ('id', 'icon', 'count',)
+        fields = ("id", "title", "duration", "owner", "icon", "count", "tags")
+        read_only = ("id", "icon", "count")
 
 
 class PomodoroSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
-
-    def create(self, validated_data):
-        if 'start' not in validated_data:
-            validated_data['start'] = timezone.now()
-        return Pomodoro.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.start = validated_data.get('start', instance.start)
-        instance.end = validated_data.get('end', instance.end)
-        instance.category = validated_data.get('category', instance.category)
-        instance.save()
-        return instance
+    owner = serializers.ReadOnlyField(source="owner.username")
+    tags = _TagTitleSerializer(many=True, required=False)
 
     class Meta:
         model = Pomodoro
-        fields = ('id', 'title', 'start', 'end', 'category', 'owner',)
-        read_only_fields = ('id',)
+        fields = ("id", "title", "start", "end", "owner", "tags")
+        read_only_fields = ("id",)
+
+    def create(self, validated_data):
+        # Pop our tags off so we can process them later
+        tags = validated_data.pop("tags", [])
+
+        # Create our pomodoro object
+        pomodoro = Pomodoro.objects.create(**validated_data)
+
+        # Process our tags using the same owner as our pomodoro
+        newtags = [
+            Tag.objects.get_or_create(owner=pomodoro.owner, **tag) for tag in tags
+        ]
+
+        # Set the new tag list while dropping the 'created' field
+        pomodoro.tags.set([x[0] for x in newtags])
+
+        return pomodoro

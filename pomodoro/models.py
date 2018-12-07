@@ -19,9 +19,6 @@ class Tag(models.Model):
         unique_together = ("title", "owner")
         ordering = ('title',)
 
-    def __str__(self):
-        return self.title
-
 
 class Pomodoro(models.Model):
     start = models.DateTimeField(default=datetime.datetime.now, verbose_name=_('start time'))
