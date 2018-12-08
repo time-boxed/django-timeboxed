@@ -12,14 +12,14 @@ class ApiTest(TestCase):
         self.user = User.objects.create(username="Test User", password="")
         self.client.force_login(self.user)
 
-    def test_query(self):
+    def test_start_from_favorite(self):
         favorite = Favorite.objects.create(title="Test", duration=5, owner=self.user)
 
         response = self.client.post(reverse("api:favorite-start", args=[favorite.pk]))
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Favorite.objects.count(), 1)
 
-    def test_post(self):
+    def test_create_pomodoro(self):
         response = self.client.post(
             reverse("api:pomodoro-list"),
             data={"title": "foo", "tags": ["a", "b"]},

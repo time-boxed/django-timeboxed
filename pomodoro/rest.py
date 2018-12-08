@@ -6,13 +6,18 @@ import time
 
 import pytz
 from rest_framework import viewsets
-from rest_framework.authentication import (BasicAuthentication, SessionAuthentication,
-                                           TokenAuthentication)
-from rest_framework.decorators import list_route, detail_route
-from pomodoro.models import Favorite, Pomodoro
+from rest_framework.authentication import (
+    BasicAuthentication,
+    SessionAuthentication,
+    TokenAuthentication,
+)
+from rest_framework.decorators import detail_route, list_route
+
+from pomodoro.models import Favorite, Pomodoro, Tag
 from pomodoro.permissions import IsOwner
 from pomodoro.renderers import CalendarRenderer
-from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer
+from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer, TagSeralizer
+
 from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.timezone import make_aware
@@ -31,6 +36,15 @@ logger = logging.getLogger(__name__)
 def floorts(ts):
     return ts.replace(minute=0, hour=0, second=0, microsecond=0)
 
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSeralizer
+    permission_classes = (IsOwner,)
+    authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
+
+    def get_queryset(self):
+        return Tag.objects.filter(owner=self.request.user)
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()

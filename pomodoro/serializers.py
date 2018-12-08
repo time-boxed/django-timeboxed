@@ -8,12 +8,6 @@ class TagSeralizer(serializers.ModelSerializer):
         model = Tag
         fields = ("title",)
 
-
-class _TagTitleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = ("title",)
-
     def to_representation(self, instance):
         return instance.title
 
@@ -23,7 +17,7 @@ class _TagTitleSerializer(serializers.ModelSerializer):
 
 class FavoriteSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source="owner.username")
-    tags = _TagTitleSerializer(many=True, required=False)
+    tags = TagSeralizer(many=True, required=False)
 
     class Meta:
         model = Favorite
@@ -33,7 +27,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 class PomodoroSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source="owner.username")
-    tags = _TagTitleSerializer(many=True, required=False)
+    tags = TagSeralizer(many=True, required=False)
 
     class Meta:
         model = Pomodoro
