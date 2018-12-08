@@ -3,7 +3,9 @@
 from __future__ import unicode_literals
 
 import datetime
+
 from django.db import migrations, models
+from django.utils import timezone
 
 
 def convert_to_end(apps, schema_editor):
@@ -32,7 +34,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pomodoro',
             name='end',
-            field=models.DateTimeField(default=datetime.datetime.now, verbose_name='end time'),
+            field=models.DateTimeField(default=timezone.now, verbose_name='end time'),
         ),
         migrations.RunPython(convert_to_end, convert_to_duration),
         migrations.RemoveField(
