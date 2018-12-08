@@ -20,7 +20,7 @@ class CalendarRenderer(renderers.BaseRenderer):
         cal.add('prodid', '-//django-pomodoro//kungfudiscomonkey.net//')
         cal.add('version', '2.0')
 
-        today = datetime.datetime.utcnow()
+        today = timezone.now()
 
 
         # TODO: Need a better way to return when results are empty

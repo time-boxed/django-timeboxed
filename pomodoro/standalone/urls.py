@@ -8,6 +8,7 @@ from django.contrib import admin
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('favorites', rest.FavoriteViewSet)
 router.register('pomodoros', rest.PomodoroViewSet)
+router.register('tags', rest.TagViewSet)
 
 urlpatterns = [
     url('', include(('pomodoro.urls', 'pomodoro'))),

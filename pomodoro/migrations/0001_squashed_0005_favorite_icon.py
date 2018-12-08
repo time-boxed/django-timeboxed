@@ -3,9 +3,11 @@
 from __future__ import unicode_literals
 
 import datetime
+
+import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
-import django.db.models.deletion
+from django.utils import timezone
 
 
 class Migration(migrations.Migration):
@@ -23,7 +25,7 @@ class Migration(migrations.Migration):
             name='Pomodoro',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(default=datetime.datetime.now, verbose_name='start time')),
+                ('created', models.DateTimeField(default=timezone.now, verbose_name='start time')),
                 ('duration', models.IntegerField(verbose_name='duration')),
                 ('title', models.CharField(max_length=32, verbose_name='title')),
                 ('category', models.CharField(blank=True, max_length=32, verbose_name='category')),
