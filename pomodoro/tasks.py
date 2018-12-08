@@ -89,7 +89,9 @@ def most_recent_pomodoro(owner_id):
     )
 
 
-@receiver(post_save, sender=models.Pomodoro)
-def signal_pomodoro_jobs(sender, instance, dispatch_id='signal_pomodoro_jobs'):
+@receiver(
+    post_save, sender=models.Pomodoro, weak=False, dispatch_uid="signal_pomodoro_jobs"
+)
+def signal_pomodoro_jobs(sender, instance, **kwargs):
     most_recent_pomodoro.delay(instance.owner.id)
     refresh_favorite.delay(category=instance.category, owner_id=instance.owner_id)

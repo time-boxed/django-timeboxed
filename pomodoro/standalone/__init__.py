@@ -2,8 +2,10 @@ import os
 import envdir
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pomodoro.standalone.settings")
+os.environ.setdefault("ENVDIR", os.path.expanduser("~/.config/pomodoro"))
 
-CONFIG_DIR = os.path.expanduser('~/.config/pomodoro')
+if os.path.exists(os.environ["ENVDIR"]):
+    envdir.open(os.environ["ENVDIR"])
 
-if os.path.exists(CONFIG_DIR):
-    envdir.open(CONFIG_DIR)
+# Preload Celery App
+from pomodoro.standalone.celery import app as celery_app  # noqa

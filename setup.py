@@ -21,6 +21,7 @@ setup(
             "celery[redis]==4.2.1",
             "dj_database_url",
             "envdir",
+            "paho-mqtt",
             "prometheus_client",
             "raven",
             "social-auth-app-django==2.1.0",
