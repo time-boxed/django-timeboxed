@@ -12,22 +12,29 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Pomodoro)
 class PomodoroAdmin(admin.ModelAdmin):
-    date_hierarchy = 'start'
-    list_display = ('title', 'category', 'start', 'end', 'duration', 'owner',)
-    list_filter = ('owner', 'start', 'category',)
+    date_hierarchy = "start"
+    list_display = ("title", "_tags", "start", "end", "duration", "owner")
+    list_filter = (("owner", admin.RelatedOnlyFieldListFilter), "start")
+
+    def _tags(self, obj):
+        return [t.title for t in obj.tags.all()]
 
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     def _icon(self, obj):
         return True if obj.icon else False
-    _icon.short_description = _('icon')
+
+    _icon.short_description = _("icon")
     _icon.boolean = True
 
-    list_display = ('title', 'category', 'duration', 'owner', '_icon', 'count')
-    list_filter = ('owner', 'category',)
+    def _tags(self, obj):
+        return [t.title for t in obj.tags.all()]
+
+    list_display = ("title", "_tags", "duration", "owner", "_icon", "count")
+    list_filter = (("owner", admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('owner', 'type')
+    list_display = ("owner", "type")

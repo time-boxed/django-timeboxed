@@ -16,6 +16,9 @@ class Tag(models.Model):
     title = models.CharField(max_length=32, verbose_name=_('title'))
     owner = models.ForeignKey('auth.User', related_name='+', verbose_name=_('owner'), on_delete=models.CASCADE)
 
+    def __str__(self):
+        return "{}:{}".format(self.owner.username, self.title)
+
     class Meta:
         unique_together = ("title", "owner")
         ordering = ('title',)
