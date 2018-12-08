@@ -18,7 +18,7 @@ setup(
     ],
     extras_require={
         "standalone": [
-            "celery[redis]==4.2.1",
+            "celery==4.2.1",
             "dj_database_url",
             "redis>=2.10.5",
             "envdir",
