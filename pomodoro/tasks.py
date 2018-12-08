@@ -3,13 +3,13 @@ import logging
 import requests
 from celery import shared_task
 
-from pomodoro import models
+from pomodoro import models, serializers, utils
 
 import django.utils.timezone
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.urls import reverse
+
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +79,17 @@ def schedule_notification(sender, instance, created, **kwargs):
     send_notification.s(instance.id).apply_async(eta=instance.end)
 
 
+@shared_task
+def most_recent_pomodoro(owner_id):
+    pomodoro = models.Pomodoro.objects.filter(owner_id=owner_id).latest("end")
+    utils.publish(
+        "pomodoro/{}/recent".format(pomodoro.owner.username),
+        json=serializers.PomodoroSerializer(pomodoro).data,
+        retain=True,
+    )
+
+
 @receiver(post_save, sender=models.Pomodoro)
-def refresh_count_from_pomodoro(sender, instance, **kwargs):
+def signal_pomodoro_jobs(sender, instance, dispatch_id='signal_pomodoro_jobs'):
+    most_recent_pomodoro.delay(instance.owner.id)
     refresh_favorite.delay(category=instance.category, owner_id=instance.owner_id)
