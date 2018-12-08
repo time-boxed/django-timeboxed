@@ -37,4 +37,4 @@ class Command(BaseCommand):
             event.add('dtend', end)
             event['uid'] = zpk
             cal.add_component(event)
-        print cal.to_ical()
+        print(cal.to_ical())
