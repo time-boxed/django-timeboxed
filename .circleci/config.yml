@@ -13,11 +13,10 @@ jobs:
           POSTGRES_DB: circle_test
     steps:
       - checkout
-      - run: sudo chown -R circleci:circleci /usr/local/bin
-      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
-      - run: sudo chown -R circleci:circleci /usr/local/man
-      - run: sudo pip install -e .[dev,standalone]
-      - run: pomodoro test
+      - run: pipenv install --dev
+      - run: pipenv run pomodoro test
+      - run: pipenv run coverage html -d test-results
+      - run: pipenv run codecov
       - store_test_results:
           path: test-results
 

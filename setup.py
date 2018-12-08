@@ -26,7 +26,7 @@ setup(
             "raven",
             "social-auth-app-django==2.1.0",
         ],
-        "dev": ["unittest-xml-reporting"],
+        "dev": ["codecov", "django-nose", "factory_boy", "nose-cov"],
     },
     classifiers=[
         "Development Status :: 3 - Alpha",
