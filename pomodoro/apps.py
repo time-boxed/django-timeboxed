@@ -6,10 +6,10 @@ logger = logging.getLogger(__name__)
 
 
 class PomodoroConfig(AppConfig):
-    name = 'pomodoro'
+    name = "pomodoro"
 
     def ready(self):
         try:
-            import pomodoro.tasks
+            import pomodoro.signals  # noqa
         except ImportError as e:
-            logger.warning('Unable to import pomodoro %s', e)
+            logger.exception("Unable to import pomodoro %s", e)
