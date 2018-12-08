@@ -197,13 +197,6 @@
             ],
             "version": "==2018.7"
         },
-        "raven": {
-            "hashes": [
-                "sha256:3fd787d19ebb49919268f06f19310e8112d619ef364f7989246fc8753d469888",
-                "sha256:95f44f3ea2c1b176d5450df4becdb96c15bf2632888f9ab193e9dd22300ce46a"
-            ],
-            "version": "==6.9.0"
-        },
         "redis": {
             "hashes": [
                 "sha256:2100750629beff143b6a200a2ea8e719fcf26420adabb81402895e144c5083cf",
@@ -224,6 +217,13 @@
                 "sha256:e21232e2465808c0e892e0e4dbb8c2faafec16ac6dc067dd546e9b466f3deac8"
             ],
             "version": "==1.0.0"
+        },
+        "sentry-sdk": {
+            "hashes": [
+                "sha256:56118f4c3bd3412e47d1969997580df2f27ae951df949d07f0c2120cefe40b00",
+                "sha256:b5a4cd2bb9e86c21e1f4b3fef856785a1075a5430b10a37385c3dce47aaf0649"
+            ],
+            "version": "==0.6.2"
         },
         "six": {
             "hashes": [
@@ -623,13 +623,6 @@
             ],
             "version": "==2018.7"
         },
-        "raven": {
-            "hashes": [
-                "sha256:3fd787d19ebb49919268f06f19310e8112d619ef364f7989246fc8753d469888",
-                "sha256:95f44f3ea2c1b176d5450df4becdb96c15bf2632888f9ab193e9dd22300ce46a"
-            ],
-            "version": "==6.9.0"
-        },
         "redis": {
             "hashes": [
                 "sha256:2100750629beff143b6a200a2ea8e719fcf26420adabb81402895e144c5083cf",
@@ -650,6 +643,13 @@
                 "sha256:e21232e2465808c0e892e0e4dbb8c2faafec16ac6dc067dd546e9b466f3deac8"
             ],
             "version": "==1.0.0"
+        },
+        "sentry-sdk": {
+            "hashes": [
+                "sha256:56118f4c3bd3412e47d1969997580df2f27ae951df949d07f0c2120cefe40b00",
+                "sha256:b5a4cd2bb9e86c21e1f4b3fef856785a1075a5430b10a37385c3dce47aaf0649"
+            ],
+            "version": "==0.6.2"
         },
         "six": {
             "hashes": [

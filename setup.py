@@ -20,11 +20,11 @@ setup(
         "standalone": [
             "celery==4.2.1",
             "dj_database_url",
-            "redis>=2.10.5",
             "envdir",
             "paho-mqtt",
             "prometheus_client",
-            "raven",
+            "redis>=2.10.5",
+            "sentry_sdk",
             "social-auth-app-django==2.1.0",
         ],
         "dev": ["codecov", "django-nose", "factory_boy", "nose-cov"],

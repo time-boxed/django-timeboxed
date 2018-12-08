@@ -126,9 +126,16 @@ STATIC_ROOT = os.environ.get('STATIC_ROOT')
 
 # Enable Sentry
 if 'SENTRY_DSN' in os.environ:
-    # Set your DSN value
-    RAVEN_CONFIG = {'dsn': os.environ.get('SENTRY_DSN')}
-    INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
+        import sentry_sdk
+        from sentry_sdk.integrations.django import DjangoIntegration
+        from sentry_sdk.integrations.celery import CeleryIntegration
+
+
+        sentry_sdk.init(
+            dsn= os.environ['SENTRY_DSN'],
+            integrations=[DjangoIntegration(),CeleryIntegration()],
+            send_default_pii=True
+        )
 
 # See documentation here
 # http://psa.matiasaguirre.net/docs/backends/google.html?highlight=google
