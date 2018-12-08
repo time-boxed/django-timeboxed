@@ -18,4 +18,4 @@ def publish(topic, **kwargs):
     )
     if "json" in kwargs:
         kwargs["payload"] = json.dumps(kwargs.pop("json"))
-    paho.mqtt.publish(topic, **kwargs)
+    paho.mqtt.publish.single(topic, **kwargs)
