@@ -1,6 +1,11 @@
-import paho.mqtt.publish
+import warnings
 import os
 import json
+
+try:
+    import paho.mqtt.publish
+except ImportError:
+    warnings.warn("missing mqtt")
 
 # https://pypi.org/project/paho-mqtt/#single
 
