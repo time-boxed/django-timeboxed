@@ -10,7 +10,7 @@ setup(
     version=__version__,
     packages=find_packages(),
     install_requires=[
-        "Django==2.1.3",
+        "Django==2.1.4",
         "djangorestframework",
         "icalendar",
         "Pillow",
@@ -20,6 +20,7 @@ setup(
         "standalone": [
             "celery[redis]==4.2.1",
             "dj_database_url",
+            "redis>=2.10.5",
             "envdir",
             "paho-mqtt",
             "prometheus_client",
