@@ -130,10 +130,9 @@ if 'SENTRY_DSN' in os.environ:
         from sentry_sdk.integrations.django import DjangoIntegration
         from sentry_sdk.integrations.celery import CeleryIntegration
 
-
         sentry_sdk.init(
-            dsn= os.environ['SENTRY_DSN'],
-            integrations=[DjangoIntegration(),CeleryIntegration()],
+            dsn=os.environ['SENTRY_DSN'],
+            integrations=[DjangoIntegration(), CeleryIntegration()],
             send_default_pii=True
         )
 
