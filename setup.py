@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-from pomodoro import __version__, __homepage__
+from pomodoro import __homepage__, __version__
 
 setup(
     name="django-pomodoro",
@@ -10,7 +10,7 @@ setup(
     version=__version__,
     packages=find_packages(),
     install_requires=[
-        "Django==2.1.4",
+        "Django>=2.1",
         "djangorestframework",
         "icalendar",
         "Pillow",
