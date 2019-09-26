@@ -20,10 +20,9 @@ setup(
         "standalone": [
             'pillow==6.1.0',
             "celery==4.3.0",
-            "dj_database_url",
+            "django-environ",
             "Django==2.2.5",
             "djangorestframework==3.10.3",
-            "envdir",
             "paho-mqtt",
             "prometheus_client==0.7.1",
             "redis>=2.10.5",

@@ -59,13 +59,6 @@
             "markers": "python_version >= '3.0'",
             "version": "==0.6.0"
         },
-        "dj-database-url": {
-            "hashes": [
-                "sha256:4aeaeb1f573c74835b0686a2b46b85990571159ffc21aa57ecd4d1e1cb334163",
-                "sha256:851785365761ebe4994a921b433062309eb882fedd318e1b0fcecc607ed02da9"
-            ],
-            "version": "==0.5.0"
-        },
         "django": {
             "hashes": [
                 "sha256:148a4a2d1a85b23883b0a4e99ab7718f518a83675e4485e44dc0c1d36988c5fa",
@@ -73,19 +66,19 @@
             ],
             "version": "==2.2.5"
         },
+        "django-environ": {
+            "hashes": [
+                "sha256:6c9d87660142608f63ec7d5ce5564c49b603ea8ff25da595fd6098f6dc82afde",
+                "sha256:c57b3c11ec1f319d9474e3e5a79134f40174b17c7cc024bbb2fad84646b120c4"
+            ],
+            "version": "==0.4.5"
+        },
         "djangorestframework": {
             "hashes": [
                 "sha256:5488aed8f8df5ec1d70f04b2114abc52ae6729748a176c453313834a9ee179c8",
                 "sha256:dc81cbf9775c6898a580f6f1f387c4777d12bd87abf0f5406018d32ccae71090"
             ],
             "version": "==3.10.3"
-        },
-        "envdir": {
-            "hashes": [
-                "sha256:54ed3f965fa33f433f989a2bfb26bcd04035f27d105217c33a72783971224d0d",
-                "sha256:ede06bacc4da4a74bff86b0aca7a9c174f60750ff8ff78e2dc6b183df02a566b"
-            ],
-            "version": "==1.0.1"
         },
         "gunicorn": {
             "hashes": [
@@ -369,19 +362,19 @@
             "markers": "python_version >= '3.0'",
             "version": "==0.6.0"
         },
-        "dj-database-url": {
-            "hashes": [
-                "sha256:4aeaeb1f573c74835b0686a2b46b85990571159ffc21aa57ecd4d1e1cb334163",
-                "sha256:851785365761ebe4994a921b433062309eb882fedd318e1b0fcecc607ed02da9"
-            ],
-            "version": "==0.5.0"
-        },
         "django": {
             "hashes": [
                 "sha256:148a4a2d1a85b23883b0a4e99ab7718f518a83675e4485e44dc0c1d36988c5fa",
                 "sha256:deb70aa038e59b58593673b15e9a711d1e5ccd941b5973b30750d5d026abfd56"
             ],
             "version": "==2.2.5"
+        },
+        "django-environ": {
+            "hashes": [
+                "sha256:6c9d87660142608f63ec7d5ce5564c49b603ea8ff25da595fd6098f6dc82afde",
+                "sha256:c57b3c11ec1f319d9474e3e5a79134f40174b17c7cc024bbb2fad84646b120c4"
+            ],
+            "version": "==0.4.5"
         },
         "djangorestframework": {
             "hashes": [
@@ -396,13 +389,6 @@
                 "sha256:c70dd71abe5a8c85e55e12c19bd91ccfeec11a6e99044204511f9ed547d48451"
             ],
             "version": "==0.3"
-        },
-        "envdir": {
-            "hashes": [
-                "sha256:54ed3f965fa33f433f989a2bfb26bcd04035f27d105217c33a72783971224d0d",
-                "sha256:ede06bacc4da4a74bff86b0aca7a9c174f60750ff8ff78e2dc6b183df02a566b"
-            ],
-            "version": "==1.0.1"
         },
         "flake8": {
             "hashes": [
