@@ -4,10 +4,15 @@ name = "pypi"
 verify_ssl = true
 
 [packages]
-"pomodoro" = {editable = true, path = ".", extras = ["standalone"]}
+pomodoro = {editable = true,path = ".",extras = ["standalone"]}
+gunicorn = "*"
 
 [requires]
 python_version = "3.6"
 
 [dev-packages]
-"pomodoro" = {extras = ["standalone", "dev"], editable = true, path = "."}
+pomodoro = {editable = true,extras = ["dev", "standalone"],path = "."}
+black = "==18.9b0"
+unittest-xml-reporting = "*"
+psycopg2-binary = "*"
+"flake8" = "*"

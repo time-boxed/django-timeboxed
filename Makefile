@@ -1,11 +1,10 @@
-.PHONY: test run clean
-
 test:
-	pipenv run pomodoro test
-
-run:
+	pipenv run pomodoro test -v 2
+build:
+	docker-compose build
+migrate:
 	pipenv run pomodoro migrate
+run: migrate
 	pipenv run pomodoro runserver
-
-.env:
-	pipenv install --dev
+shell: migrate
+	pipenv run pomodoro shell

@@ -6,10 +6,21 @@ import time
 
 import pytz
 from rest_framework import viewsets
+<<<<<<< HEAD
 from rest_framework.authentication import (BasicAuthentication, SessionAuthentication,
                                            TokenAuthentication)
 from rest_framework.decorators import list_route, detail_route
 from pomodoro.models import Favorite, Pomodoro
+=======
+from rest_framework.authentication import (
+    BasicAuthentication,
+    SessionAuthentication,
+    TokenAuthentication,
+)
+from rest_framework.decorators import action
+
+from pomodoro.models import Favorite, Pomodoro, Tag
+>>>>>>> c54ddb4... Initial docker configuration
 from pomodoro.permissions import IsOwner
 from pomodoro.renderers import CalendarRenderer
 from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer
@@ -47,7 +58,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         """
         return Favorite.objects.filter(owner=self.request.user)
 
-    @detail_route(methods=['post'])
+    @action(detail=True, methods=["post"])
     def start(self, request, pk):
         '''Quickstart a Pomodoro'''
         favorite = self.get_object()
@@ -93,7 +104,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
     def get_today(self):
         return floorts(timezone.localtime(timezone.now()))
 
-    @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
+    @action(detail=False, methods=["post"], authentication_classes=[BasicAuthentication])
     def query(self, request):
         '''Grafana Query'''
         body = json.loads(request.body.decode("utf-8"))
@@ -154,7 +165,7 @@ class PomodoroViewSet(viewsets.ModelViewSet):
             results.append(response)
         return JsonResponse(results, safe=False)
 
-    @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
+    @action(detail=False, methods=["post"], authentication_classes=[BasicAuthentication])
     def search(self, request):
         '''Grafana Search'''
         categories = list(Pomodoro.objects
