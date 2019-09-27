@@ -6,24 +6,16 @@ import time
 
 import pytz
 from rest_framework import viewsets
-<<<<<<< HEAD
-from rest_framework.authentication import (BasicAuthentication, SessionAuthentication,
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication,
                                            TokenAuthentication)
-from rest_framework.decorators import list_route, detail_route
-from pomodoro.models import Favorite, Pomodoro
-=======
-from rest_framework.authentication import (
-    BasicAuthentication,
-    SessionAuthentication,
-    TokenAuthentication,
-)
 from rest_framework.decorators import action
 
-from pomodoro.models import Favorite, Pomodoro, Tag
->>>>>>> c54ddb4... Initial docker configuration
+from pomodoro.models import Favorite, Pomodoro
 from pomodoro.permissions import IsOwner
 from pomodoro.renderers import CalendarRenderer
 from pomodoro.serializers import FavoriteSerializer, PomodoroSerializer
+
 from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.timezone import make_aware
