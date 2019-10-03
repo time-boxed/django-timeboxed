@@ -9,7 +9,6 @@ import django.utils.timezone
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +57,7 @@ def send_notification(pomodoro_id):
             line(notification.key, pomodoro)
 
 
-@receiver(post_save, sender=models.Pomodoro)
+@receiver(post_save, sender="pomodoro.Pomodoro")
 def schedule_notification(sender, instance, created, **kwargs):
     if created is False:
         logger.debug('Skipping notification for modified pomodoro')
@@ -79,6 +78,6 @@ def schedule_notification(sender, instance, created, **kwargs):
     send_notification.s(instance.id).apply_async(eta=instance.end)
 
 
-@receiver(post_save, sender=models.Pomodoro)
+@receiver(post_save, sender="pomodoro.Pomodoro")
 def refresh_count_from_pomodoro(sender, instance, **kwargs):
     refresh_favorite.delay(category=instance.category, owner_id=instance.owner_id)
