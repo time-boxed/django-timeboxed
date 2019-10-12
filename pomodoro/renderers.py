@@ -16,14 +16,14 @@ class CalendarRenderer(renderers.BaseRenderer):
 
         view = renderer_context["view"]
         request = renderer_context["request"]
-        queryset = view.get_queryset()
+        page = view.paginate_queryset(view.queryset)
 
         cal = icalendar.Calendar()
         cal.add("prodid", "-//Pomodoro Calendar//")
         cal.add("version", "2.0")
         cal.add("X-ORIGINAL-URL", request.build_absolute_uri())
 
-        for pomodoro in queryset:
+        for pomodoro in page:
             event = icalendar.Event()
             event.add("summary", pomodoro.title)
             event.add("description", pomodoro.memo)
