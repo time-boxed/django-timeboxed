@@ -4,8 +4,8 @@ name = "pypi"
 verify_ssl = true
 
 [packages]
-pomodoro = {editable = true,path = ".",extras = ["standalone"]}
 gunicorn = "*"
+pomodoro = {editable = true, extras = ["standalone"], path = "."}
 
 [requires]
 python_version = "3.6"
