@@ -45,11 +45,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "social_django",
+    "pomodoro.standalone",
     "rest_framework",
     "rest_framework.authtoken",
-    "social_django",
     "pomodoro.apps.PomodoroConfig",
-    "pomodoro.standalone",
 ]
 
 MIDDLEWARE = [
@@ -158,6 +158,11 @@ LOGIN_REDIRECT_URL = "/"
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 50,
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
 }
 
 

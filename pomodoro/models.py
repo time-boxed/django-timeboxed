@@ -19,6 +19,9 @@ class Pomodoro(models.Model):
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
     owner = models.ForeignKey('auth.User', related_name='pomodoros', verbose_name=_('owner'), on_delete=models.CASCADE)
 
+    url = models.URLField(blank=True, help_text="Optional link")
+    memo = models.TextField(blank=True)
+
     @property
     def duration(self):
         return self.end - self.start
@@ -41,6 +44,7 @@ class Favorite(models.Model):
     owner = models.ForeignKey('auth.User', related_name='favorite', verbose_name=_('owner'), on_delete=models.CASCADE)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     count = models.PositiveIntegerField(default=0)
+    url = models.URLField(blank=True)
 
     class Meta:
         ordering = ('-count',)
@@ -51,22 +55,21 @@ class Favorite(models.Model):
             start__gte=duration,
             owner=self.owner,
             title=self.title,
-            category=self.category
+            category=self.category,
         ).count()
-        self.save()
+        self.save(update_fields=("count",))
 
     def timedelta(self):
         return datetime.timedelta(minutes=self.duration)
 
     def start(self, ts):
-        pomodoro = Pomodoro()
-        pomodoro.title = self.title
-        pomodoro.category = self.category
-        pomodoro.owner = self.owner
-        pomodoro.start = ts
-        pomodoro.end = ts + datetime.timedelta(minutes=self.duration)
-        pomodoro.save()
-        return pomodoro
+        return Pomodoro.objects.create(
+            title=self.title,
+            category=self.category,
+            owner=self.owner,
+            start=ts,
+            end=ts + datetime.timedelta(minutes=self.duration),
+        )
 
 
 class Notification(models.Model):

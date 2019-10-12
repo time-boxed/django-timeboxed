@@ -6,10 +6,9 @@ import time
 
 import pytz
 from rest_framework import viewsets
-from rest_framework.authentication import (BasicAuthentication,
-                                           SessionAuthentication,
-                                           TokenAuthentication)
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import action
+from rest_framework.settings import api_settings
 
 from pomodoro.models import Favorite, Pomodoro
 from pomodoro.permissions import IsOwner
@@ -39,7 +38,6 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
     permission_classes = (IsOwner,)
-    authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -84,11 +82,11 @@ class PomodoroViewSet(viewsets.ModelViewSet):
     """
     Basic Pomodoro API without any extra
     """
+
     queryset = Pomodoro.objects.all()
     serializer_class = PomodoroSerializer
     permission_classes = (IsOwner,)
-    authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
-    renderer_classes = viewsets.ModelViewSet.renderer_classes + [CalendarRenderer]
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES + [CalendarRenderer]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
