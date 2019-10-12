@@ -25,7 +25,10 @@ class CalendarRenderer(renderers.BaseRenderer):
 
         for pomodoro in page:
             event = icalendar.Event()
-            event.add("summary", pomodoro.title)
+            if pomodoro.category:
+                event.add("summary", pomodoro.title + " #" + pomodoro.title)
+            else:
+                event.add("summary", pomodoro.title)
             event.add("description", pomodoro.memo)
             event.add("dtstart", pomodoro.start)
             event.add("dtend", pomodoro.end)
