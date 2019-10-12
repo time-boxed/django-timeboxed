@@ -11,6 +11,9 @@ class CalendarRenderer(renderers.BaseRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         # Pull these from our renderer context to better match a
         # typical view
+        if renderer_context["response"].status_code != 200:
+            return data
+
         view = renderer_context["view"]
         request = renderer_context["request"]
         queryset = view.get_queryset()
