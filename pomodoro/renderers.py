@@ -29,7 +29,7 @@ class CalendarRenderer(renderers.BaseRenderer):
             event.add("description", pomodoro.memo)
             event.add("dtstart", pomodoro.start)
             event.add("dtend", pomodoro.end)
-            event.add("url", pomodoro.url)
+            event.add("url", request.build_absolute_uri(pomodoro.get_absolute_url()))
             event.add("categories", [pomodoro.category])
             event["uid"] = pomodoro.pk
             cal.add_component(event)
