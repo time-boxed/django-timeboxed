@@ -18,7 +18,7 @@ setup(
     ],
     extras_require={
         "standalone": [
-            'pillow==6.1.0',
+            'pillow==6.2.0',
             "celery==4.3.0",
             "django-environ",
             "Django==2.2.5",
