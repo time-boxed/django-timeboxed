@@ -21,7 +21,7 @@ setup(
             'pillow==6.1.0',
             "celery==4.3.0",
             "django-environ",
-            "Django==2.2.5",
+            "Django==2.2.8",
             "djangorestframework==3.10.3",
             "paho-mqtt",
             "prometheus_client==0.7.1",
