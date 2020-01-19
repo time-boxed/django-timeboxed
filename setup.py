@@ -43,14 +43,11 @@ setup(
         'Programming Language :: Python',
     ],
     entry_points={
-        'powerplug.apps': ['pomodoro = pomodoro.apps.PomodoroConfig'],
-        'powerplug.urls': ['pomodoro = pomodoro.urls'],
-        'powerplug.rest': [
-            'pomodoro = pomodoro.rest:PomodoroViewSet',
-            'favorite = pomodoro.rest:FavoriteViewSet',
+        "pomodoro.notification": [
+            "line = pomodoro.notifications.line:Line",
+            "prowl = pomodoro.notifications.prowl:Prowl",
+            "mqtt = pomodoro.notifications.mqtt:MQTT",
         ],
-        'console_scripts': [
-            'pomodoro = pomodoro.standalone.manage:main[standalone]',
-        ],
+        "console_scripts": ["pomodoro = pomodoro.standalone.manage:main[standalone]",],
     },
 )
