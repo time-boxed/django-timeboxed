@@ -68,7 +68,9 @@ def most_recent_pomodoro(owner_id):
 
     pomodoro = models.Pomodoro.objects.filter(owner_id=owner_id).latest("end")
     data = serializers.PomodoroSerializer(pomodoro).data
-    data["html_url"] = "https://" + get_current_site(None) + pomodoro.get_absolute_url()
+    data["html_url"] = (
+        "https://" + get_current_site(None).domain + pomodoro.get_absolute_url()
+    )
     publish("pomodoro/%s/recent" % pomodoro.owner.username, data)
 
 
