@@ -1,14 +1,18 @@
+import json
 import logging
 
 import requests
 from celery import shared_task
 
-from pomodoro import models
-
-import django.utils.timezone
+from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
+from pomodoro import models, serializers
+
+try:
+    import paho.mqtt.client as mqtt
+except ImportError:
+    mqtt = False
 
 logger = logging.getLogger(__name__)
 
@@ -57,27 +61,21 @@ def send_notification(pomodoro_id):
             line(notification.key, pomodoro)
 
 
-@receiver(post_save, sender="pomodoro.Pomodoro")
-def schedule_notification(sender, instance, created, **kwargs):
-    if created is False:
-        logger.debug('Skipping notification for modified pomodoro')
+@shared_task
+def most_recent_pomodoro(owner_id):
+    if mqtt is False:
         return
 
-    # Skip pomodoro's that are less than 2 minutes long
-    if instance.duration.total_seconds() <= 120:
-        logger.debug('Skipping notification for short pomodoro')
-        return
-
-    now = django.utils.timezone.now()
-
-    if instance.end < now:
-        logger.debug('Skipping notification for past pomodoro')
-        return
-
-    logger.debug('Queuring notification for %s', instance)
-    send_notification.s(instance.id).apply_async(eta=instance.end)
+    pomodoro = models.Pomodoro.objects.filter(owner_id=owner_id).latest("end")
+    data = serializers.PomodoroSerializer(pomodoro).data
+    data["html_url"] = "https://" + get_current_site(None) + pomodoro.get_absolute_url()
+    publish("pomodoro/%s/recent" % pomodoro.owner.username, data)
 
 
-@receiver(post_save, sender="pomodoro.Pomodoro")
-def refresh_count_from_pomodoro(sender, instance, **kwargs):
-    refresh_favorite.delay(category=instance.category, owner_id=instance.owner_id)
+@shared_task
+def publish(topic, data, retain=True):
+    client = mqtt.Client()
+    client.username_pw_set(settings.MQTT_USER, password=settings.MQTT_PASS)
+    client.connect(settings.MQTT_HOST, settings.MQTT_PORT, 60)
+    # client.tls_set('/etc/ssl/certs/ca-bundle.trust.crt', tls_version=2)
+    client.publish(topic, json.dumps(data).encode("utf8"), retain=retain)

@@ -9,7 +9,5 @@ class PomodoroConfig(AppConfig):
     name = 'pomodoro'
 
     def ready(self):
-        try:
-            import pomodoro.tasks
-        except ImportError as e:
-            logger.warning('Unable to import pomodoro %s', e)
+        import pomodoro.tasks  # NOQA
+        import pomodoro.signals  # NOQA
