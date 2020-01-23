@@ -6,7 +6,7 @@ import pkg_resources
 
 from django.db import models
 from django.urls import reverse
-from django.utils.functional import cached_property
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 logger = logging.getLogger(__name__)
@@ -18,8 +18,8 @@ def _upload_to_path(instance, filename):
 
 
 class Pomodoro(models.Model):
-    start = models.DateTimeField(default=datetime.datetime.now, verbose_name=_('start time'))
-    end = models.DateTimeField(default=datetime.datetime.now, verbose_name=_('end time'))
+    start = models.DateTimeField(default=timezone.now, verbose_name=_('start time'))
+    end = models.DateTimeField(default=timezone.now, verbose_name=_('end time'))
 
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
