@@ -11,7 +11,7 @@ class ApiTest(TestCase):
         self.client.force_login(self.user)
 
     @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
-    def test_query(self):
+    def test_start_favorite(self):
         favorite = Favorite.objects.create(title="Test", duration=5, owner=self.user)
 
         response = self.client.post(reverse("api:favorite-start", args=[favorite.pk]))
