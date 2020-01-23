@@ -18,21 +18,18 @@ setup(
     ],
     extras_require={
         "standalone": [
-            'pillow==6.1.0',
+            "pillow>=6.2.0",
             "celery==4.3.0",
             "django-environ",
-            "Django==2.2.5",
+            "Django==2.2.9",
             "djangorestframework==3.10.3",
             "paho-mqtt",
             "prometheus_client==0.7.1",
             "redis>=2.10.5",
             "requests==2.22.0",
             "sentry_sdk",
-            "social-auth-app-django==2.1.0",
         ],
-        'dev': [
-            'unittest-xml-reporting',
-        ]
+        "dev": ["unittest-xml-reporting"],
     },
     classifiers=[
         'Development Status :: 3 - Alpha',

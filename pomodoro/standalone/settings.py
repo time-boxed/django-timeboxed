@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "social_django",
     "pomodoro.standalone",
     "rest_framework",
     "rest_framework.authtoken",
@@ -63,7 +62,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "standalone.urls"
-SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
 
 TEMPLATES = [
     {
@@ -143,15 +141,6 @@ if "SENTRY_DSN" in os.environ:
     except ImportError:
         pass
 
-# See documentation here
-# http://psa.matiasaguirre.net/docs/backends/google.html?highlight=google
-SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
-AUTHENTICATION_BACKENDS = (
-    "social_core.backends.google.GooglePlusAuth",
-    "django.contrib.auth.backends.ModelBackend",
-)
-SOCIAL_AUTH_GOOGLE_PLUS_KEY = os.environ.get("SOCIAL_AUTH_GOOGLE_PLUS_KEY")
-SOCIAL_AUTH_GOOGLE_PLUS_SECRET = os.environ.get("SOCIAL_AUTH_GOOGLE_PLUS_SECRET")
 LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "/"
 
