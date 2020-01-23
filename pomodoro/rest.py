@@ -51,7 +51,6 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def start(self, request, pk):
         '''Quickstart a Pomodoro'''
-        favorite = self.get_object()
         now = timezone.now().replace(microsecond=0)
         try:
             pomodoro = Pomodoro.objects\
@@ -67,15 +66,8 @@ class FavoriteViewSet(viewsets.ModelViewSet):
                     'data': PomodoroSerializer(pomodoro).data
                 }, status=409)
 
-        pomodoro = Pomodoro()
-        pomodoro.title = favorite.title
-        pomodoro.category = favorite.category
-        pomodoro.owner = request.user
-        pomodoro.start = now
-        pomodoro.end = pomodoro.start + datetime.timedelta(minutes=favorite.duration)
-        pomodoro.save()
-
-        return JsonResponse(PomodoroSerializer(pomodoro).data, status=201)
+        favorite = self.get_object()
+        return JsonResponse(PomodoroSerializer(favorite.start(now)).data, status=201)
 
 
 class PomodoroViewSet(viewsets.ModelViewSet):

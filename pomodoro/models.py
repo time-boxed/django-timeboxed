@@ -56,7 +56,7 @@ class Favorite(models.Model):
         ordering = ('-count',)
 
     def refresh(self):
-        duration = datetime.datetime.utcnow() - datetime.timedelta(days=30)
+        duration = timezone.now() - datetime.timedelta(days=30)
         self.count = Pomodoro.objects.filter(
             start__gte=duration,
             owner=self.owner,
