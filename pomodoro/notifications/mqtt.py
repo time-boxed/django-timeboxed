@@ -20,7 +20,7 @@ class MQTT:
         self.publish("pomodoro/%s/recent" % pomodoro.owner.username, data)
 
     def publish(self, topic, data, retain=True):
-        client = mqtt.Client(client_id=self.domain + "-" + self.uuid)
+        client = mqtt.Client(client_id=self.domain + "-%d" % self.uuid.int)
         client.username_pw_set(settings.MQTT_USER, password=settings.MQTT_PASS)
         client.connect(settings.MQTT_HOST, settings.MQTT_PORT, 60)
         # client.tls_set('/etc/ssl/certs/ca-bundle.trust.crt', tls_version=2)
