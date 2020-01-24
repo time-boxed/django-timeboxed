@@ -22,7 +22,7 @@ class MQTT:
     def publish(self, topic, data, retain=True):
         single(
             topic=topic,
-            data=json.dumps(data).encode("utf8"),
+            payload=json.dumps(data).encode("utf8"),
             retain=retain,
             client_id=self.client_id[:23],
             hostname=settings.MQTT_HOST,
