@@ -12,7 +12,7 @@ from pomodoro import serializers
 class MQTT:
     def __init__(self, *args):
         self.domain = get_current_site(None).domain
-        self.uuid = uuid.uuid4()
+        self.client_id = self.domain + "-%d" % uuid.uuid4().int
 
     def send(self, pomodoro):
         data = serializers.PomodoroSerializer(pomodoro).data
@@ -20,7 +20,7 @@ class MQTT:
         self.publish("pomodoro/%s/recent" % pomodoro.owner.username, data)
 
     def publish(self, topic, data, retain=True):
-        client = mqtt.Client(client_id=self.domain + "-%d" % self.uuid.int)
+        client = mqtt.Client(client_id=self.client_id[:23])
         client.username_pw_set(settings.MQTT_USER, password=settings.MQTT_PASS)
         client.connect(settings.MQTT_HOST, settings.MQTT_PORT, 60)
         # client.tls_set('/etc/ssl/certs/ca-bundle.trust.crt', tls_version=2)
