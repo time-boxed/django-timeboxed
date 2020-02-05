@@ -1,10 +1,10 @@
 import datetime
 import logging
 
-from pomodoro import forms, models
+from pomodoro import forms, models, mixins
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -124,12 +124,6 @@ class PomodoroHistory(LoginRequiredMixin, ListView):
         return context
 
 
-class PomodoroDetailView(UserPassesTestMixin, DetailView):
+class PomodoroDetailView(mixins.OwnerRequiredMixin, DetailView):
     model = models.Pomodoro
-
-    def test_func(self):
-        if not self.request.user.is_authenticated:
-            return False
-
-        return self.get_object().owner == self.request.user
 
