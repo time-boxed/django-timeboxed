@@ -20,7 +20,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         """
         Return Favorites owned by current user only
         """
-        return self.queryset.objects.filter(owner=self.request.user)
+        return self.queryset.filter(owner=self.request.user)
 
     @action(detail=True, methods=["post"])
     def start(self, request, pk):

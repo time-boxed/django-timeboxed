@@ -30,7 +30,7 @@ setup(
             "requests==2.22.0",
             "sentry_sdk",
         ],
-        "dev": ["unittest-xml-reporting"],
+        "dev": ["unittest-xml-reporting", "psycopg2-binary", "django_nose", "black"],
     },
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -46,6 +46,6 @@ setup(
             "prowl = pomodoro.notifications.prowl:Prowl",
             "mqtt = pomodoro.notifications.mqtt:MQTT",
         ],
-        "console_scripts": ["pomodoro = pomodoro.standalone.manage:main[standalone]",],
+        "console_scripts": ["pomodoro = pomodoro.standalone.manage:main[standalone]"],
     },
 )

@@ -1,5 +1,6 @@
 *.py[cod]
 .env
+.venv
 db.sqlite3
 
 # Packages
@@ -14,6 +15,4 @@ sdist
 .tox
 nosetests.xml
 *.mo
-venv
-.env
 test-results
