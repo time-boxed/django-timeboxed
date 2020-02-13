@@ -1,4 +1,5 @@
 import collections
+import datetime
 import json
 import logging
 
@@ -44,43 +45,48 @@ def to_ts(dt):
     return dt.timestamp() * 1000
 
 
+def floor(dt):
+    return dt.replace(hour=0, minute=0, second=0, microsecond=0)
+
+
 class Query(APIView):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (IsAuthenticated,)
 
     def datapoints(self, targets, start, end):
-        durations = collections.defaultdict(lambda: collections.defaultdict(int))
-        for name, date, duration in self.fetch(targets, start, end):
-            durations[date][name] += duration
-        for date in durations:
-            for name in durations[date]:
-                key = date
-                value = durations[date][name]
-                yield {"target": name, "datapoints": [key, value]}
-
-    def targets(self, targets, start, end):
+        durations = collections.defaultdict(
+            lambda: collections.defaultdict(datetime.timedelta)
+        )
         for t in targets:
-            _search = "" if t["target"] == NOCATEGORY else t["target"]
+            target = "" if t["target"] == NOCATEGORY else t["target"]
+            for date, duration in self.fetch(target, start, end):
+                bucket = floor(date)
+                durations[target][bucket] += duration
 
-            for pomodoro in (
-                models.Pomodoro.objects.filter(owner=self.request.user)
-                .filter(category=_search)
-                .filter(start__gte=start)
-                .filter(end__lte=end)
-            ):
+        for target in durations:
+            yield {
+                "target": target,
+                "datapoints": [
+                    [durations[target][date].total_seconds(), to_ts(date)]
+                    for date in sorted(durations[target])
+                ],
+            }
 
-                midnight = pomodoro.end.replace(
-                    hour=0, minute=0, second=0, microsecond=0
-                )
-
-                if pomodoro.start.date() == pomodoro.end.date():
-                    yield pomodoro.name, pomodoro.start.date(), pomodoro.end - pomodoro.start
-                else:
-                    yield pomodoro.name, pomodoro.start.date(), midnight - pomodoro.start
-                    yield pomodoro.name, pomodoro.start.date(), pomodoro.end - mindnight
+    def fetch(self, target, start, end):
+        for pomodoro in (
+            models.Pomodoro.objects.filter(owner=self.request.user)
+            .filter(category=target)
+            .filter(start__gte=start)
+            .filter(end__lte=end)
+        ):
+            if pomodoro.start.date() == pomodoro.end.date():
+                yield pomodoro.start, pomodoro.end - pomodoro.start
+            else:
+                midnight = floor(pomodoro.end)
+                yield pomodoro.start, midnight - pomodoro.start
+                yield pomodoro.end, pomodoro.end - midnight
 
     def post(self, request, **kwargs):
-        print(request)
         query = json.loads(request.body.decode("utf8"))
         start = parse(query["range"]["from"])
         end = parse(query["range"]["to"])
