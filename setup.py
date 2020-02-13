@@ -14,6 +14,7 @@ setup(
         "djangorestframework",
         "icalendar",
         "Pillow",
+        "python-dateutil",
         "requests",
     ],
     extras_require={
