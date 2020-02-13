@@ -22,7 +22,7 @@ RUN set -ex \
 RUN set -ex \
     && apk add --no-cache jpeg-dev zlib-dev \
     && apk add --no-cache --virtual build-deps build-base \
-    && pip install --no-cache-dir Pillow==6.1.0 \
+    && pip install --no-cache-dir Pillow==6.2.0 \
     && apk del build-deps
 
 # Finish installing app
