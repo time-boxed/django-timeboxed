@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     "pomodoro.standalone",
     "rest_framework",
     "rest_framework.authtoken",
@@ -157,7 +158,7 @@ REST_FRAMEWORK = {
 
 if "CELERY_BROKER_URL" in os.environ:
     CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://127.0.0.1:6379/0")
-    CELERY_TIMEZONE = env('CELERY_TIMEZONE', default=TIME_ZONE)
+    CELERY_TIMEZONE = env("CELERY_TIMEZONE", default=TIME_ZONE)
     CELERY_ACCEPT_CONTENT = ["json"]
     CELERY_RESULT_SERIALIZER = "json"
     CELERY_TASK_SERIALIZER = "json"
@@ -165,3 +166,4 @@ else:
     CELERY_TASK_ALWAYS_EAGER = True
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
+SITE_ID = 1
