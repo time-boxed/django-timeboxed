@@ -1,18 +1,18 @@
 from rest_framework import routers
 
-import pomodoro.rest as rest
-
-from django.conf.urls import include, url
+from django.urls import include, path
 from django.contrib import admin
 
+from pomodoro import rest
+
 router = routers.DefaultRouter(trailing_slash=False)
-router.register('favorites', rest.FavoriteViewSet)
-router.register('pomodoros', rest.PomodoroViewSet)
+router.register("favorites", rest.FavoriteViewSet)
+router.register("pomodoros", rest.PomodoroViewSet)
 
 urlpatterns = [
-    url('', include(('pomodoro.urls', 'pomodoro'))),
-    url('', include('social_django.urls')),
-    url('', include('django.contrib.auth.urls')),
-    url(r'^api/', include((router.urls, 'api'), namespace='api')),
-    url(r'^admin/', admin.site.urls),
+    path("", include(("pomodoro.urls", "pomodoro"))),
+    path("", include("django.contrib.auth.urls")),
+    path("grafana/", include(("pomodoro.grafana"))),
+    path("api/", include((router.urls, "api"), namespace="api")),
+    path("admin/", admin.site.urls),
 ]
