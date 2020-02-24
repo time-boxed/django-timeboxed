@@ -4,12 +4,14 @@ import uuid
 from paho.mqtt.publish import single
 
 from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
 
 from pomodoro import serializers
 
 
 class MQTT:
     def __init__(self, *args):
+        self.domain = get_current_site(None).domain
         self.client_id = self.domain + "-%d" % uuid.uuid4().int
 
     def send(self, pomodoro):
