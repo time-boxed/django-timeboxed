@@ -57,18 +57,20 @@ class Query(APIView):
         durations = collections.defaultdict(
             lambda: collections.defaultdict(datetime.timedelta)
         )
+
         for t in targets:
             target = "" if t["target"] == NOCATEGORY else t["target"]
             for date, duration in self.fetch(target, start, end):
                 bucket = floor(date)
-                durations[target][bucket] += duration
+                durations[bucket][target] += duration
 
-        for target in durations:
+        for t in targets:
+            target = "" if t["target"] == NOCATEGORY else t["target"]
             yield {
                 "target": target,
                 "datapoints": [
-                    [durations[target][date].total_seconds(), to_ts(date)]
-                    for date in sorted(durations[target])
+                    [durations[bucket][target].total_seconds(), to_ts(bucket)]
+                    for bucket in sorted(durations.keys())
                 ],
             }
 
