@@ -62,7 +62,7 @@ class Query(APIView):
         buckets = sorted(
             [
                 floor(start + datetime.timedelta(days=x))
-                for x in range(0, (end - start).days)
+                for x in range(0, (end - start).days + 1)
             ]
         )
 
