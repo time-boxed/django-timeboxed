@@ -57,6 +57,14 @@ class Query(APIView):
         durations = collections.defaultdict(
             lambda: collections.defaultdict(datetime.timedelta)
         )
+        # Define our buckets here, so that any days without metrics
+        # are shown as 0
+        buckets = sorted(
+            [
+                floor(start + datetime.timedelta(days=x))
+                for x in range(0, (end - start).days)
+            ]
+        )
 
         for t in targets:
             target = "" if t["target"] == NOCATEGORY else t["target"]
@@ -70,7 +78,7 @@ class Query(APIView):
                 "target": target,
                 "datapoints": [
                     [durations[bucket][target].total_seconds(), to_ts(bucket)]
-                    for bucket in sorted(durations.keys())
+                    for bucket in buckets
                 ],
             }
 
@@ -100,6 +108,7 @@ class Query(APIView):
         )
 
 
+app_name = "grafana"
 urlpatterns = [
     # Need to have a / for grafana-json-plugin
     path("", Help.as_view(), name="help"),

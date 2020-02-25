@@ -12,7 +12,7 @@ router.register("pomodoros", rest.PomodoroViewSet)
 urlpatterns = [
     path("", include(("pomodoro.urls", "pomodoro"))),
     path("", include("django.contrib.auth.urls")),
-    path("grafana/", include(("pomodoro.grafana"))),
+    path("grafana/", include(("pomodoro.grafana"), namespace="grafana")),
     path("api/", include((router.urls, "api"), namespace="api")),
     path("admin/", admin.site.urls),
 ]
