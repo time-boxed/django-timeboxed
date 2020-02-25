@@ -12,6 +12,7 @@ from . import models
 
 from django.http import JsonResponse
 from django.urls import path
+from django.utils import timezone
 from django.views.generic.base import TemplateView
 
 logger = logging.getLogger(__name__)
@@ -98,8 +99,8 @@ class Query(APIView):
 
     def post(self, request, **kwargs):
         query = json.loads(request.body.decode("utf8"))
-        start = parse(query["range"]["from"])
-        end = parse(query["range"]["to"])
+        start = timezone.localtime(parse(query["range"]["from"]))
+        end = timezone.localtime(parse(query["range"]["to"]))
 
         logger.debug("%s %s %s", query, start, end)
 
