@@ -16,7 +16,7 @@ class CalendarRenderer(renderers.BaseRenderer):
 
         view = renderer_context["view"]
         request = renderer_context["request"]
-        page = view.paginate_queryset(view.queryset)
+        page = view.paginate_queryset(view.filter_queryset(view.get_queryset()))
 
         cal = icalendar.Calendar()
         cal.add("prodid", "-//Pomodoro Calendar//")
