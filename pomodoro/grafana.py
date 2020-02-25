@@ -90,17 +90,27 @@ class Query(APIView):
             .filter(start__gte=start)
             .filter(end__lte=end)
         ):
-            if pomodoro.start.date() == pomodoro.end.date():
-                yield pomodoro.start, pomodoro.end - pomodoro.start
+            _start = timezone.localtime(pomodoro.start)
+            _end = timezone.localtime(pomodoro.end)
+            if _start.date() == _end.date():
+                yield _start, _end - _start
             else:
-                midnight = floor(pomodoro.end)
-                yield pomodoro.start, midnight - pomodoro.start
-                yield pomodoro.end, pomodoro.end - midnight
+                midnight = floor(_end)
+                yield _start, midnight - _start
+                yield _end, _end - midnight
 
     def post(self, request, **kwargs):
         query = json.loads(request.body.decode("utf8"))
         start = timezone.localtime(parse(query["range"]["from"]))
         end = timezone.localtime(parse(query["range"]["to"]))
+
+        try:
+            timezone.activate(request.timezone.timezone)
+        except AttributeError:
+            timezone.deactivate()
+        else:
+            start = timezone.localtime(start)
+            end = timezone.localtime(end)
 
         logger.debug("%s %s %s", query, start, end)
 
