@@ -47,7 +47,7 @@ def to_ts(dt):
 
 
 def floor(dt):
-    return dt.replace(hour=0, minute=0, second=0, microsecond=0)
+    return datetime.datetime.combine(dt, datetime.time.min)
 
 
 class Query(APIView):
@@ -67,12 +67,17 @@ class Query(APIView):
             ]
         )
 
+        # Loop through our targets, getting a date,timedelta pair that we
+        # can bucket
         for t in targets:
             target = "" if t["target"] == NOCATEGORY else t["target"]
-            for date, duration in self.fetch(target, start, end):
+            for date, duration in self.filter(
+                category=target, start__gte=start, end__lte=end, owner=self.request.user
+            ):
                 bucket = floor(date)
                 durations[bucket][target] += duration
 
+        # Loop through our targets and buckets to build format that Grafana expects
         for t in targets:
             target = "" if t["target"] == NOCATEGORY else t["target"]
             yield {
@@ -83,24 +88,38 @@ class Query(APIView):
                 ],
             }
 
-    def fetch(self, target, start, end):
-        for pomodoro in (
-            models.Pomodoro.objects.filter(owner=self.request.user)
-            .filter(category=target)
-            .filter(start__gte=start)
-            .filter(end__lte=end)
-        ):
-            if pomodoro.start.date() == pomodoro.end.date():
-                yield pomodoro.start, pomodoro.end - pomodoro.start
+    def filter(self, **kwargs):
+        """
+        Taking kwargs as our django filter, loop through our pomodoro
+        queryset, and return timedelta objects bucketed by date
+        """
+        for pomodoro in models.Pomodoro.objects.filter(**kwargs):
+            start = timezone.localtime(pomodoro.start)
+            end = timezone.localtime(pomodoro.end)
+            # if there is no overlap, then we can return just the
+            # difference of our start and end times
+            if start.date() == end.date():
+                yield start, end - start
+            # otherwise, we need to return the part before midnight
+            # and the part after midnight as two objects
             else:
-                midnight = floor(pomodoro.end)
-                yield pomodoro.start, midnight - pomodoro.start
-                yield pomodoro.end, pomodoro.end - midnight
+                midnight = floor(end)
+                yield start, midnight - start
+                yield end, end - midnight
 
     def post(self, request, **kwargs):
+        # https://github.com/grafana/simple-json-datasource#query-api
         query = json.loads(request.body.decode("utf8"))
         start = timezone.localtime(parse(query["range"]["from"]))
         end = timezone.localtime(parse(query["range"]["to"]))
+
+        try:
+            timezone.activate(request.timezone.timezone)
+        except AttributeError:
+            timezone.deactivate()
+        else:
+            start = timezone.localtime(start)
+            end = timezone.localtime(end)
 
         logger.debug("%s %s %s", query, start, end)
 
