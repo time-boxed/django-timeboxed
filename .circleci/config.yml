@@ -1,11 +1,11 @@
-version: 2
+version: 2.1
+
 jobs:
   build:
     docker:
       - image: circleci/python:3.6.4
         environment:
           SECRET_KEY: abcd
-          PIPENV_VENV_IN_PROJECT: true
           DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
       - image: circleci/postgres:9.6.2
         environment:
