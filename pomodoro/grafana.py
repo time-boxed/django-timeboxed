@@ -47,7 +47,7 @@ def to_ts(dt):
 
 
 def floor(dt):
-    return dt.replace(hour=0, minute=0, second=0, microsecond=0)
+    return datetime.datetime.combine(dt, datetime.time.min)
 
 
 class Query(APIView):
