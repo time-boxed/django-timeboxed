@@ -13,13 +13,12 @@ jobs:
           POSTGRES_DB: circle_test
     steps:
       - checkout
-      - run: mkdir test # For xunit
       - run: python3 -m venv .venv
       - run: .venv/bin/pip install -r docker/requirements.txt
       - run: .venv/bin/pip install -e .[dev,standalone]
       - run: .venv/bin/pomodoro test
       - store_test_results:
-          path: dist/test-results
+          path: test-results
       - store_artifacts:
           path: dist
 
