@@ -18,7 +18,9 @@ jobs:
       - run: .venv/bin/pip install -e .[dev,standalone]
       - run: .venv/bin/pomodoro test
       - store_test_results:
-          path: test-results
+          path: dist/test-results
+      - store_artifacts:
+          path: dist
 
 general:
   branches:
