@@ -26,7 +26,10 @@ setup(
         ],
         "dev": [
             "black",
+            "codecov",
             "django_nose",
+            "django-nose",
+            "nose-cov",
             "psycopg2-binary",
             "unittest-xml-reporting",
         ],
