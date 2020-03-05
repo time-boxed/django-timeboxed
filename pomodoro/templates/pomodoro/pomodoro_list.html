@@ -7,7 +7,7 @@
     <ul class="pagination justify-content-center">
         {% if date_prev %}
         <li class="page-item">
-            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:history' date_prev|date:"Ymd" %}">
+            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-list' date_prev|date:"Ymd" %}">
                 <span aria-hidden="true">&laquo; {{date_prev|date}}</span>
             </a>
         </li>
@@ -15,7 +15,7 @@
 
         {% if date_next %}
         <li class="page-item">
-            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:history' date_next|date:"Ymd" %}">
+            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:pomodoro-list' date_next|date:"Ymd" %}">
                 <span aria-hidden="true">{{date_next|date}} &raquo;</span>
             </a>
         </li>
