@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import uuid
 
 import pkg_resources
 
@@ -103,6 +104,7 @@ class Notification(models.Model):
 
 
 class Share(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(
         "auth.User", related_name="+", verbose_name=_("owner"), on_delete=models.CASCADE
     )
