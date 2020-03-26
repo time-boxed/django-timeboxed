@@ -29,5 +29,5 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(models.Share)
 class ShareAdmin(admin.ModelAdmin):
-    list_display = ("owner", "last_accessed")
+    list_display = ("pk", "owner", "last_accessed")
     readonly_fields = ("last_accessed",)

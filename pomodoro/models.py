@@ -109,3 +109,6 @@ class Share(models.Model):
         "auth.User", related_name="+", verbose_name=_("owner"), on_delete=models.CASCADE
     )
     last_accessed = models.DateTimeField(default=timezone.now)
+
+    def get_absolute_url(self):
+        return reverse("pomodoro:share-calendar", kwargs={"pk": self.pk})
