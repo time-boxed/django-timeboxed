@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+{% include 'pomodoro/nav.inc.html' %}
+
+<table class="table">
+    {% for share in object_list %}
+    <tr>
+        <td>
+            <a href="{% url 'pomodoro:share-calendar' share.pk %}">{{share.pk}}</a>
+        </td>
+        <td>
+            {{share.last_accessed}}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

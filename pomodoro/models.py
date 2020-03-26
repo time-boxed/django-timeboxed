@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import uuid
 
 import pkg_resources
 
@@ -100,3 +101,14 @@ class Notification(models.Model):
             return self.drivers[self.type](self)
         except Exception:
             logger.exception("Error with driver %s", self.type)
+
+
+class Share(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(
+        "auth.User", related_name="+", verbose_name=_("owner"), on_delete=models.CASCADE
+    )
+    last_accessed = models.DateTimeField(default=timezone.now)
+
+    def get_absolute_url(self):
+        return reverse("pomodoro:share-calendar", kwargs={"pk": self.pk})

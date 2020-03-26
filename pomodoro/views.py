@@ -1,10 +1,11 @@
 import datetime
 import logging
 
-from pomodoro import forms, models, mixins
+import icalendar
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -12,6 +13,8 @@ from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
+
+from pomodoro import forms, mixins, models
 
 logger = logging.getLogger(__name__)
 
@@ -127,3 +130,35 @@ class PomodoroHistory(LoginRequiredMixin, ListView):
 class PomodoroDetailView(mixins.OwnerRequiredMixin, DetailView):
     model = models.Pomodoro
 
+
+class ShareList(LoginRequiredMixin, ListView):
+    model = models.Share
+
+    def get_queryset(self):
+        return self.model.objects.filter(owner=self.request.user)
+
+
+class ShareCalendar(View):
+    def get(self, request, pk):
+        share = get_object_or_404(models.Share, pk=pk)
+        share.last_accessed = timezone.now()
+        share.save(update_fields=["last_accessed"])
+
+        cal = icalendar.Calendar()
+        cal.add("prodid", "-//Pomodoro Calendar//")
+        cal.add("version", "2.0")
+        cal.add("X-ORIGINAL-URL", request.build_absolute_uri())
+        cal.add("X-WR-CALNAME", "Calendar Share for %s" % share.owner)
+
+        for pomodoro in models.Pomodoro.objects.filter(owner=share.owner)[:10]:
+            event = icalendar.Event()
+            url = request.build_absolute_uri(pomodoro.get_absolute_url())
+            event.add("uid", pomodoro.pk)
+            event.add("url", url)
+            event.add("categories", [pomodoro.category])
+            event.add("description", pomodoro.memo)
+            event.add("dtstart", pomodoro.start)
+            event.add("dtend", pomodoro.end)
+            cal.add_component(event)
+
+        return HttpResponse(cal.to_ical(), content_type="text/plain")
