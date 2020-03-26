@@ -158,6 +158,10 @@ class ShareCalendar(View):
             url = request.build_absolute_uri(pomodoro.get_absolute_url())
             event.add("uid", pomodoro.pk)
             event.add("url", url)
+            if pomodoro.category:
+                event.add("summary", pomodoro.title + " #" + pomodoro.title)
+            else:
+                event.add("summary", pomodoro.title)
             event.add("categories", [pomodoro.category])
             event.add("description", pomodoro.memo)
             event.add("dtstart", pomodoro.start)
