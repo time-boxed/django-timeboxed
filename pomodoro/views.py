@@ -141,6 +141,8 @@ class ShareList(LoginRequiredMixin, ListView):
 class ShareCalendar(View):
     def get(self, request, pk):
         share = get_object_or_404(models.Share, pk=pk)
+        share.last_accessed = timezone.now()
+        share.save(update_fields=["last_accessed"])
 
         cal = icalendar.Calendar()
         cal.add("prodid", "-//Pomodoro Calendar//")
