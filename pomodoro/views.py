@@ -150,7 +150,10 @@ class ShareCalendar(View):
         cal.add("X-ORIGINAL-URL", request.build_absolute_uri())
         cal.add("X-WR-CALNAME", "Calendar Share for %s" % share.owner)
 
-        for pomodoro in models.Pomodoro.objects.filter(owner=share.owner)[:10]:
+        for pomodoro in models.Pomodoro.objects.filter(
+            owner=share.owner,
+            start_gte=share.last_accessed - datetime.timedelta(days=14),
+        ):
             event = icalendar.Event()
             url = request.build_absolute_uri(pomodoro.get_absolute_url())
             event.add("uid", pomodoro.pk)
