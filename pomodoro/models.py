@@ -100,3 +100,10 @@ class Notification(models.Model):
             return self.drivers[self.type](self)
         except Exception:
             logger.exception("Error with driver %s", self.type)
+
+
+class Share(models.Model):
+    owner = models.ForeignKey(
+        "auth.User", related_name="+", verbose_name=_("owner"), on_delete=models.CASCADE
+    )
+    last_accessed = models.DateTimeField(default=timezone.now)
