@@ -76,6 +76,7 @@ class Favorite(models.Model):
             owner=self.owner,
             start=ts,
             end=ts + datetime.timedelta(minutes=self.duration),
+            url=self.url,
         )
 
 
