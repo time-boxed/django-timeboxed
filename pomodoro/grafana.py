@@ -17,8 +17,6 @@ from django.views.generic.base import TemplateView
 
 logger = logging.getLogger(__name__)
 
-NOCATEGORY = "{Uncategorized}"
-
 
 class Help(TemplateView):
 
@@ -32,14 +30,13 @@ class Search(APIView):
     def post(self, request, **kwargs):
         query = json.loads(request.body.decode("utf8"))
         logger.debug("search %s", query)
-        categories = (
-            models.Pomodoro.objects.filter(owner=self.request.user)
-            .exclude(category="")
-            .order_by("category")
-            .values_list("category", flat=True)
-            .distinct("category")
+        return JsonResponse(
+            [
+                project.name
+                for project in models.Project.objects.filter(owner=self.request.user)
+            ],
+            safe=False,
         )
-        return JsonResponse([NOCATEGORY] + list(categories), safe=False)
 
 
 def to_ts(dt):
@@ -47,7 +44,7 @@ def to_ts(dt):
 
 
 def floor(dt):
-    return datetime.datetime.combine(dt, datetime.time.min)
+    return datetime.datetime.combine(dt, datetime.time.min, tzinfo=dt.tzinfo)
 
 
 class Query(APIView):
@@ -70,20 +67,22 @@ class Query(APIView):
         # Loop through our targets, getting a date,timedelta pair that we
         # can bucket
         for t in targets:
-            target = "" if t["target"] == NOCATEGORY else t["target"]
+            target = t["target"]
             for date, duration in self.filter(
-                category=target, start__gte=start, end__lte=end, owner=self.request.user
+                project__name=target,
+                start__gte=start,
+                end__lte=end,
+                owner=self.request.user,
             ):
                 bucket = floor(date)
-                durations[bucket][target] += duration
+                durations[target][bucket] += duration
 
         # Loop through our targets and buckets to build format that Grafana expects
-        for t in targets:
-            target = "" if t["target"] == NOCATEGORY else t["target"]
+        for target in durations:
             yield {
                 "target": target,
                 "datapoints": [
-                    [durations[bucket][target].total_seconds(), to_ts(bucket)]
+                    [durations[target][bucket].total_seconds(), to_ts(bucket)]
                     for bucket in buckets
                 ],
             }
@@ -103,6 +102,7 @@ class Query(APIView):
             # otherwise, we need to return the part before midnight
             # and the part after midnight as two objects
             else:
+                # TODO: Fix for multiple day events
                 midnight = floor(end)
                 yield start, midnight - start
                 yield end, end - midnight

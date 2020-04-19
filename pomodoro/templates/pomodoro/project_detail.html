@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:project-list' %}">Projects</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{object.name}}</li>
+    </ol>
+</nav>
+
+<dl class="row" style="border: solid #{{project.color}}">
+    <dt class="col-sm-2">Title</dt>
+    <dd class="col-sm-9"><a href="{{object.get_absolute_url}}">{{object.name}}</a></dd>
+    <dt class="col-sm-2">URL</dt>
+    <dd class="col-sm-9">{{obj.url|urlize}}</dd>
+    <dt class="col-sm-2">Memo</dt>
+    <dd class="col-sm-9">{{object.memo}}</dd>
+</dl>
+
+<table class="table" style="border: solid #{{project.color}}">
+    <tr>
+        <th>Favorite</th>
+        <th>Duration</th>
+        <th>Count</th>
+    </tr>
+    {% for f in object.favorite_set.all %}
+    <tr>
+        <td>
+            <form action="{% url 'pomodoro:favorite-detail' f.pk %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-primary btn-block btn-social">
+                    {% if f.icon %}
+                    <img src="{{ MEDIA_PREFIX }}{{ f.icon }}" />
+                    {% endif %}
+                    {{f.title}}
+                </button>
+            </form>
+        </td>
+        <td>{{f.timedelta}}</td>
+        <td>{{f.count}}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3">No Favorites</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

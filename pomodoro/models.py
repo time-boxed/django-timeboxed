@@ -34,7 +34,7 @@ class Project(models.Model):
     )
     name = models.CharField(max_length=32, verbose_name=_("name"))
     color = models.CharField(max_length=6, default=color)
-    url = models.URLField(blank=True, help_text="Optional link")
+    url = models.URLField(blank=True, verbose_name=_("Optional link"))
     memo = models.TextField(blank=True)
 
     class Meta:

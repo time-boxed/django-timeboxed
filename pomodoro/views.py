@@ -60,6 +60,17 @@ class Index(LoginRequiredMixin, FormView):
             return self.form_invalid(form)
 
 
+class ProjectList(LoginRequiredMixin, ListView):
+    model = models.Project
+
+    def get_queryset(self):
+        return self.model.objects.filter(owner=self.request.user)
+
+
+class ProjectDetail(LoginRequiredMixin, DetailView):
+    model = models.Project
+
+
 class Favorite(LoginRequiredMixin, View):
     def post(self, request, pk):
         pomodoro = models.Pomodoro.objects\
