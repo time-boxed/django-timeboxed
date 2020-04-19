@@ -1,7 +1,7 @@
 APP_BIN := .venv/bin/pomodoro
 PIP_BIN := .venv/bin/pip
 
-.PHONY:	test build migrate run shell
+.PHONY:	test build migrate run shell clean
 
 test: ${APP_BIN}
 	${APP_BIN} test -v 2
@@ -19,3 +19,5 @@ run: migrate
 	${APP_BIN} runserver
 shell: migrate
 	${APP_BIN} shell
+clean:
+	rm -rf .venv
