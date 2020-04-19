@@ -23,41 +23,43 @@ class Index(LoginRequiredMixin, FormView):
     template_name = "pomodoro/index.html"
     form_class = forms.PomodoroForm
 
+    def get_object(self):
+        return models.Pomodoro.objects.filter(owner=self.request.user).latest("start")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["owner"] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["pomodoro"] = models.Pomodoro.objects.filter(
-            owner=self.request.user
-        ).latest("start")
-        context['now'] = timezone.now().replace(microsecond=0)
-        context['active'] = context['pomodoro'].end > context['now']
+        context["pomodoro"] = self.get_object()
+        context["now"] = timezone.now().replace(microsecond=0)
+        context["active"] = context["pomodoro"].end > context["now"]
         return context
 
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            data = form.clean()
-            data['owner'] = request.user
-            data['start'] = timezone.now()
-            if 'pomodoro' in request.POST:
-                data['end'] = data['start'] + datetime.timedelta(minutes=25)
-            if 'hour' in request.POST:
-                data['end'] = data['start'] + datetime.timedelta(hours=1)
-            models.Pomodoro.objects.create(**data)
-            return redirect(reverse('pomodoro:dashboard'))
-        else:
-            if 'plus-five' in request.POST:
-                pomodoro = models.Pomodoro.objects.latest('start')
-                pomodoro.end += datetime.timedelta(minutes=5)
-                pomodoro.save()
-                return redirect(reverse('pomodoro:dashboard'))
+    def form_valid(self, form):
+        data = form.clean()
+        data["owner"] = self.request.user
+        data["start"] = timezone.now()
+        data["end"] = data["start"] + datetime.timedelta(minutes=data.pop("duration"))
+        models.Pomodoro.objects.create(**data)
+        return redirect(reverse("pomodoro:dashboard"))
 
-            if 'stop' in request.POST:
-                pomodoro = models.Pomodoro.objects.latest('start')
-                pomodoro.end = timezone.now().replace(microsecond=0)
-                pomodoro.save()
-                return redirect(reverse('pomodoro:dashboard'))
+    def post(self, request):
+        if "extend" in self.request.POST:
+            pomodoro = self.get_object()
+            pomodoro.end += datetime.timedelta(minutes=int(self.request.POST["extend"]))
+            pomodoro.save(update_fields=["end"])
+            return redirect(reverse("pomodoro:dashboard"))
 
-            return self.form_invalid(form)
+        if "stop" in self.request.POST:
+            pomodoro = self.get_object()
+            pomodoro.end = timezone.now().replace(microsecond=0)
+            pomodoro.save(update_fields=["end"])
+            pomodoro.save()
+            return redirect(reverse("pomodoro:dashboard"))
+        return super().post(self, request)
 
 
 class ProjectList(LoginRequiredMixin, ListView):

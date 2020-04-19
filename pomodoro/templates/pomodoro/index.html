@@ -16,7 +16,10 @@
 {% block content %}
 
 <div class="card" data-countdown="{{ pomodoro.end.isoformat }}">
-    <h4 class="card-title">{{ pomodoro.title }} {% if pomodoro.category %}- {{ pomodoro.category}}{% endif %}</h4>
+    <h4 class="card-title">
+        {{ pomodoro.title }}
+        (<a href="{{pomodoro.project.get_absolute_url}}">{{pomodoro.project.name}}</a>)
+    </h4>
     <div class="card-body countdown-body">
         <div class="days">
             <span></span>
@@ -49,20 +52,23 @@
             <tr>
                 <td>{{form.title.label}}</td>
                 <td>{{form.title}}</td>
+                <td>{{form.title.error}}</td>
             </tr>
             <tr>
-                <td>{{form.category.label}}</td>
-                <td>{{form.category}}</td>
-                </td>
+                <td>{{form.project.label}}</td>
+                <td>{{form.project}}</td>
+                <td>{{form.project.error}}</td>
         </table>
         <div class="card-body">
-            <button name="pomodoro" type="submit" class="btn btn-primary btn-block">25 Minute</button>
-            <button name="hour" type="submit" class="btn btn-primary btn-block">1 Hour</button>
+            <button name="duration" type="submit" value="25" class="btn btn-primary btn-block">25 Minute</button>
+            <button name="duration" type="submit" value="60" class="btn btn-primary btn-block">1 Hour</button>
         </div>
         {% else %}
         </table>
         <div class="card-body">
-            <button name="plus-five" type="submit" class="btn btn-primary btn-block">+5</button>
+            <button name="extend" type="submit" value="5" class="btn btn-primary btn-block">+5</button>
+            <button name="extend" type="submit" value="10" class="btn btn-primary btn-block">+10</button>
+            <button name="extend" type="submit" value="30" class="btn btn-primary btn-block">+30</button>
             <button name="stop" type="submit " class="btn btn-danger btn-block">Stop</button>
         </div>
         {% endif %}

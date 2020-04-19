@@ -1,12 +1,14 @@
-from django.forms import ModelForm
-
 from . import models
 
+from django import forms
 
-class PomodoroForm(ModelForm):
+
+class PomodoroForm(forms.ModelForm):
+    duration = forms.IntegerField()
+
     class Meta:
         model = models.Pomodoro
-        fields = ["title", "project"]
+        fields = ["title", "project", "duration"]
 
     def __init__(self, owner, *args, **kwargs):
         super().__init__(*args, **kwargs)

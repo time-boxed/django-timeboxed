@@ -14,7 +14,7 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(models.Pomodoro)
 class PomodoroAdmin(admin.ModelAdmin):
     date_hierarchy = 'start'
-    list_display = ('title', 'category', 'start', 'end', 'duration', 'owner',)
+    list_display = ('title', 'project', 'start', 'end', 'duration', 'owner',)
     list_filter = ('owner', 'start', 'category',)
 
 
