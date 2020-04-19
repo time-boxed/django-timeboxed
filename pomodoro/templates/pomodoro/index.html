@@ -1,87 +1,74 @@
 {% extends "base.html" %}
 {% load static %}
-{% block content %}
-{% include 'pomodoro/nav.inc.html' %}
-
-        {% include 'pomodoro/block_pomodoro.html' %}
-
-{% endblock %}
 
 {% block styles %}
-<link rel="apple-touch-icon" href="{% static "images/pomodoro.png" %}">
+<link rel="apple-touch-icon" href="{% static "/images/pomodoro.png" %}">
 <meta name="apple-mobile-web-app-title" content="Pomodoro">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<style type="text/css">
-#clockdiv{
-    font-family: sans-serif;
-    display: inline-block;
-    font-weight: 100;
-    text-align: center;
-    font-size: 1em;
-}
-
-#clockdiv > div{
-    padding: 10px;
-    border-radius: 3px;
-    display: inline-block;
-    background-color:#eee;
-}
-
-#clockdiv div > span{
-    padding: 15px;
-    border-radius: 3px;
-    display: inline-block;
-}
-.smalltext{
-    padding-top: 5px;
-    font-size: 0.75em;
-}
-
-</style>
+<link rel="stylesheet" href="{% static "/css/pomodoro.css" %}">
 {% endblock %}
 
 {% block javascript %}
+<script src="{% static "/js/pomodoro.js" %}"></script>
 <script>
-/*
-Based on code from
-https://www.sitepoint.com/build-javascript-countdown-timer-no-dependencies/
-*/
-var deadline = new Date("{{ pomodoro.end.isoformat }}")
-
-function getTimeRemaining(endtime, current){
-    t = Math.abs(endtime - current);
-
-    return {
-        'total': t,
-        'days': Math.floor( t/(1000*60*60*24) ),
-        'hours': Math.floor( (t/(1000*60*60)) % 24 ),
-        'minutes': Math.floor( (t/1000/60) % 60 ),
-        'seconds': Math.floor( (t/1000) % 60 )
-    };
-}
-
-function initializeClock(id, endtime){
-    var clock = document.getElementById(id);
-    var daysSpan = clock.querySelector('.days');
-    var hoursSpan = clock.querySelector('.hours');
-    var minutesSpan = clock.querySelector('.minutes');
-    var secondsSpan = clock.querySelector('.seconds');
-
-    function updateClock(){
-        var current = Date.now()
-        var t = getTimeRemaining(endtime, current);
-
-        daysSpan.innerHTML = t.days
-        hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
-        minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
-        secondsSpan.innerHTML =('0' + t.seconds).slice(-2);
-    }
-
-    updateClock(); // run function once at first to avoid delay
-    var timeinterval = setInterval(updateClock, 1000);
-}
-
-initializeClock('clockdiv', deadline);
+    initializeClock("clockdiv", new Date("{{ pomodoro.end.isoformat }}"));
 </script>
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h4 class="card-title">{{ pomodoro.title }} {% if pomodoro.category %}- {{ pomodoro.category}}{% endif %}</h4>
+    <div class="card-body" id="clockdiv">
+        <div class="days">
+            <span></span>
+            <div>Days</div>
+        </div>
+        <div class="hours">
+            <span></span>
+            <div>Hours</div>
+        </div>
+        <div class="minutes">
+            <span></span>
+            <div>Minutes</div>
+        </div>
+        <div class="seconds">
+            <span></span>
+            <div>Seconds</div>
+        </div>
+    </div>
+    <form action="" method="post">{% csrf_token %}
+        <table class="table">
+            <tr>
+                <td>Start</td>
+                <td>{{ pomodoro.start }}</td>
+            </tr>
+            <tr>
+                <td>End</td>
+                <td>{{ pomodoro.end }}</td>
+            </tr>
+            {% if not active %}
+            <tr>
+                <td>{{form.title.label}}</td>
+                <td>{{form.title}}</td>
+            </tr>
+            <tr>
+                <td>{{form.category.label}}</td>
+                <td>{{form.category}}</td>
+                </td>
+        </table>
+        <div class="card-body">
+            <button name="pomodoro" type="submit" class="btn btn-primary btn-block">25 Minute</button>
+            <button name="hour" type="submit" class="btn btn-primary btn-block">1 Hour</button>
+        </div>
+        {% else %}
+        </table>
+        <div class="card-body">
+            <button name="plus-five" type="submit" class="btn btn-primary btn-block">+5</button>
+            <button name="stop" type="submit " class="btn btn-danger btn-block">Stop</button>
+        </div>
+        {% endif %}
+    </form>
+</div>
 {% endblock %}
