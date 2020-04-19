@@ -70,7 +70,7 @@ class ProjectList(LoginRequiredMixin, ListView):
 
 
 
-class ProjectDetail(LoginRequiredMixin, DetailView):
+class ProjectDetail(mixins.OwnerRequiredMixin, DetailView):
     model = models.Project
 
     def get_context_data(self, **kwargs):
@@ -81,7 +81,7 @@ class ProjectDetail(LoginRequiredMixin, DetailView):
         return context
 
 
-class Favorite(LoginRequiredMixin, View):
+class Favorite(mixins.OwnerRequiredMixin, View):
     def post(self, request, pk):
         pomodoro = models.Pomodoro.objects\
             .filter(owner=self.request.user).latest('start')
@@ -101,7 +101,6 @@ class FavoriteList(LoginRequiredMixin, ListView):
     model = models.Favorite
 
     def get_queryset(self):
-        print(dir(self))
         return self.model.objects.filter(owner=self.request.user)
 
 
