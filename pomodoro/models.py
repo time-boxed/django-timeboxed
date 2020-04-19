@@ -21,7 +21,7 @@ def _upload_to_path(instance, filename):
 
 
 def color():
-    return f"{random.randrange(0x1000000):06x}"
+    return "%06x" % random.randint(0, 0xFFFFFF)
 
 
 class Project(models.Model):
