@@ -20,28 +20,16 @@ logger = logging.getLogger(__name__)
 
 
 class Index(LoginRequiredMixin, FormView):
-    template_name = 'pomodoro/index.html'
+    template_name = "pomodoro/index.html"
     form_class = forms.PomodoroForm
 
     def get_context_data(self, **kwargs):
-        context = super(Index, self).get_context_data(**kwargs)
-        context['pomodoro'] = models.Pomodoro.objects\
-            .filter(owner=self.request.user).latest('start')
+        context = super().get_context_data(**kwargs)
+        context["pomodoro"] = models.Pomodoro.objects.filter(
+            owner=self.request.user
+        ).latest("start")
         context['now'] = timezone.now().replace(microsecond=0)
         context['active'] = context['pomodoro'].end > context['now']
-        context['diff'] = context['now'] - context['pomodoro'].end
-
-        if context['active']:
-            context['hilite'] = 'success'
-        elif context['diff'].total_seconds() < 5 * 60 * 60:
-            context['hilite'] = 'warning'
-        else:
-            context['hilite'] = 'danger'
-
-        context['today'] = timezone.localtime(context['now'])\
-            .replace(minute=0, hour=0, second=0)
-
-        context['yesterday'] = context['today'] - datetime.timedelta(days=1)
         return context
 
     def post(self, request, *args, **kwargs):
