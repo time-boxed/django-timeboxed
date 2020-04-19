@@ -4,6 +4,13 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 
+@admin.register(models.Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ("name", "color", "owner")
+    list_filter = ("owner",)
+    list_select_related = ("owner",)
+
+
 @admin.register(models.Pomodoro)
 class PomodoroAdmin(admin.ModelAdmin):
     date_hierarchy = 'start'

@@ -1,10 +1,12 @@
 import datetime
 import logging
 import os
+import random
 import uuid
 
 import pkg_resources
 
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -15,7 +17,35 @@ logger = logging.getLogger(__name__)
 
 def _upload_to_path(instance, filename):
     root, ext = os.path.splitext(filename)
-    return 'pomodoro/favorites/{}{}'.format(instance.pk, ext)
+    return "pomodoro/favorites/{}{}".format(instance.pk, ext)
+
+
+def color():
+    return f"{random.randrange(0x1000000):06x}"
+
+
+class Project(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="+",
+        verbose_name=_("owner"),
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=32, verbose_name=_("name"))
+    color = models.CharField(max_length=6, default=color)
+    url = models.URLField(blank=True, help_text="Optional link")
+    memo = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ("name",)
+        unique_together = [["owner", "name"]]
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("pomodoro:project-detail", kwargs={"pk": self.pk})
 
 
 class Pomodoro(models.Model):
@@ -25,6 +55,7 @@ class Pomodoro(models.Model):
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
     owner = models.ForeignKey('auth.User', related_name='pomodoros', verbose_name=_('owner'), on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, null=True, on_delete=models.CASCADE)
 
     url = models.URLField(blank=True, help_text="Optional link")
     memo = models.TextField(blank=True)
@@ -49,6 +80,7 @@ class Favorite(models.Model):
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
     owner = models.ForeignKey('auth.User', related_name='favorite', verbose_name=_('owner'), on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, null=True, on_delete=models.CASCADE)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     count = models.PositiveIntegerField(default=0)
     url = models.URLField(blank=True)
