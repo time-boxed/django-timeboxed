@@ -1,4 +1,4 @@
-#clockdiv {
+.countdown-body {
   font-family: sans-serif;
   display: inline-block;
   font-weight: 100;
@@ -6,14 +6,14 @@
   font-size: 1em;
 }
 
-#clockdiv > div {
+.countdown-body > div {
   padding: 10px;
   border-radius: 3px;
   display: inline-block;
   background-color: #eee;
 }
 
-#clockdiv div > span {
+.countdown-body  div > span {
   padding: 15px;
   border-radius: 3px;
   display: inline-block;

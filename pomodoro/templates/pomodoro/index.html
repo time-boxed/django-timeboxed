@@ -11,16 +11,13 @@
 
 {% block javascript %}
 <script src="{% static "/js/pomodoro.js" %}"></script>
-<script>
-    initializeClock("clockdiv", new Date("{{ pomodoro.end.isoformat }}"));
-</script>
 {% endblock %}
 
 {% block content %}
 
-<div class="card">
+<div class="card" data-countdown="{{ pomodoro.end.isoformat }}">
     <h4 class="card-title">{{ pomodoro.title }} {% if pomodoro.category %}- {{ pomodoro.category}}{% endif %}</h4>
-    <div class="card-body" id="clockdiv">
+    <div class="card-body countdown-body">
         <div class="days">
             <span></span>
             <div>Days</div>

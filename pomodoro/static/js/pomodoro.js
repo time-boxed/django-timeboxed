@@ -3,54 +3,66 @@
     https://www.sitepoint.com/build-javascript-countdown-timer-no-dependencies/
     */
 
-function getTimeRemaining(endtime) {
-  var current = Date.now();
-  diff = endtime - current;
-  t = Math.abs(diff);
+class Countdown {
+  constructor(ele, endtime) {
+    this.clock = ele;
+    this.endtime = new Date(ele.dataset.countdown);
 
-  return {
-    diff: diff / 1000,
-    total: t / 1000,
-    days: Math.floor(t / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((t / (1000 * 60 * 60)) % 24),
-    minutes: Math.floor((t / 1000 / 60) % 60),
-    seconds: Math.floor((t / 1000) % 60),
-  };
-}
+    this.daysSpan = this.clock.querySelector(".days");
+    this.hoursSpan = this.clock.querySelector(".hours");
+    this.minutesSpan = this.clock.querySelector(".minutes");
+    this.secondsSpan = this.clock.querySelector(".seconds");
 
-function color(time) {
-  if (time > 0) return "success";
-  if (time < -300) return "danger";
-  return "warning";
-}
+    // Call updateClock once to get things started
+    this.updateClock();
 
-function updateElement(ele, t, value, padded) {
-  span = ele.querySelector("span");
-  div = ele.querySelector("div");
-
-  span.innerHTML = padded ? ("0" + value).slice(-2) : value;
-  span.className = `bg-${color(t.diff)}`;
-  div.className = `smalltext text-${color(t.diff)}`;
-}
-
-function initializeClock(id, endtime) {
-  var clock = document.getElementById(id);
-  var daysSpan = clock.querySelector(".days");
-  var hoursSpan = clock.querySelector(".hours");
-  var minutesSpan = clock.querySelector(".minutes");
-  var secondsSpan = clock.querySelector(".seconds");
-
-  function updateClock() {
-    var t = getTimeRemaining(endtime);
-
-    updateElement(daysSpan, t, t.days, false);
-    updateElement(hoursSpan, t, t.hours, true);
-    updateElement(minutesSpan, t, t.minutes, true);
-    updateElement(secondsSpan, t, t.seconds, true);
-
-    clock.className = `card card-${color(t.diff)}`;
+    // Update our countdown every second
+    var t = this;
+    var timeinterval = setInterval(function () {
+      t.updateClock();
+    }, 1000);
   }
 
-  updateClock(); // run function once at first to avoid delay
-  var timeinterval = setInterval(updateClock, 1000);
+  getTimeRemaining() {
+    var current = Date.now();
+    var diff = this.endtime - current;
+    var t = Math.abs(diff);
+
+    return {
+      diff: diff / 1000,
+      total: t / 1000,
+      days: Math.floor(t / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((t / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((t / 1000 / 60) % 60),
+      seconds: Math.floor((t / 1000) % 60),
+    };
+  }
+
+  color(time) {
+    if (time > 0) return "success";
+    if (time < -300) return "danger";
+    return "warning";
+  }
+  updateElement(ele, t, value, padded) {
+    var span = ele.querySelector("span");
+    var div = ele.querySelector("div");
+
+    span.innerHTML = padded ? ("0" + value).slice(-2) : value;
+    span.className = `bg-${this.color(t.diff)}`;
+    div.className = `smalltext text-${this.color(t.diff)}`;
+  }
+
+  updateClock() {
+    var t = this.getTimeRemaining(this.endtime);
+
+    this.updateElement(this.daysSpan, t, t.days, false);
+    this.updateElement(this.hoursSpan, t, t.hours, true);
+    this.updateElement(this.minutesSpan, t, t.minutes, true);
+    this.updateElement(this.secondsSpan, t, t.seconds, true);
+    this.clock.parentElement.className = `card card-${this.color(t.diff)}`;
+  }
 }
+
+document.querySelectorAll("[data-countdown]").forEach(function (ele) {
+  new Countdown(ele);
+});
