@@ -68,3 +68,15 @@ class PomodoroViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user)
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    queryset = models.Project.objects
+    serializer_class = serializers.ProjectSeralizer
+    permission_classes = (permissions.IsOwner,)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
