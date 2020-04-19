@@ -33,7 +33,7 @@ class ShortProjectSeralizer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    project = ShortProjectSeralizer()
+    # project = ShortProjectSeralizer()
     html_link = LinkField()
 
     class Meta:
@@ -43,7 +43,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class PomodoroSerializer(serializers.ModelSerializer):
-    project = ShortProjectSeralizer()
+    # project = ShortProjectSeralizer()
     html_link = LinkField()
 
     def create(self, validated_data):
