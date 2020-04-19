@@ -16,18 +16,34 @@ class LinkField(serializers.Field):
         return "https://" + get_current_site(None).domain + value
 
 
+class ProjectSeralizer(serializers.ModelSerializer):
+    html_link = LinkField()
+    
+    class Meta:
+        model = models.Project
+        exclude = ("owner",)
+        read_only = "id"
+
+
+class ShortProjectSeralizer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Project
+        exclude = ("owner", "memo", "url")
+        read_only = "id"
+
+
 class FavoriteSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source="owner.username")
+    project = ShortProjectSeralizer()
     html_link = LinkField()
 
     class Meta:
         model = models.Favorite
-        fields = "__all__"
-        read_only = ("id", "icon", "count", "owner")
+        exclude = ("owner",)
+        read_only = ("id", "icon", "count")
 
 
 class PomodoroSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source="owner.username")
+    project = ShortProjectSeralizer()
     html_link = LinkField()
 
     def create(self, validated_data):
@@ -37,5 +53,5 @@ class PomodoroSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Pomodoro
-        fields = "__all__"
-        read_only_fields = ("id", "owner")
+        exclude = ("owner",)
+        read_only_fields = ("id",)

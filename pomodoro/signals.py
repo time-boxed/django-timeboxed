@@ -1,12 +1,25 @@
 import logging
 
-from . import tasks
+from . import models, tasks
 
 import django.utils.timezone
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 logger = logging.getLogger(__name__)
+
+
+@receiver(pre_save, sender="pomodoro.Pomodoro")
+def legacy_category(sender, instance, **kwargs):
+    if not instance.pk:  # Creating a new instance
+        if instance.category:  # and there's a category name
+            if not instance.project:  # And there is no project
+                instance.project, _ = models.Project.objects.get_or_create(
+                    name=instance.category, owner=instance.owner
+                )
+                logger.info(
+                    "Automatically added project %s to %s", instance.project, instance
+                )
 
 
 @receiver(post_save, sender="pomodoro.Pomodoro")

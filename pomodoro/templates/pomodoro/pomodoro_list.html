@@ -28,6 +28,7 @@
     <table class="table">
         <tr>
             <th>Title</th>
+            <th>Project</th>
             <th>Category</th>
             <th>Start</th>
             <th>End</th>
@@ -35,7 +36,8 @@
         </tr>
 {% for p in pomodoro_list %}
         <tr>
-            <td><a href="{% url 'pomodoro:pomodoro-detail' p.pk %}">{{p.title}}</a></td>
+            <td><a href="{{p.get_absoluete_url}}">{{p.title}}</a></td>
+            <td><a href="{{p.project.get_absolute_url}}">{{p.project.name}}</a></td>
             <td>{{p.category}}</td>
             <td>{{p.start}}</td>
             <td>{{p.end}}</td>
