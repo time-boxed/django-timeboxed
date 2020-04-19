@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic.base import View
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 
 from pomodoro import forms, mixins, models
@@ -20,7 +20,7 @@ from pomodoro import forms, mixins, models
 logger = logging.getLogger(__name__)
 
 
-class Index(LoginRequiredMixin, FormView):
+class Index(LoginRequiredMixin, UpdateView):
     template_name = "pomodoro/index.html"
     form_class = forms.PomodoroForm
 
@@ -34,7 +34,6 @@ class Index(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["pomodoro"] = self.get_object()
         context["now"] = timezone.now().replace(microsecond=0)
         context["active"] = context["pomodoro"].end > context["now"]
         return context
