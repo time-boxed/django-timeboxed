@@ -15,7 +15,7 @@
 {% for f in favorite_list %}
         <tr>
             <td>
-                <form action="{% url 'pomodoro:favorite' f.pk %}" method="post">
+                <form action="{{f.get_absolute_url}}" method="post">
                     {% csrf_token %}
                     <button class="btn btn-primary btn-block btn-social">
                         {% if f.icon %}

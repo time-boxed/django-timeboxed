@@ -12,7 +12,7 @@
 
 <dl class="row" style="border: solid #{{project.color}}">
     <dt class="col-sm-2">Title</dt>
-    <dd class="col-sm-9"><a href="{{object.get_absolute_url}}">{{object.name}}</a></dd>
+    <dd class="col-sm-9">{{object.name}}</dd>
     <dt class="col-sm-2">URL</dt>
     <dd class="col-sm-9">{{obj.url|urlize}}</dd>
     <dt class="col-sm-2">Memo</dt>
@@ -47,4 +47,28 @@
     </tr>
     {% endfor %}
 </table>
+
+<table class="table" style="border: solid #{{project.color}}">
+    <tr>
+        <th>Pomodoro</th>
+        <th>Category</th>
+        <th>Start</th>
+        <th>End</th>
+    </tr>
+    {% for p in page_obj %}
+    <tr>
+        <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
+        <td>{{p.category}}</td>
+        <td>{{p.start}}</td>
+        <td>{{p.end}}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3">No Pomodoros</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% include 'pomodoro/pagination.html' %}
+
 {% endblock %}

@@ -5,6 +5,7 @@ import icalendar
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import InvalidPage, Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -69,8 +70,16 @@ class ProjectList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
+
 class ProjectDetail(LoginRequiredMixin, DetailView):
     model = models.Project
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = Paginator(context["object"].pomodoro_set.order_by("-start"), 25)
+        context["paginator"] = paginator
+        context["page_obj"] = paginator.get_page(self.request.GET.get("page") or 1)
+        return context
 
 
 class Favorite(LoginRequiredMixin, View):

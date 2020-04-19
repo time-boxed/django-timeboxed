@@ -54,7 +54,7 @@ class Pomodoro(models.Model):
 
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
-    owner = models.ForeignKey('auth.User', related_name='pomodoros', verbose_name=_('owner'), on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='pomodoros', verbose_name=_('owner'), on_delete=models.CASCADE)
     project = models.ForeignKey(Project, null=True, on_delete=models.CASCADE)
 
     url = models.URLField(blank=True, help_text="Optional link")
@@ -79,7 +79,7 @@ class Favorite(models.Model):
     duration = models.IntegerField(verbose_name=_('duration'))
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
-    owner = models.ForeignKey('auth.User', related_name='favorite', verbose_name=_('owner'), on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='favorite', verbose_name=_('owner'), on_delete=models.CASCADE)
     project = models.ForeignKey(Project, null=True, on_delete=models.CASCADE)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     count = models.PositiveIntegerField(default=0)
@@ -87,6 +87,9 @@ class Favorite(models.Model):
 
     class Meta:
         ordering = ('-count',)
+
+    def get_absolute_url(self):
+        return reverse('pomodoro:favorite-detail', kwargs={'pk': self.pk})
 
     def refresh(self):
         duration = timezone.now() - datetime.timedelta(days=30)
