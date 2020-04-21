@@ -5,7 +5,7 @@ from paho.mqtt.publish import single
 
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
-
+from rest_framework.urls.json import JSONEncoder
 from pomodoro import serializers
 
 
@@ -21,7 +21,7 @@ class MQTT:
     def publish(self, topic, data, retain=True):
         single(
             topic=topic,
-            payload=json.dumps(data).encode("utf8"),
+            payload=json.dumps(data, cls=JSONEncoder).encode("utf8"),
             retain=retain,
             client_id=self.client_id[:23],
             hostname=settings.MQTT_HOST,
