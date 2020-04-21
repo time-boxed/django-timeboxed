@@ -2,7 +2,7 @@ import json
 import uuid
 
 from paho.mqtt.publish import single
-from rest_framework.urls.encoders import JSONEncoder
+from rest_framework.utils.encoders import JSONEncoder
 
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
