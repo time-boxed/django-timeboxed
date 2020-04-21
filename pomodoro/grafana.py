@@ -44,7 +44,9 @@ def to_ts(dt):
 
 
 def floor(dt):
-    return datetime.datetime.combine(dt, datetime.time.min, tzinfo=dt.tzinfo)
+    # Pending python upgrade
+    return datetime.datetime.combine(dt, datetime.time.min)
+    # return datetime.datetime.combine(dt, datetime.time.min, tzinfo=dt.tzinfo)
 
 
 class Query(APIView):
