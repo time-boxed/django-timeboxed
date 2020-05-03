@@ -1,10 +1,10 @@
 import datetime
 import logging
-import os
-import random
 import uuid
 
 import pkg_resources
+
+from . import util
 
 from django.conf import settings
 from django.db import models
@@ -14,14 +14,6 @@ from django.utils.translation import ugettext_lazy as _
 
 logger = logging.getLogger(__name__)
 
-
-def _upload_to_path(instance, filename):
-    root, ext = os.path.splitext(filename)
-    return "pomodoro/favorites/{}{}".format(instance.pk, ext)
-
-
-def color():
-    return "%06x" % random.randint(0, 0xFFFFFF)
 
 
 class Project(models.Model):
@@ -33,7 +25,7 @@ class Project(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=32, verbose_name=_("name"))
-    color = models.CharField(max_length=6, default=color)
+    color = models.CharField(max_length=6, default=util.color)
     url = models.URLField(blank=True, verbose_name=_("Optional link"))
     memo = models.TextField(blank=True)
     active = models.BooleanField(default=False)
@@ -82,7 +74,7 @@ class Favorite(models.Model):
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='favorite', verbose_name=_('owner'), on_delete=models.CASCADE)
     project = models.ForeignKey(Project, null=True, on_delete=models.CASCADE)
-    icon = models.ImageField(upload_to=_upload_to_path, blank=True)
+    icon = models.ImageField(upload_to=util._upload_to_path, blank=True)
     count = models.PositiveIntegerField(default=0)
     url = models.URLField(blank=True)
 

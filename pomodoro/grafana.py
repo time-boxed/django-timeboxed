@@ -8,7 +8,7 @@ from rest_framework.authentication import BasicAuthentication, SessionAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from . import models
+from . import models, util
 
 from django.http import JsonResponse
 from django.urls import path
@@ -41,15 +41,6 @@ class Search(APIView):
         )
 
 
-def to_ts(dt):
-    return dt.timestamp() * 1000
-
-
-def floor(dt):
-    # Pending python upgrade
-    return datetime.datetime.combine(dt, datetime.time.min)
-    # return datetime.datetime.combine(dt, datetime.time.min, tzinfo=dt.tzinfo)
-
 
 class Query(APIView):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
@@ -63,7 +54,7 @@ class Query(APIView):
         # are shown as 0
         buckets = sorted(
             [
-                floor(start + datetime.timedelta(days=x))
+                util.floor(start + datetime.timedelta(days=x))
                 for x in range(0, (end - start).days + 1)
             ]
         )
@@ -78,7 +69,7 @@ class Query(APIView):
                 end__lte=end,
                 owner=self.request.user,
             ):
-                bucket = floor(date)
+                bucket = util.floor(date)
                 durations[target][bucket] += duration
 
         # Loop through our targets and buckets to build format that Grafana expects
@@ -86,7 +77,7 @@ class Query(APIView):
             yield {
                 "target": target,
                 "datapoints": [
-                    [durations[target][bucket].total_seconds(), to_ts(bucket)]
+                    [durations[target][bucket].total_seconds(), util.to_ts(bucket)]
                     for bucket in buckets
                 ],
             }
@@ -107,7 +98,7 @@ class Query(APIView):
             # and the part after midnight as two objects
             else:
                 # TODO: Fix for multiple day events
-                midnight = floor(end)
+                midnight = util.floor(end)
                 yield start, midnight - start
                 yield end, end - midnight
 
