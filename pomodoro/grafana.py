@@ -33,7 +33,9 @@ class Search(APIView):
         return JsonResponse(
             [
                 project.name
-                for project in models.Project.objects.filter(owner=self.request.user)
+                for project in models.Project.objects.filter(
+                    owner=self.request.user, active=True
+                )
             ],
             safe=False,
         )

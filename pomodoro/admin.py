@@ -6,8 +6,8 @@ from django.utils.translation import ugettext_lazy as _
 
 @admin.register(models.Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ("name", "color", "owner")
-    list_filter = ("owner",)
+    list_display = ("name", "color", "active", "owner")
+    list_filter = ("owner", "active")
     list_select_related = ("owner",)
 
 
