@@ -28,7 +28,7 @@ class Project(models.Model):
     color = models.CharField(max_length=6, default=util.color)
     url = models.URLField(blank=True, verbose_name=_("Optional link"))
     memo = models.TextField(blank=True)
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ("name",)

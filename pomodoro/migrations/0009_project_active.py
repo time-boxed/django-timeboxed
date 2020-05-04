@@ -2,12 +2,6 @@
 
 from django.db import migrations, models
 
-
-def default_active(apps, schema_editor):
-    Project = apps.get_model("pomodoro", "Project")
-    Project.objects.all().update(active=True)
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -18,7 +12,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="project",
             name="active",
-            field=models.BooleanField(default=False),
+            field=models.BooleanField(default=True),
         ),
-        migrations.RunPython(default_active, migrations.RunPython.noop),
     ]
