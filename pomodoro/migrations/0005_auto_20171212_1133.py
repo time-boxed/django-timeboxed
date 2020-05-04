@@ -3,7 +3,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import pomodoro.models
+
+from pomodoro import util
 
 
 class Migration(migrations.Migration):
@@ -20,6 +21,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='favorite',
             name='icon',
-            field=models.ImageField(blank=True, upload_to=pomodoro.models._upload_to_path),
+            field=models.ImageField(blank=True, upload_to=util._upload_to_path),
         ),
     ]
