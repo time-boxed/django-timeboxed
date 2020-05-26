@@ -13,9 +13,21 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(models.Pomodoro)
 class PomodoroAdmin(admin.ModelAdmin):
-    date_hierarchy = 'start'
-    list_display = ('title', 'project', 'start', 'end', 'duration', 'owner',)
-    list_filter = ('owner', 'start', 'category',)
+    date_hierarchy = "start"
+    list_select_related = ("project", "owner")
+    list_display = (
+        "title",
+        "project",
+        "start",
+        "end",
+        "duration",
+        "owner",
+    )
+    list_filter = (
+        ("owner", admin.RelatedOnlyFieldListFilter),
+        "start",
+        "category",
+    )
 
 
 @admin.register(models.Favorite)
