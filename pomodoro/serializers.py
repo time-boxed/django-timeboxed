@@ -25,7 +25,7 @@ class URLField(serializers.URLField):
 
 class ProjectSeralizer(serializers.ModelSerializer):
     html_link = LinkField()
-    url = URLField()
+    url = URLField(required=False)
 
     class Meta:
         model = models.Project
@@ -43,7 +43,7 @@ class ShortProjectSeralizer(serializers.ModelSerializer):
 class FavoriteSerializer(serializers.ModelSerializer):
     # project = ShortProjectSeralizer()
     html_link = LinkField()
-    url = URLField()
+    url = URLField(required=False)
 
     class Meta:
         model = models.Favorite
@@ -54,7 +54,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 class PomodoroSerializer(serializers.ModelSerializer):
     # project = ShortProjectSeralizer()
     html_link = LinkField()
-    url = URLField()
+    url = URLField(required=False)
 
     def create(self, validated_data):
         if "start" not in validated_data:
