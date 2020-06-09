@@ -21,6 +21,7 @@ setup(
         "standalone": [
             "celery==4.3.0",
             "django-environ",
+            "django==2.2.13",
             "paho-mqtt",
             "sentry_sdk",
         ],
