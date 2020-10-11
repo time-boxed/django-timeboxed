@@ -81,20 +81,24 @@ class ProjectDetail(mixins.OwnerRequiredMixin, DetailView):
         return context
 
 
-class Favorite(mixins.OwnerRequiredMixin, View):
+class FavoriteDetail(mixins.OwnerRequiredMixin, DetailView):
+    model = models.Favorite
+
     def post(self, request, pk):
-        pomodoro = models.Pomodoro.objects\
-            .filter(owner=self.request.user).latest('start')
+        pomodoro = models.Pomodoro.objects.filter(owner=self.request.user).latest(
+            "start"
+        )
         now = timezone.now().replace(microsecond=0)
+
         favorite = get_object_or_404(models.Favorite, pk=pk)
 
         if pomodoro.end > now:
-            messages.warning(request, 'Active Pomodoro')
-            return redirect(reverse('pomodoro:dashboard'))
+            messages.warning(request, "Active Pomodoro")
+            return redirect(reverse("pomodoro:dashboard"))
 
         pomodoro = favorite.start(now)
-        messages.warning(request, 'Starting Pomodoro {}'.format(pomodoro.title))
-        return redirect(reverse('pomodoro:dashboard'))
+        messages.warning(request, "Starting Pomodoro {}".format(pomodoro.title))
+        return redirect(reverse("pomodoro:dashboard"))
 
 
 class FavoriteList(LoginRequiredMixin, ListView):
