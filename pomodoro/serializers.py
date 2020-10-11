@@ -33,17 +33,10 @@ class ProjectSeralizer(serializers.ModelSerializer):
         read_only = "id"
 
 
-class ShortProjectSeralizer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Project
-        exclude = ("owner", "memo", "url")
-        read_only = "id"
-
-
 class FavoriteSerializer(serializers.ModelSerializer):
-    # project = ShortProjectSeralizer()
     html_link = LinkField()
     url = URLField(required=False)
+    project = ProjectSeralizer()
 
     class Meta:
         model = models.Favorite
@@ -52,9 +45,9 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class PomodoroSerializer(serializers.ModelSerializer):
-    # project = ShortProjectSeralizer()
     html_link = LinkField()
     url = URLField(required=False)
+    project = ProjectSeralizer()
 
     def create(self, validated_data):
         if "start" not in validated_data:
