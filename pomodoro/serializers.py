@@ -40,7 +40,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         if "project" in data:
-            data["project_id"] = data.pop("project")["id"]
+            data["project_id"] = data.pop("project", {}).get('id')
         return data
 
     class Meta:
@@ -56,7 +56,7 @@ class PomodoroSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         if "project" in data:
-            data["project_id"] = data.pop("project")["id"]
+            data["project_id"] = data.pop("project", {}).get('id')
         return data
 
     def create(self, validated_data):
