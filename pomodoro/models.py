@@ -43,6 +43,8 @@ class Project(models.Model):
     def timedelta(self):
         return datetime.timedelta(seconds=self.duration)
 
+    timedelta.admin_order_field = "duration"
+
     def refresh(self):
         limit = timezone.now() - datetime.timedelta(days=30)
         duration = datetime.timedelta()
