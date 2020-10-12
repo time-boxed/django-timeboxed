@@ -41,7 +41,7 @@ class Project(models.Model):
         return reverse("pomodoro:project-detail", kwargs={"pk": self.pk})
 
     def timedelta(self):
-        return datetime.timedelta(minutes=self.duration)
+        return datetime.timedelta(seconds=self.duration)
 
     def refresh(self):
         limit = timezone.now() - datetime.timedelta(days=30)
