@@ -30,7 +30,7 @@ class ProjectSeralizer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
         exclude = ("owner",)
-        read_only = "id"
+        read_only_fields = ("id",)
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -46,7 +46,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Favorite
         exclude = ("owner",)
-        read_only = ("id", "icon", "count")
+        read_only_fields = ("id", "icon", "count")
 
 
 class PomodoroSerializer(serializers.ModelSerializer):
