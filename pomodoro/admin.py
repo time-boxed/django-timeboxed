@@ -6,9 +6,16 @@ from django.utils.translation import ugettext_lazy as _
 
 @admin.register(models.Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ("name", "color", "active", "owner")
+    list_display = ("name", "color", "timedelta", "active", "owner")
     list_filter = ("owner", "active")
     list_filter = (("owner", admin.RelatedOnlyFieldListFilter),)
+
+    def refresh(self, request, queryset):
+        for obj in queryset:
+            obj.refresh()
+
+    refresh.short_description = "Refresh cached counters"
+    actions = ["refresh"]
 
 
 @admin.register(models.Pomodoro)
@@ -33,11 +40,18 @@ class PomodoroAdmin(admin.ModelAdmin):
 @admin.register(models.Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_select_related = ("project", "owner")
-    list_display = ("title", "project", "duration", "owner", "count")
+    list_display = ("title", "project", "timedelta", "owner", "count")
     list_filter = (
         ("owner", admin.RelatedOnlyFieldListFilter),
         ("project", admin.RelatedOnlyFieldListFilter),
     )
+
+    def refresh(self, request, queryset):
+        for obj in queryset:
+            obj.refresh()
+
+    refresh.short_description = "Refresh cached counters"
+    actions = ["refresh"]
 
 
 @admin.register(models.Notification)

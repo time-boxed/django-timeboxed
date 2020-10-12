@@ -15,7 +15,6 @@ from django.utils.translation import ugettext_lazy as _
 logger = logging.getLogger(__name__)
 
 
-
 class Project(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(
@@ -29,6 +28,7 @@ class Project(models.Model):
     url = models.URLField(blank=True, verbose_name=_("Optional link"))
     memo = models.TextField(blank=True)
     active = models.BooleanField(default=True)
+    duration = models.IntegerField(verbose_name=_("duration"))
 
     class Meta:
         ordering = ("name",)
@@ -39,6 +39,19 @@ class Project(models.Model):
 
     def get_absolute_url(self):
         return reverse("pomodoro:project-detail", kwargs={"pk": self.pk})
+
+    def timedelta(self):
+        return datetime.timedelta(minutes=self.duration)
+
+    def refresh(self):
+        limit = timezone.now() - datetime.timedelta(days=30)
+        duration = datetime.timedelta()
+        for pomodoro in Pomodoro.objects.filter(
+            start__gte=limit, owner=self.owner, project=self,
+        ):
+            duration += pomodoro.end - pomodoro.start
+        self.duration = duration.total_seconds()
+        self.save(update_fields=("duration",))
 
 
 class Pomodoro(models.Model):

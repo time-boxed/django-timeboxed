@@ -46,4 +46,5 @@ def schedule_notification(sender, instance, created, **kwargs):
 @receiver(post_save, sender="pomodoro.Pomodoro")
 def refresh_count_from_pomodoro(sender, instance, **kwargs):
     tasks.refresh_favorite.delay(category=instance.category, owner_id=instance.owner_id)
+    tasks.refresh_project.delay(pk=instance.project_id)
     tasks.most_recent_pomodoro.delay(owner_id=instance.owner_id)

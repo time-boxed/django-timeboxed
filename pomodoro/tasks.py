@@ -14,6 +14,11 @@ def refresh_favorite(**kwargs):
 
 
 @shared_task
+def refresh_project(pk):
+    models.Project.objects.get(pk=pk).refresh()
+
+
+@shared_task
 def send_notification(pomodoro_id):
     pomodoro = models.Pomodoro.objects.get(pk=pomodoro_id)
     for notification in models.Notification.objects.filter(owner=pomodoro.owner):
