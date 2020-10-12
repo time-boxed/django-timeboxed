@@ -8,6 +8,7 @@ from pomodoro import rest
 router = routers.DefaultRouter(trailing_slash=False)
 router.register("favorites", rest.FavoriteViewSet)
 router.register("pomodoros", rest.PomodoroViewSet)
+router.register("project", rest.ProjectViewSet)
 
 urlpatterns = [
     path("", include(("pomodoro.urls", "pomodoro"))),
