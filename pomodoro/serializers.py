@@ -39,8 +39,12 @@ class FavoriteSerializer(serializers.ModelSerializer):
     project = ProjectSeralizer()
 
     def to_internal_value(self, data):
-        if "project" in data:
-            data["project_id"] = data.pop("project", {}).get('id')
+        # TODO: Make less messy and more testable
+        project = data.pop("project", None)
+        if isinstance(project, str):
+            data["project_id"] = project
+        if isinstance(project, dict):
+            data["project_id"] = project.get("id")
         return data
 
     class Meta:
@@ -55,8 +59,12 @@ class PomodoroSerializer(serializers.ModelSerializer):
     project = ProjectSeralizer()
 
     def to_internal_value(self, data):
-        if "project" in data:
-            data["project_id"] = data.pop("project", {}).get('id')
+        # TODO: Make less messy and more testable
+        project = data.pop("project", None)
+        if isinstance(project, str):
+            data["project_id"] = project
+        if isinstance(project, dict):
+            data["project_id"] = project.get("id")
         return data
 
     def create(self, validated_data):
