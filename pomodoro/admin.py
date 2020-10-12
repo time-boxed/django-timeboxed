@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ("name", "color", "active", "owner")
     list_filter = ("owner", "active")
-    list_select_related = ("owner",)
+    list_filter = (("owner", admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(models.Pomodoro)
@@ -24,26 +24,25 @@ class PomodoroAdmin(admin.ModelAdmin):
         "owner",
     )
     list_filter = (
-        ("owner", admin.RelatedOnlyFieldListFilter),
         "start",
-        "category",
+        ("owner", admin.RelatedOnlyFieldListFilter),
+        ("project", admin.RelatedOnlyFieldListFilter),
     )
 
 
 @admin.register(models.Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    def _icon(self, obj):
-        return True if obj.icon else False
-    _icon.short_description = _('icon')
-    _icon.boolean = True
-
-    list_display = ('title', 'category', 'duration', 'owner', '_icon', 'count')
-    list_filter = ('owner', 'category',)
+    list_select_related = ("project", "owner")
+    list_display = ("title", "project", "duration", "owner", "count")
+    list_filter = (
+        ("owner", admin.RelatedOnlyFieldListFilter),
+        ("project", admin.RelatedOnlyFieldListFilter),
+    )
 
 
 @admin.register(models.Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('owner', 'type')
+    list_display = ("owner", "type")
 
 
 @admin.register(models.Share)
