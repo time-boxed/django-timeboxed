@@ -38,6 +38,11 @@ class FavoriteSerializer(serializers.ModelSerializer):
     url = URLField(required=False)
     project = ProjectSeralizer()
 
+    def to_internal_value(self, data):
+        if "project" in data:
+            data["project_id"] = data.pop("project")["id"]
+        return data
+
     class Meta:
         model = models.Favorite
         exclude = ("owner",)
@@ -48,6 +53,11 @@ class PomodoroSerializer(serializers.ModelSerializer):
     html_link = LinkField()
     url = URLField(required=False)
     project = ProjectSeralizer()
+
+    def to_internal_value(self, data):
+        if "project" in data:
+            data["project_id"] = data.pop("project")["id"]
+        return data
 
     def create(self, validated_data):
         if "start" not in validated_data:
