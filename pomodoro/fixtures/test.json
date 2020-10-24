@@ -10,7 +10,16 @@
     "model": "pomodoro.project",
     "pk": "07f03c60-9b2c-4ee5-ad2f-c5e2eaa213f4",
     "fields": {
-      "name": "Test Project",
+      "name": "Test Project 1",
+      "owner": 1,
+      "duration": 0
+    }
+  },
+  {
+    "model": "pomodoro.project",
+    "pk": "1b33e4ff-87f8-4bca-bc44-5264e2a5ffb1",
+    "fields": {
+      "name": "Test Project 2",
       "owner": 1,
       "duration": 0
     }
@@ -21,6 +30,17 @@
     "fields": {
       "duration": 60,
       "title": "Test Favorite",
+      "owner": 1,
+      "project": "07f03c60-9b2c-4ee5-ad2f-c5e2eaa213f4"
+    }
+  },
+  {
+    "model": "pomodoro.Pomodoro",
+    "pk": 1,
+    "fields": {
+      "start": "2020-10-24T00:00:00Z",
+      "end": "2020-10-24T00:01:00Z",
+      "title": "Existing Pomodoro",
       "owner": 1,
       "project": "07f03c60-9b2c-4ee5-ad2f-c5e2eaa213f4"
     }

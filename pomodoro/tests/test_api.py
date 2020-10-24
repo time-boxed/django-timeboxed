@@ -30,7 +30,7 @@ class ApiTest(TestCase):
         )
         self.assertEqual(response.status_code, 201, response.content)
         self.assertEqual(
-            Pomodoro.objects.count(), 1, "Created pomodoro with project id"
+            Pomodoro.objects.count(), 2, "Created pomodoro with project id"
         )
 
     def test_create_pomodoro_nested(self):
@@ -46,7 +46,7 @@ class ApiTest(TestCase):
         )
         self.assertEqual(response.status_code, 201, response.content)
         self.assertEqual(
-            Pomodoro.objects.count(), 1, "Created a pomodoro with nested project"
+            Pomodoro.objects.count(), 2, "Created a pomodoro with nested project"
         )
 
     def test_create_pomodoro_no_project(self):
@@ -59,6 +59,29 @@ class ApiTest(TestCase):
         )
         self.assertEqual(response.status_code, 201, response.content)
         self.assertEqual(
-            Pomodoro.objects.count(), 1, "Created a pomodoro without project"
+            Pomodoro.objects.count(), 2, "Created a pomodoro without project"
+        )
+
+    def test_remove_project(self):
+        response = self.client.put(
+            reverse("api:pomodoro-detail", kwargs={"pk": 1}),
+            content_type="application/json",
+            data={"title": "Test update without project"},
+        )
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertEqual(Pomodoro.objects.count(), 1, "Updated and removed Project")
+
+    def test_change_project(self):
+        response = self.client.put(
+            reverse("api:pomodoro-detail", kwargs={"pk": 1}),
+            content_type="application/json",
+            data={
+                "title": "Test change project",
+                "project": "1b33e4ff-87f8-4bca-bc44-5264e2a5ffb1",
+            },
+        )
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertEqual(
+            Pomodoro.objects.count(), 1, "Changed the project of an existing pomodoro"
         )
 
