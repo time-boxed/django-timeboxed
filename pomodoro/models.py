@@ -28,7 +28,7 @@ class Project(models.Model):
     url = models.URLField(blank=True, verbose_name=_("Optional link"))
     memo = models.TextField(blank=True)
     active = models.BooleanField(default=True)
-    duration = models.IntegerField(verbose_name=_("duration"))
+    duration = models.IntegerField(verbose_name=_("duration"), default=0)
 
     class Meta:
         ordering = ("name",)
