@@ -8,19 +8,19 @@ from django.http import JsonResponse
 from django.utils import timezone
 
 
-class FavoriteViewSet(viewsets.ModelViewSet):
-    queryset = models.Favorite.objects
-    serializer_class = serializers.FavoriteSerializer
+class BaseViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsOwner,)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        """
-        Return Favorites owned by current user only
-        """
         return self.queryset.filter(owner=self.request.user)
+
+
+class FavoriteViewSet(BaseViewSet):
+    queryset = models.Favorite.objects
+    serializer_class = serializers.FavoriteSerializer
 
     @action(detail=True, methods=["post"])
     def start(self, request, pk):
@@ -51,32 +51,14 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         )
 
 
-class PomodoroViewSet(viewsets.ModelViewSet):
-    """
-    Basic Pomodoro API without any extra
-    """
-
+class PomodoroViewSet(BaseViewSet):
     queryset = models.Pomodoro.objects
     serializer_class = serializers.PomodoroSerializer
-    permission_classes = (permissions.IsOwner,)
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES + [
         renderers.CalendarRenderer
     ]
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
 
-    def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
-
-
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectViewSet(BaseViewSet):
     queryset = models.Project.objects
     serializer_class = serializers.ProjectSeralizer
-    permission_classes = (permissions.IsOwner,)
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-    def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
