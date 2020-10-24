@@ -1,4 +1,3 @@
-from logging import raiseExceptions
 from rest_framework import serializers
 
 from . import models
@@ -56,10 +55,11 @@ class FavoriteSerializer(serializers.ModelSerializer):
 class PomodoroSerializer(serializers.ModelSerializer):
     html_link = LinkField()
     url = URLField(required=False)
-    project = NestedProject()
+    project = NestedProject(required=False)
 
     def create(self, validated_data):
-        validated_data["project_id"] = validated_data.pop("project")["id"]
+        if "project" in validated_data:
+            validated_data["project_id"] = validated_data.pop("project")["id"]
         return models.Pomodoro.objects.create(**validated_data)
 
     class Meta:
