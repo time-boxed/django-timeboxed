@@ -1,9 +1,9 @@
+from logging import raiseExceptions
 from rest_framework import serializers
 
 from . import models
 
 from django.contrib.sites.shortcuts import get_current_site
-from django.utils import timezone
 
 
 class LinkField(serializers.Field):
@@ -33,19 +33,19 @@ class ProjectSeralizer(serializers.ModelSerializer):
         read_only_fields = ("id",)
 
 
+class NestedProject(ProjectSeralizer):
+    def to_internal_value(self, data):
+        # if we have just a string, then we assume that we have just the
+        # project pk, otherwise we assume it's the full data block.
+        if isinstance(data, str):
+            return {"id": data}
+        return data
+
+
 class FavoriteSerializer(serializers.ModelSerializer):
     html_link = LinkField()
     url = URLField(required=False)
-    project = ProjectSeralizer()
-
-    def to_internal_value(self, data):
-        # TODO: Make less messy and more testable
-        project = data.pop("project", None)
-        if isinstance(project, str):
-            data["project_id"] = project
-        if isinstance(project, dict):
-            data["project_id"] = project.get("id")
-        return data
+    project = NestedProject()
 
     class Meta:
         model = models.Favorite
@@ -56,20 +56,10 @@ class FavoriteSerializer(serializers.ModelSerializer):
 class PomodoroSerializer(serializers.ModelSerializer):
     html_link = LinkField()
     url = URLField(required=False)
-    project = ProjectSeralizer()
-
-    def to_internal_value(self, data):
-        # TODO: Make less messy and more testable
-        project = data.pop("project", None)
-        if isinstance(project, str):
-            data["project_id"] = project
-        if isinstance(project, dict):
-            data["project_id"] = project.get("id")
-        return data
+    project = NestedProject()
 
     def create(self, validated_data):
-        if "start" not in validated_data:
-            validated_data["start"] = timezone.now()
+        validated_data["project_id"] = validated_data.pop("project")["id"]
         return models.Pomodoro.objects.create(**validated_data)
 
     class Meta:

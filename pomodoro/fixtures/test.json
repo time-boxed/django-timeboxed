@@ -1,0 +1,28 @@
+[
+  {
+    "model": "auth.User",
+    "pk": 1,
+    "fields": {
+      "username": "test user"
+    }
+  },
+  {
+    "model": "pomodoro.project",
+    "pk": "07f03c60-9b2c-4ee5-ad2f-c5e2eaa213f4",
+    "fields": {
+      "name": "Test Project",
+      "owner": 1,
+      "duration": 0
+    }
+  },
+  {
+    "model": "pomodoro.favorite",
+    "pk": 1,
+    "fields": {
+      "duration": 60,
+      "title": "Test Favorite",
+      "owner": 1,
+      "project": "07f03c60-9b2c-4ee5-ad2f-c5e2eaa213f4"
+    }
+  }
+]
