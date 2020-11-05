@@ -10,7 +10,7 @@ setup(
     version=__version__,
     packages=find_packages(),
     install_requires=[
-        "Django>=2.1",
+        "Django>=2.2.13",
         "djangorestframework",
         "icalendar",
         "Pillow",

@@ -7,7 +7,7 @@ certifi==2019.9.11
 chardet==3.0.4
 defusedxml==0.6.0 ; python_version >= '3.0'
 django-environ==0.4.5
-django==2.2.10
+django==2.2.13
 djangorestframework==3.10.3
 gunicorn==19.9.0
 icalendar==4.0.3
