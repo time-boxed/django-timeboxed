@@ -2,10 +2,11 @@ import datetime
 import logging
 
 import icalendar
+from dateutil.relativedelta import relativedelta
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import InvalidPage, Paginator
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -15,7 +16,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 
-from pomodoro import forms, mixins, models
+from pomodoro import forms, mixins, models, util
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +70,6 @@ class ProjectList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
-
 class ProjectDetail(mixins.OwnerRequiredMixin, DetailView):
     model = models.Project
 
@@ -108,24 +108,50 @@ class FavoriteList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
+class PomodoroReport(LoginRequiredMixin, ListView):
+    model = models.Pomodoro
+
+    def get_queryset(self):
+        # TODO: May need to check timezone here
+        if self.kwargs.get("date"):
+            self.today = timezone.make_aware(
+                datetime.datetime.strptime(str(self.kwargs["date"]), "%Y%m")
+            )
+        else:
+            self.today = timezone.now()
+
+        self.start = util.floor(self.today)
+        end = self.start + relativedelta(months=1)
+        print(self.start, end)
+
+        return (
+            self.model.objects.filter(start__gte=self.start)
+            .filter(end__lte=end)
+            .filter(owner=self.request.user)
+            .prefetch_related("project")
+        )
+
+
 class PomodoroHistory(LoginRequiredMixin, ListView):
     model = models.Pomodoro
 
     def get_queryset(self):
         # TODO: May need to check timezone here
-        if self.kwargs.get('date'):
+        if self.kwargs.get("date"):
             self.today = timezone.make_aware(
-                datetime.datetime.strptime(self.kwargs['date'], '%Y%m%d')
+                datetime.datetime.strptime(self.kwargs["date"], "%Y%m%d")
             )
         else:
             self.today = timezone.now()
-        self.start = self.today.replace(hour=0, minute=0, second=0, microsecond=0)
+        self.start = util.floor(self.today)
         end = self.start + datetime.timedelta(days=1)
 
-        return self.model.objects\
-            .filter(start__gte=self.start)\
-            .filter(end__lte=end)\
+        return (
+            self.model.objects.filter(start__gte=self.start)
+            .filter(end__lte=end)
             .filter(owner=self.request.user)
+            .prefetch_related("project")
+        )
 
     def get_context_data(self, **kwargs):
         context = super(PomodoroHistory, self).get_context_data(**kwargs)
