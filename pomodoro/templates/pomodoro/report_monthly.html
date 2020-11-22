@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load pomodoro %}
+{% block content %}
+{% include 'pomodoro/nav.inc.html' %}
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if date_prev %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-report' date_prev|date:"Ym" %}">
+                <span aria-hidden="true">&laquo; {{date_prev|date}}</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% if date_next %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:pomodoro-report' date_next|date:"Ym" %}">
+                <span aria-hidden="true">{{date_next|date}} &raquo;</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+<div class="card">
+    <h4 class="card-heading">{{date}}</h4>
+    <table class="table">
+        <tr>
+            <th>Project</th>
+            <th>Duration</th>
+        </tr>
+        {% for project, duration in pomodoro_list|project_report|dictsortreversed:1 %}
+        <tr>
+            <td><a href="{{project.get_absolute_url}}">{{project.name}}</a></td>
+            <td>{{duration}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

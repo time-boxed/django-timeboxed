@@ -108,61 +108,60 @@ class FavoriteList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
-class PomodoroReport(LoginRequiredMixin, ListView):
-    model = models.Pomodoro
-
-    def get_queryset(self):
-        # TODO: May need to check timezone here
+class _ReportBase(LoginRequiredMixin, ListView):
+    def get_date(self, format):
         if self.kwargs.get("date"):
-            self.today = timezone.make_aware(
-                datetime.datetime.strptime(str(self.kwargs["date"]), "%Y%m")
+            return timezone.make_aware(
+                datetime.datetime.strptime(str(self.kwargs["date"]), format)
             )
         else:
-            self.today = timezone.now()
-
-        self.start = util.floor(self.today)
-        end = self.start + relativedelta(months=1)
-        print(self.start, end)
-
-        return (
-            self.model.objects.filter(start__gte=self.start)
-            .filter(end__lte=end)
-            .filter(owner=self.request.user)
-            .prefetch_related("project")
-        )
-
-
-class PomodoroHistory(LoginRequiredMixin, ListView):
-    model = models.Pomodoro
-
-    def get_queryset(self):
-        # TODO: May need to check timezone here
-        if self.kwargs.get("date"):
-            self.today = timezone.make_aware(
-                datetime.datetime.strptime(self.kwargs["date"], "%Y%m%d")
-            )
-        else:
-            self.today = timezone.now()
-        self.start = util.floor(self.today)
-        end = self.start + datetime.timedelta(days=1)
-
-        return (
-            self.model.objects.filter(start__gte=self.start)
-            .filter(end__lte=end)
-            .filter(owner=self.request.user)
-            .prefetch_related("project")
-        )
+            return timezone.now()
 
     def get_context_data(self, **kwargs):
-        context = super(PomodoroHistory, self).get_context_data(**kwargs)
-        context['today'] = timezone.now()
-        context['date'] = self.start
-        context['date_prev'] = self.start - datetime.timedelta(days=1)
-        next = self.start + datetime.timedelta(days=1)
-        if next < context['today']:
-            context['date_next'] = next
+        context = super().get_context_data(**kwargs)
+        context["today"] = timezone.now()
+        context["date"] = self.start
+        context["date_prev"] = self.start - self.delta
+        next = self.start + self.delta
+        if next < context["today"]:
+            context["date_next"] = next
 
         return context
+
+
+class PomodoroReport(_ReportBase):
+    model = models.Pomodoro
+    template_name = "pomodoro/report_monthly.html"
+    delta = relativedelta(months=1)
+
+    def get_queryset(self):
+        self.today = self.get_date("%Y%m")
+        self.start = util.floor(self.today)
+        end = self.start + self.delta
+
+        return (
+            self.model.objects.filter(start__gte=self.start)
+            .filter(end__lte=end)
+            .filter(owner=self.request.user)
+            .prefetch_related("project")
+        )
+
+
+class PomodoroHistory(_ReportBase):
+    model = models.Pomodoro
+    delta = datetime.timedelta(days=1)
+
+    def get_queryset(self):
+        self.today = self.get_date("%Y%m%d")
+        self.start = util.floor(self.today)
+        end = self.start + self.delta
+
+        return (
+            self.model.objects.filter(start__gte=self.start)
+            .filter(end__lte=end)
+            .filter(owner=self.request.user)
+            .prefetch_related("project")
+        )
 
 
 class PomodoroDetailView(mixins.OwnerRequiredMixin, DetailView):
