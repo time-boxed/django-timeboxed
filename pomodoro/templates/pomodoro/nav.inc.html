@@ -12,7 +12,7 @@
     <li class="nav-item">
             <a
             class="nav-link{% if request.resolver_match.view_name == 'pomodoro:pomodoro-list' %} active{% endif %}"
-            href="{% if date %}{% url 'pomodoro:pomodoro-list' date|date:"Ymd" %}{% else %}{% url 'pomodoro:pomodoro-list' %}{% endif %}">History</a>
+            href="{% url 'pomodoro:pomodoro-list' %}">History</a>
         </li>
     <li class="nav-item">
         <a class="nav-link" href="{% url 'api:pomodoro-list' format='ics' %}" aria-controls="history-tab">Calendar</a>

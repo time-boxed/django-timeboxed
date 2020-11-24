@@ -7,16 +7,16 @@
     <ul class="pagination justify-content-center">
         {% if date_prev %}
         <li class="page-item">
-            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-report' date_prev|date:"Ym" %}">
-                <span aria-hidden="true">&laquo; {{date_prev|date}}</span>
+            <a class="page-link" aria-label="Previous" href="{% dateurl 'pomodoro:pomodoro-report' date_prev %}">
+                <span aria-hidden="true">&laquo; {{date_prev|date:dtfmt}}</span>
             </a>
         </li>
         {% endif %}
 
         {% if date_next %}
         <li class="page-item">
-            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:pomodoro-report' date_next|date:"Ym" %}">
-                <span aria-hidden="true">{{date_next|date}} &raquo;</span>
+            <a class="page-link" aria-label="Next" href="{% dateurl 'pomodoro:pomodoro-report' date_next %}">
+                <span aria-hidden="true">{{date_next|date:dtfmt}} &raquo;</span>
             </a>
         </li>
         {% endif %}

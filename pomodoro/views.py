@@ -108,52 +108,41 @@ class FavoriteList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
-class _ReportBase(LoginRequiredMixin, ListView):
-    def get_date(self, format):
-        if self.kwargs.get("date"):
-            return timezone.make_aware(
-                datetime.datetime.strptime(str(self.kwargs["date"]), format)
-            )
-        else:
-            return timezone.now()
+class PomodoroReport(LoginRequiredMixin, ListView):
+    model = models.Pomodoro
+    template_name = "pomodoro/report_monthly.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["today"] = timezone.now()
         context["date"] = self.start
         context["date_prev"] = self.start - self.delta
-        next = self.start + self.delta
-        if next < context["today"]:
-            context["date_next"] = next
+        context["date_next"] = self.start + self.delta
+        if context["date_next"] > context["today"]:
+            context.pop("date_next")
+        context["dtfmt"] = self.dtfmt
+        context["kwargs"] = self.kwargs
 
         return context
 
-
-class PomodoroReport(_ReportBase):
-    model = models.Pomodoro
-    template_name = "pomodoro/report_monthly.html"
-    delta = relativedelta(months=1)
-
     def get_queryset(self):
-        self.today = self.get_date("%Y%m")
-        self.start = util.floor(self.today)
-        end = self.start + self.delta
+        lookup = {
+            "year": self.kwargs.get("year"),
+            "month": self.kwargs.get("month", 1),
+            "day": self.kwargs.get("day", 1),
+        }
+        if "day" in self.kwargs:
+            self.delta = datetime.timedelta(days=1)
+            self.dtfmt = "N j, Y"
+        elif "month" in self.kwargs:
+            self.delta = relativedelta(months=1)
+            self.dtfmt = "N Y"
+        else:
+            self.delta = relativedelta(years=1)
+            self.dtfmt = "Y"
 
-        return (
-            self.model.objects.filter(start__gte=self.start)
-            .filter(end__lte=end)
-            .filter(owner=self.request.user)
-            .prefetch_related("project")
-        )
-
-
-class PomodoroHistory(_ReportBase):
-    model = models.Pomodoro
-    delta = datetime.timedelta(days=1)
-
-    def get_queryset(self):
-        self.today = self.get_date("%Y%m%d")
-        self.start = util.floor(self.today)
+        today = timezone.make_aware(datetime.datetime(**lookup))
+        self.start = util.floor(today)
         end = self.start + self.delta
 
         return (
