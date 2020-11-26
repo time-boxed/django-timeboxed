@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-{% include 'pomodoro/nav.inc.html' %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item active"><a href="{% url 'pomodoro:favorite-list' %}">Favorites</a></li>
+    </ol>
+</nav>
+
 {% get_media_prefix as MEDIA_PREFIX %}
 <div class="card">
     <h4 class="card-heading">Favorites</h4>
