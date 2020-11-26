@@ -2,15 +2,7 @@
 {% load pomodoro %}
 {% block content %}
 
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
-    <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-list' pomodoro.start.year %}">{{pomodoro.start.year}}</a></li>
-    <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-list' pomodoro.start.year pomodoro.start.month %}">{{pomodoro.start.month}}</a></li>
-    <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-list' pomodoro.start.year pomodoro.start.month pomodoro.start.day %}">{{pomodoro.start.day}}</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{object.title}} #{{object.category}}</li>
-  </ol>
-</nav>
+{% breadcrumb pomodoro %}
 
 <form method="POST">
   {% csrf_token %}
