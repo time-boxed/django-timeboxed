@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load pomodoro %}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-list' pomodoro.start.year %}">{{pomodoro.start.year}}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-list' pomodoro.start.year pomodoro.start.month %}">{{pomodoro.start.month}}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-list' pomodoro.start.year pomodoro.start.month pomodoro.start.day %}">{{pomodoro.start.day}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{object.title}} #{{object.category}}</li>
+  </ol>
+</nav>
+
+<form method="POST">
+  {% csrf_token %}
+
+  <dl class="row">
+    <dt class="col-sm-2">Title</dt>
+    <dd class="col-sm-9">{{form.title}}</dd>
+    <dt class="col-sm-2">Project</dt>
+    <dd class="col-sm-9">{{form.project}}</dd>
+
+    <dt class="col-sm-2">Start</dt>
+    <dd class="col-sm-9">{{form.start}}</dd>
+    <dt class="col-sm-2">End</dt>
+    <dd class="col-sm-9">{{form.end}}</dd>
+
+    <dt class="col-sm-2">Duration</dt>
+    <dd class="col-sm-9">{{object.duration}}</dd>
+  </dl>
+  <button name="duration" type="submit" value="25" class="btn btn-warning">Update</button>
+</form>
+
+{% endblock %}

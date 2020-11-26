@@ -156,8 +156,14 @@ class PomodoroReport(LoginRequiredMixin, ListView):
         )
 
 
-class PomodoroDetailView(mixins.OwnerRequiredMixin, DetailView):
+class PomodoroDetailView(mixins.OwnerRequiredMixin, UpdateView):
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["owner"] = self.request.user
+        return kwargs
+
     model = models.Pomodoro
+    form_class = forms.PomodoroEdit
 
 
 class ShareList(LoginRequiredMixin, ListView):
