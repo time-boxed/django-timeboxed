@@ -70,12 +70,14 @@ class ProjectList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
-class ProjectDetail(mixins.OwnerRequiredMixin, DetailView):
+class ProjectDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailView):
     model = models.Project
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        paginator = Paginator(context["object"].pomodoro_set.order_by("-start"), 25)
+        paginator = Paginator(
+            self.get_date_qs(context["object"].pomodoro_set.order_by("-start")), 25
+        )
         context["paginator"] = paginator
         context["page_obj"] = paginator.get_page(self.request.GET.get("page") or 1)
         return context
@@ -108,64 +110,60 @@ class FavoriteList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
-class _ReportBase(LoginRequiredMixin, ListView):
-    def get_date(self, format):
-        if self.kwargs.get("date"):
-            return timezone.make_aware(
-                datetime.datetime.strptime(str(self.kwargs["date"]), format)
-            )
-        else:
-            return timezone.now()
+class PomodoroReport(LoginRequiredMixin, ListView):
+    model = models.Pomodoro
+    template_name = "pomodoro/report_monthly.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["today"] = timezone.now()
-        context["date"] = self.start
+        context["start"] = self.start
+        context["end"] = self.end
         context["date_prev"] = self.start - self.delta
-        next = self.start + self.delta
-        if next < context["today"]:
-            context["date_next"] = next
+        context["date_next"] = self.start + self.delta
+        if context["date_next"] > self.today:
+            context.pop("date_next")
+        context["dtfmt"] = self.dtfmt
+        context["kwargs"] = self.kwargs
 
         return context
 
-
-class PomodoroReport(_ReportBase):
-    model = models.Pomodoro
-    template_name = "pomodoro/report_monthly.html"
-    delta = relativedelta(months=1)
-
     def get_queryset(self):
-        self.today = self.get_date("%Y%m")
-        self.start = util.floor(self.today)
-        end = self.start + self.delta
+        self.today = timezone.now()
+        lookup = {
+            "year": self.kwargs.get("year", self.today.year),
+            "month": self.kwargs.get("month", 1),
+            "day": self.kwargs.get("day", 1),
+        }
+        if "day" in self.kwargs:
+            self.delta = datetime.timedelta(days=1)
+            self.dtfmt = "N j, Y"
+        elif "month" in self.kwargs:
+            self.delta = relativedelta(months=1)
+            self.dtfmt = "N Y"
+        else:
+            self.delta = relativedelta(years=1)
+            self.dtfmt = "Y"
+
+        today = timezone.make_aware(datetime.datetime(**lookup))
+        self.start = util.floor(today)
+        self.end = self.start + self.delta
 
         return (
             self.model.objects.filter(start__gte=self.start)
-            .filter(end__lte=end)
+            .filter(end__lte=self.end)
             .filter(owner=self.request.user)
             .prefetch_related("project")
         )
 
 
-class PomodoroHistory(_ReportBase):
+class PomodoroDetailView(mixins.OwnerRequiredMixin, UpdateView):
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["owner"] = self.request.user
+        return kwargs
+
     model = models.Pomodoro
-    delta = datetime.timedelta(days=1)
-
-    def get_queryset(self):
-        self.today = self.get_date("%Y%m%d")
-        self.start = util.floor(self.today)
-        end = self.start + self.delta
-
-        return (
-            self.model.objects.filter(start__gte=self.start)
-            .filter(end__lte=end)
-            .filter(owner=self.request.user)
-            .prefetch_related("project")
-        )
-
-
-class PomodoroDetailView(mixins.OwnerRequiredMixin, DetailView):
-    model = models.Pomodoro
+    form_class = forms.PomodoroEdit
 
 
 class ShareList(LoginRequiredMixin, ListView):

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load pomodoro %}
+{% block content %}
+
+{% breadcrumb pomodoro %}
+
+<form method="POST">
+  {% csrf_token %}
+
+  <dl class="row">
+    <dt class="col-sm-2">Title</dt>
+    <dd class="col-sm-9">{{form.title}}</dd>
+    <dt class="col-sm-2">Project</dt>
+    <dd class="col-sm-9">{{form.project}}</dd>
+
+    <dt class="col-sm-2">Start</dt>
+    <dd class="col-sm-9">{{form.start}}</dd>
+    <dt class="col-sm-2">End</dt>
+    <dd class="col-sm-9">{{form.end}}</dd>
+
+    <dt class="col-sm-2">Duration</dt>
+    <dd class="col-sm-9">{{object.duration}}</dd>
+  </dl>
+  <button name="duration" type="submit" value="25" class="btn btn-warning">Update</button>
+</form>
+
+{% endblock %}

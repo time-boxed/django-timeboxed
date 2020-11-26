@@ -51,16 +51,16 @@
 <table class="table" style="border: solid #{{project.color}}">
     <tr>
         <th>Pomodoro</th>
-        <th>Category</th>
         <th>Start</th>
         <th>End</th>
+        <th>Duration</th>
     </tr>
     {% for p in page_obj %}
     <tr>
         <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
-        <td>{{p.category}}</td>
         <td>{{p.start}}</td>
         <td>{{p.end}}</td>
+        <td>{{p.duration}}</td>
     </tr>
     {% empty %}
     <tr>

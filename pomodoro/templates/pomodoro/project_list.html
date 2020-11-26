@@ -2,6 +2,13 @@
 {% load static %}
 {% block content %}
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item active"><a href="{% url 'pomodoro:project-list' %}">Projects</a></li>
+    </ol>
+</nav>
+
 <div class="card">
     <h4 class="card-heading">Projects</h4>
     <table class="table">

@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-{% include 'pomodoro/nav.inc.html' %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Shares</li>
+    </ol>
+</nav>
 
 <table class="table">
     {% for share in object_list %}

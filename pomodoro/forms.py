@@ -13,3 +13,13 @@ class PomodoroForm(forms.ModelForm):
     def __init__(self, owner, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["project"].queryset = models.Project.objects.filter(owner=owner)
+
+
+class PomodoroEdit(forms.ModelForm):
+    class Meta:
+        model = models.Pomodoro
+        fields = ["title", "project", "start", "end"]
+
+    def __init__(self, owner, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["project"].queryset = models.Project.objects.filter(owner=owner)
