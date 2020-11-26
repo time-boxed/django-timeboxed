@@ -70,12 +70,14 @@ class ProjectList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
-class ProjectDetail(mixins.OwnerRequiredMixin, DetailView):
+class ProjectDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailView):
     model = models.Project
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        paginator = Paginator(context["object"].pomodoro_set.order_by("-start"), 25)
+        paginator = Paginator(
+            self.get_date_qs(context["object"].pomodoro_set.order_by("-start")), 25
+        )
         context["paginator"] = paginator
         context["page_obj"] = paginator.get_page(self.request.GET.get("page") or 1)
         return context
@@ -114,11 +116,11 @@ class PomodoroReport(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["today"] = timezone.now()
-        context["date"] = self.start
+        context["start"] = self.start
+        context["end"] = self.end
         context["date_prev"] = self.start - self.delta
         context["date_next"] = self.start + self.delta
-        if context["date_next"] > context["today"]:
+        if context["date_next"] > self.today:
             context.pop("date_next")
         context["dtfmt"] = self.dtfmt
         context["kwargs"] = self.kwargs
@@ -126,8 +128,9 @@ class PomodoroReport(LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
+        self.today = timezone.now()
         lookup = {
-            "year": self.kwargs.get("year"),
+            "year": self.kwargs.get("year", self.today.year),
             "month": self.kwargs.get("month", 1),
             "day": self.kwargs.get("day", 1),
         }
@@ -143,11 +146,11 @@ class PomodoroReport(LoginRequiredMixin, ListView):
 
         today = timezone.make_aware(datetime.datetime(**lookup))
         self.start = util.floor(today)
-        end = self.start + self.delta
+        self.end = self.start + self.delta
 
         return (
             self.model.objects.filter(start__gte=self.start)
-            .filter(end__lte=end)
+            .filter(end__lte=self.end)
             .filter(owner=self.request.user)
             .prefetch_related("project")
         )

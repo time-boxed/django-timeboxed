@@ -5,9 +5,9 @@ from pomodoro import views
 app_name = "pomodoro"
 urlpatterns = [
     path("report", views.PomodoroReport.as_view(), name="pomodoro-list"),
-    path("report/<int:year>", views.PomodoroReport.as_view(), name="pomodoro-report"),
-    path("report/<int:year>/<int:month>", views.PomodoroReport.as_view(), name="pomodoro-report"),
-    path("report/<int:year>/<int:month>/<int:day>", views.PomodoroReport.as_view(), name="pomodoro-report"),
+    path("report/<int:year>", views.PomodoroReport.as_view(), name="pomodoro-list"),
+    path("report/<int:year>/<int:month>", views.PomodoroReport.as_view(), name="pomodoro-list"),
+    path("report/<int:year>/<int:month>/<int:day>", views.PomodoroReport.as_view(), name="pomodoro-list"),
     path("pomodoro/<int:pk>", views.PomodoroDetailView.as_view(), name="pomodoro-detail"),
     path("favorite/<int:pk>", views.FavoriteDetail.as_view(), name="favorite-detail"),
     path("favorite", views.FavoriteList.as_view(), name="favorite-list"),

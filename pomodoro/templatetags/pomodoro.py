@@ -21,3 +21,8 @@ def dateurl(context, to, dt):
     # TODO: Rather messy
     return resolve_url(to, **{key: getattr(dt, key) for key in context["kwargs"]})
 
+
+@register.filter
+def isoformat(dt, timespec="seconds"):
+    return dt.isoformat(timespec=timespec)
+

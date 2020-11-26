@@ -7,15 +7,17 @@
     <ul class="pagination justify-content-center">
         {% if date_prev %}
         <li class="page-item">
-            <a class="page-link" aria-label="Previous" href="{% dateurl 'pomodoro:pomodoro-report' date_prev %}">
+            <a class="page-link" aria-label="Previous" href="{% dateurl 'pomodoro:pomodoro-list' date_prev %}">
                 <span aria-hidden="true">&laquo; {{date_prev|date:dtfmt}}</span>
             </a>
         </li>
         {% endif %}
-
+        <li class="page-item active" aria-current="page">
+            <span class="page-link" aria-hidden="true">{{start|date:dtfmt}}</span>
+        </li>
         {% if date_next %}
         <li class="page-item">
-            <a class="page-link" aria-label="Next" href="{% dateurl 'pomodoro:pomodoro-report' date_next %}">
+            <a class="page-link" aria-label="Next" href="{% dateurl 'pomodoro:pomodoro-list' date_next %}">
                 <span aria-hidden="true">{{date_next|date:dtfmt}} &raquo;</span>
             </a>
         </li>
@@ -32,7 +34,7 @@
         </tr>
         {% for project, duration in pomodoro_list|project_report|dictsortreversed:1 %}
         <tr>
-            <td><a href="{{project.get_absolute_url}}">{{project.name}}</a></td>
+            <td><a href="{{project.get_absolute_url}}?start={{start|isoformat}}&end={{end|isoformat}}">{{project.name}}</a></td>
             <td>{{duration}}</td>
         </tr>
         {% endfor %}
