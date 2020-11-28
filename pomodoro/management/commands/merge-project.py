@@ -5,7 +5,7 @@ from pomodoro import models
 
 
 class Command(BaseCommand):
-    help = "Closes the specified poll for voting"
+    help = "Merge projects together"
 
     def add_arguments(self, parser):
         parser.add_argument("username")
@@ -25,8 +25,13 @@ class Command(BaseCommand):
         src = self.project(username, src)
         dst = self.project(username, dst)
         if force:
+            self.stdout.write("Updating %d Pomodoros" % src.pomodoro_set.count())
             src.pomodoro_set.update(project=dst)
+            self.stdout.write("Updating %d Favorites" % src.favorite_set.count())
             src.favorite_set.update(project=dst)
+            # Update counts
+            src.refresh()
+            dst.refresh()
         else:
             self.stdout.write("Pomodoros %d" % src.pomodoro_set.count())
             self.stdout.write("Favorites %d" % src.favorite_set.count())
