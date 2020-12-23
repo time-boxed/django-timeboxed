@@ -5,7 +5,7 @@ from . import models
 from django.contrib.sites.shortcuts import get_current_site
 
 
-class LinkField(serializers.Field):
+class PermalinkField(serializers.Field):
     def __init__(self, **kwargs):
         kwargs["source"] = "get_absolute_url"
         kwargs["read_only"] = True
@@ -23,7 +23,7 @@ class URLField(serializers.URLField):
 
 
 class ProjectSeralizer(serializers.ModelSerializer):
-    html_link = LinkField()
+    html_link = PermalinkField()
     url = URLField(required=False)
 
     class Meta:
@@ -42,7 +42,7 @@ class NestedProject(ProjectSeralizer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    html_link = LinkField()
+    html_link = PermalinkField()
     url = URLField(required=False)
     project = NestedProject()
 
@@ -53,7 +53,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class PomodoroSerializer(serializers.ModelSerializer):
-    html_link = LinkField()
+    html_link = PermalinkField()
     url = URLField(required=False)
     project = NestedProject(required=False)
 
