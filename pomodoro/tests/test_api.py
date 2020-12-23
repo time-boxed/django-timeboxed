@@ -85,3 +85,18 @@ class ApiTest(TestCase):
             Pomodoro.objects.count(), 1, "Changed the project of an existing pomodoro"
         )
 
+    def test_create_favorite(self):
+        """Test creating favorite with just project id"""
+        response = self.client.post(
+            reverse("api:favorite-list"),
+            content_type="application/json",
+            data={
+                "title": "Test with project_id",
+                "duration": 5,
+                "project": "07f03c60-9b2c-4ee5-ad2f-c5e2eaa213f4",
+            },
+        )
+        self.assertEqual(response.status_code, 201, response.content)
+        self.assertEqual(
+            Favorite.objects.count(), 2, "Created favorite with project id"
+        )

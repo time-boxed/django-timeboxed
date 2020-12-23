@@ -32,6 +32,18 @@ class ProjectSeralizer(serializers.ModelSerializer):
         read_only_fields = ("id",)
 
 
+class ProjectSeralizerMixin:
+    def create(self, validated_data):
+        if "project" in validated_data:
+            validated_data["project_id"] = validated_data.pop("project")["id"]
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        if "project" in validated_data:
+            validated_data["project_id"] = validated_data.pop("project")["id"]
+        return super().update(instance, validated_data)
+
+
 class NestedProject(ProjectSeralizer):
     def to_internal_value(self, data):
         # if we have just a string, then we assume that we have just the
@@ -41,7 +53,7 @@ class NestedProject(ProjectSeralizer):
         return data
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
+class FavoriteSerializer(ProjectSeralizerMixin, serializers.ModelSerializer):
     html_link = PermalinkField()
     url = URLField(required=False)
     project = NestedProject()
@@ -52,20 +64,10 @@ class FavoriteSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "icon", "count")
 
 
-class PomodoroSerializer(serializers.ModelSerializer):
+class PomodoroSerializer(ProjectSeralizerMixin, serializers.ModelSerializer):
     html_link = PermalinkField()
     url = URLField(required=False)
     project = NestedProject(required=False)
-
-    def create(self, validated_data):
-        if "project" in validated_data:
-            validated_data["project_id"] = validated_data.pop("project")["id"]
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        if "project" in validated_data:
-            validated_data["project_id"] = validated_data.pop("project")["id"]
-        return super().update(instance, validated_data)
 
     class Meta:
         model = models.Pomodoro
