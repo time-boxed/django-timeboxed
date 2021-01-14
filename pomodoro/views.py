@@ -5,6 +5,7 @@ import icalendar
 from dateutil.relativedelta import relativedelta
 
 from django.contrib import messages
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse
@@ -24,6 +25,11 @@ logger = logging.getLogger(__name__)
 class Index(LoginRequiredMixin, UpdateView):
     template_name = "pomodoro/index.html"
     form_class = forms.PomodoroForm
+
+    def get_success_url(self):
+        if REDIRECT_FIELD_NAME in self.request.POST:
+            return self.request.POST[REDIRECT_FIELD_NAME]
+        return reverse("pomodoro:dashboard")
 
     def get_object(self):
         return models.Pomodoro.objects.filter(owner=self.request.user).latest("start")
@@ -45,21 +51,21 @@ class Index(LoginRequiredMixin, UpdateView):
         data["start"] = timezone.now()
         data["end"] = data["start"] + datetime.timedelta(minutes=data.pop("duration"))
         models.Pomodoro.objects.create(**data)
-        return redirect(reverse("pomodoro:dashboard"))
+        return redirect(self.get_success_url())
 
     def post(self, request):
         if "extend" in self.request.POST:
             pomodoro = self.get_object()
             pomodoro.end += datetime.timedelta(minutes=int(self.request.POST["extend"]))
             pomodoro.save(update_fields=["end"])
-            return redirect(reverse("pomodoro:dashboard"))
+            return redirect(self.get_success_url())
 
         if "stop" in self.request.POST:
             pomodoro = self.get_object()
             pomodoro.end = timezone.now().replace(microsecond=0)
             pomodoro.save(update_fields=["end"])
             pomodoro.save()
-            return redirect(reverse("pomodoro:dashboard"))
+            return redirect(self.get_success_url())
         return super().post(self, request)
 
 
@@ -86,6 +92,11 @@ class ProjectDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailVie
 class FavoriteDetail(mixins.OwnerRequiredMixin, DetailView):
     model = models.Favorite
 
+    def get_success_url(self):
+        if REDIRECT_FIELD_NAME in self.request.POST:
+            return self.request.POST[REDIRECT_FIELD_NAME]
+        return reverse("pomodoro:dashboard")
+
     def post(self, request, pk):
         pomodoro = models.Pomodoro.objects.filter(owner=self.request.user).latest(
             "start"
@@ -96,11 +107,11 @@ class FavoriteDetail(mixins.OwnerRequiredMixin, DetailView):
 
         if pomodoro.end > now:
             messages.warning(request, "Active Pomodoro")
-            return redirect(reverse("pomodoro:dashboard"))
+            return redirect(self.get_success_url())
 
         pomodoro = favorite.start(now)
         messages.warning(request, "Starting Pomodoro {}".format(pomodoro.title))
-        return redirect(reverse("pomodoro:dashboard"))
+        return redirect(self.get_success_url())
 
 
 class FavoriteList(LoginRequiredMixin, ListView):
