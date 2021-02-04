@@ -20,7 +20,12 @@ def refresh_project(pk):
 
 @shared_task
 def send_notification(pomodoro_id):
-    pomodoro = models.Pomodoro.objects.get(pk=pomodoro_id)
+    try:
+        pomodoro = models.Pomodoro.objects.get(pk=pomodoro_id)
+    except models.Pomodoro.DoesNotExist:
+        logger.debug("Skipping missing pomodoro")
+        return
+
     for notification in models.Notification.objects.filter(owner=pomodoro.owner):
         notification.driver.send(pomodoro)
 
