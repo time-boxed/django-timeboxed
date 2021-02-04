@@ -116,6 +116,7 @@ class Favorite(models.Model):
         return Pomodoro.objects.create(
             title=self.title,
             category=self.category,
+            project=self.project,
             owner=self.owner,
             start=ts,
             end=ts + datetime.timedelta(minutes=self.duration),
