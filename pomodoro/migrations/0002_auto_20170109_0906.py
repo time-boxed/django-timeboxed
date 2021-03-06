@@ -29,8 +29,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL('SET CONSTRAINTS ALL IMMEDIATE',
-                      reverse_sql=migrations.RunSQL.noop),
+        # migrations.RunSQL('SET CONSTRAINTS ALL IMMEDIATE', reverse_sql=migrations.RunSQL.noop),
         migrations.AddField(
             model_name='pomodoro',
             name='end',
