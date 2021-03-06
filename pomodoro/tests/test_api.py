@@ -1,8 +1,8 @@
-from pomodoro.models import Favorite, Pomodoro
-
 from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
 from django.urls import reverse
+
+from pomodoro.models import Favorite, FavoritePomodoro, Pomodoro
 
 
 class ApiTest(TestCase):
@@ -17,6 +17,7 @@ class ApiTest(TestCase):
         response = self.client.post(reverse("api:favorite-start", args=[1]))
         self.assertEqual(response.status_code, 201, response.content)
         self.assertEqual(Favorite.objects.count(), 1)
+        self.assertEqual(FavoritePomodoro.objects.count(), 1, 'Linked favorite to pomodoro')
 
     def test_create_pomodoro(self):
         """Test creating pomodoro with just project id"""
