@@ -62,7 +62,12 @@ class Pomodoro(models.Model):
 
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='pomodoros', verbose_name=_('owner'), on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="+",
+        verbose_name=_("owner"),
+        on_delete=models.CASCADE,
+    )
     project = models.ForeignKey(Project, null=True, on_delete=models.CASCADE)
 
     url = models.URLField(blank=True, help_text="Optional link")
@@ -87,11 +92,22 @@ class Favorite(models.Model):
     duration = models.IntegerField(verbose_name=_('duration'))
     title = models.CharField(max_length=32, verbose_name=_('title'))
     category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='favorite', verbose_name=_('owner'), on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="+",
+        verbose_name=_("owner"),
+        on_delete=models.CASCADE,
+    )
     project = models.ForeignKey(Project, null=True, on_delete=models.CASCADE)
     icon = models.ImageField(upload_to=util._upload_to_path, blank=True)
     count = models.PositiveIntegerField(default=0)
     url = models.URLField(blank=True)
+
+    pomodoro_set = models.ManyToManyField(
+        Pomodoro,
+        through="FavoritePomodoro",
+        through_fields=("favorite", "pomodoro"),
+    )
 
     class Meta:
         ordering = ('-count',)
@@ -100,20 +116,14 @@ class Favorite(models.Model):
         return reverse('pomodoro:favorite-detail', kwargs={'pk': self.pk})
 
     def refresh(self):
-        duration = timezone.now() - datetime.timedelta(days=30)
-        self.count = Pomodoro.objects.filter(
-            start__gte=duration,
-            owner=self.owner,
-            title=self.title,
-            category=self.category,
-        ).count()
+        self.count = self.pomodoro_set.count()
         self.save(update_fields=("count",))
 
     def timedelta(self):
         return datetime.timedelta(minutes=self.duration)
 
     def start(self, ts):
-        return Pomodoro.objects.create(
+        pomodoro = Pomodoro.objects.create(
             title=self.title,
             category=self.category,
             project=self.project,
@@ -122,11 +132,13 @@ class Favorite(models.Model):
             end=ts + datetime.timedelta(minutes=self.duration),
             url=self.url,
         )
+        self.pomodoro_set.add(pomodoro)
+        return pomodoro
 
 
 class Notification(models.Model):
     owner = models.ForeignKey(
-        "auth.User",
+        settings.AUTH_USER_MODEL,
         related_name="+",
         verbose_name=_("owner"),
         on_delete=models.CASCADE,
@@ -151,9 +163,18 @@ class Notification(models.Model):
 class Share(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(
-        "auth.User", related_name="+", verbose_name=_("owner"), on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        related_name="+",
+        verbose_name=_("owner"),
+        on_delete=models.CASCADE,
     )
     last_accessed = models.DateTimeField(default=timezone.now)
 
     def get_absolute_url(self):
         return reverse("pomodoro:share-calendar", kwargs={"pk": self.pk})
+
+
+class FavoritePomodoro(models.Model):
+    favorite = models.ForeignKey(Favorite, on_delete=models.CASCADE)
+    pomodoro = models.ForeignKey(Pomodoro, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(default=timezone.now)
