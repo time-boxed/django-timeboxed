@@ -165,5 +165,4 @@ if "CELERY_BROKER_URL" in os.environ:
 else:
     CELERY_TASK_ALWAYS_EAGER = True
 
-TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 SITE_ID = 1

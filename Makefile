@@ -5,7 +5,7 @@ PYTHON_BIN := .venv/bin/python
 .PHONY:	test build migrate run shell clean
 
 test: ${APP_BIN}
-	${APP_BIN} test -v 2
+	${APP_BIN} test
 
 ${APP_BIN}:
 	python3 -m venv .venv
