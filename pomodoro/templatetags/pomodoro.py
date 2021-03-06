@@ -37,9 +37,17 @@ def breadcrumb(instance=None, active=None):
 
     def dates(dt):
         yield reverse("pomodoro:pomodoro-list", args=(dt.year,)), dt.year
-        yield reverse("pomodoro:pomodoro-list", args=(dt.year, dt.month),), dt.month
         yield reverse(
-            "pomodoro:pomodoro-list", args=(dt.year, dt.month, dt.day,),
+            "pomodoro:pomodoro-list",
+            args=(dt.year, dt.month),
+        ), dt.month
+        yield reverse(
+            "pomodoro:pomodoro-list",
+            args=(
+                dt.year,
+                dt.month,
+                dt.day,
+            ),
         ), dt.day
 
     def generator():

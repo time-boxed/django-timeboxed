@@ -41,7 +41,6 @@ class Search(APIView):
         )
 
 
-
 class Query(APIView):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (IsAuthenticated,)
