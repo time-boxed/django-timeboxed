@@ -1,4 +1,3 @@
-
 import os
 import random
 import datetime
@@ -11,6 +10,7 @@ def _upload_to_path(instance, filename):
 
 def color():
     return "%06x" % random.randint(0, 0xFFFFFF)
+
 
 def to_ts(dt):
     return dt.timestamp() * 1000

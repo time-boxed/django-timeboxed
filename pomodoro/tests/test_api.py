@@ -17,7 +17,9 @@ class ApiTest(TestCase):
         response = self.client.post(reverse("api:favorite-start", args=[1]))
         self.assertEqual(response.status_code, 201, response.content)
         self.assertEqual(Favorite.objects.count(), 1)
-        self.assertEqual(FavoritePomodoro.objects.count(), 1, 'Linked favorite to pomodoro')
+        self.assertEqual(
+            FavoritePomodoro.objects.count(), 1, "Linked favorite to pomodoro"
+        )
 
     def test_create_pomodoro(self):
         """Test creating pomodoro with just project id"""
@@ -56,7 +58,7 @@ class ApiTest(TestCase):
         response = self.client.post(
             reverse("api:pomodoro-list"),
             content_type="application/json",
-            data={"title": "Test without project",},
+            data={"title": "Test without project"},
         )
         self.assertEqual(response.status_code, 201, response.content)
         self.assertEqual(

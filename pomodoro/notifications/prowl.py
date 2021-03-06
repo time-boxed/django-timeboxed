@@ -18,7 +18,9 @@ class Prowl:
                     get_current_site(None), pomodoro.get_absolute_url()
                 ),
                 "description": "{} - {} - {}".format(
-                    pomodoro.title, pomodoro.category, pomodoro.duration,
+                    pomodoro.title,
+                    pomodoro.category,
+                    pomodoro.duration,
                 ),
             },
         ).raise_for_status()

@@ -49,7 +49,9 @@ class Project(models.Model):
         limit = timezone.now() - datetime.timedelta(days=30)
         duration = datetime.timedelta()
         for pomodoro in Pomodoro.objects.filter(
-            start__gte=limit, owner=self.owner, project=self,
+            start__gte=limit,
+            owner=self.owner,
+            project=self,
         ):
             duration += pomodoro.end - pomodoro.start
         self.duration = duration.total_seconds()
@@ -57,11 +59,11 @@ class Project(models.Model):
 
 
 class Pomodoro(models.Model):
-    start = models.DateTimeField(default=timezone.now, verbose_name=_('start time'))
-    end = models.DateTimeField(default=timezone.now, verbose_name=_('end time'))
+    start = models.DateTimeField(default=timezone.now, verbose_name=_("start time"))
+    end = models.DateTimeField(default=timezone.now, verbose_name=_("end time"))
 
-    title = models.CharField(max_length=32, verbose_name=_('title'))
-    category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
+    title = models.CharField(max_length=32, verbose_name=_("title"))
+    category = models.CharField(max_length=32, blank=True, verbose_name=_("category"))
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="+",
@@ -76,22 +78,23 @@ class Pomodoro(models.Model):
     @property
     def duration(self):
         return self.end - self.start
-    duration.fget.short_description = _('duration')
+
+    duration.fget.short_description = _("duration")
 
     def __str__(self):
-        return '{}:{}'.format(self.start, self.title)
+        return "{}:{}".format(self.start, self.title)
 
     def get_absolute_url(self):
-        return reverse('pomodoro:pomodoro-detail', kwargs={'pk': self.pk})
+        return reverse("pomodoro:pomodoro-detail", kwargs={"pk": self.pk})
 
     class Meta:
-        ordering = ('-start',)
+        ordering = ("-start",)
 
 
 class Favorite(models.Model):
-    duration = models.IntegerField(verbose_name=_('duration'))
-    title = models.CharField(max_length=32, verbose_name=_('title'))
-    category = models.CharField(max_length=32, blank=True, verbose_name=_('category'))
+    duration = models.IntegerField(verbose_name=_("duration"))
+    title = models.CharField(max_length=32, verbose_name=_("title"))
+    category = models.CharField(max_length=32, blank=True, verbose_name=_("category"))
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="+",
@@ -110,10 +113,10 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        ordering = ('-count',)
+        ordering = ("-count",)
 
     def get_absolute_url(self):
-        return reverse('pomodoro:favorite-detail', kwargs={'pk': self.pk})
+        return reverse("pomodoro:favorite-detail", kwargs={"pk": self.pk})
 
     def refresh(self):
         self.count = self.pomodoro_set.count()
