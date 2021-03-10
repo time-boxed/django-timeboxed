@@ -15,13 +15,13 @@ import environ
 import pathlib
 
 env = environ.Env()
-try:
-    environ.Env.read_env(env("DJANGO_ENV_FILE"))
-except FileNotFoundError:
-    pass
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = pathlib.Path(__file__).parent.parent.parent
+ENV_FILE = BASE_DIR / ".env"
+if ENV_FILE.exists():
+    with ENV_FILE.open() as fp:
+        env.read_env(fp)
 
 
 # Quick-start development settings - unsuitable for production

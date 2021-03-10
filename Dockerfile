@@ -27,11 +27,12 @@ RUN set -ex \
 
 # Finish installing app
 WORKDIR ${APP_DIR}
-ADD pomodoro ${APP_DIR}/pomodoro
-ADD docker ${APP_DIR}/docker
-ADD setup.py ${APP_DIR}/setup.py
+COPY pomodoro ${APP_DIR}/pomodoro
+COPY docker ${APP_DIR}/docker
+COPY setup.* ${APP_DIR}/
 RUN set -ex && pip install --no-cache-dir -r ${APP_DIR}/docker/requirements.txt
 RUN SECRET_KEY=1 pomodoro collectstatic --noinput
+
 USER nobody
 EXPOSE 8000
 
