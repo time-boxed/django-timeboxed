@@ -27,7 +27,7 @@
         <td>
             <form action="{% url 'pomodoro:favorite-detail' f.pk %}" method="post">
                 {% csrf_token %}
-                <button class="btn btn-primary btn-block">
+                <button class="btn btn-primary btn-sm btn-block">
                     {{f.title}}
                 </button>
             </form>

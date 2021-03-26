@@ -60,6 +60,8 @@ def breadcrumb(instance=None, active=None):
             yield instance.get_absolute_url(), instance.name
         if instance == 'Projects':
             yield reverse("pomodoro:project-list"), _("Projects")
+        if instance == 'Favorites':
+            yield reverse("pomodoro:favorite-list"), _("Favorites")
 
     def to_tag():
         yield '<ol class="breadcrumb">'

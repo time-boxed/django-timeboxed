@@ -1,42 +1,40 @@
 {% extends "base.html" %}
+{% load pomodoro %}
 {% load static %}
 {% block content %}
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Home</a></li>
-        <li class="breadcrumb-item active"><a href="{% url 'pomodoro:favorite-list' %}">Favorites</a></li>
-    </ol>
-</nav>
+{% breadcrumb 'Favorites' %}
 
 {% get_media_prefix as MEDIA_PREFIX %}
 <div class="card">
     <h4 class="card-heading">Favorites</h4>
-    <table class="table">
+    <table class="table table-sm">
         <tr>
-            <th>Title</th>
-            <th>Category</th>
+            <th>Quickstart</th>
             <th>Duration</th>
+            <th>Project</th>
             <th>Count</th>
+            <td>&nbsp;</td>
         </tr>
-{% for f in favorite_list %}
+        {% for f in favorite_list %}
         <tr>
             <td>
                 <form action="{{f.get_absolute_url}}" method="post">
                     {% csrf_token %}
-                    <button class="btn btn-primary btn-block btn-social">
-                        {% if f.icon %}
-                        <img src="{{ MEDIA_PREFIX }}{{ f.icon }}" />
-                        {% endif %}
+                    <button class="btn btn-primary btn-sm btn-block">
                         {{f.title}}
                     </button>
                 </form>
             </td>
-            <td>{{f.category}}</td>
             <td>{{f.timedelta}}</td>
+
+            <td style="border-left: 10px solid #{{f.project.color}}">
+                <a href="{{f.project.get_absolute_url}}">{{f.project}}</a>
+            </td>
             <td>{{f.count}}</td>
+            <td><a class="btn btn-warning btn-sm" href="{% url 'pomodoro:favorite-detail' f.pk %}">Edit</a></td>
         </tr>
-{% endfor %}
+        {% endfor %}
     </table>
 </div>
 {% endblock %}
