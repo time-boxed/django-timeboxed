@@ -76,6 +76,11 @@ class ProjectList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
+class ProjectUpdate(mixins.OwnerRequiredMixin, UpdateView):
+    model = models.Project
+    fields = ["name", "color", "url", "memo", "active", "duration"]
+
+
 class ProjectDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailView):
     model = models.Project
 
@@ -106,7 +111,7 @@ class FavoriteDetail(mixins.OwnerRequiredMixin, DetailView):
         favorite = get_object_or_404(models.Favorite, pk=pk)
 
         if pomodoro.end > now:
-            messages.warning(request, "Active Pomodoro")
+            messages.warning(request, "There is already an Active Pomodoro")
             return redirect(self.get_success_url())
 
         pomodoro = favorite.start(now)

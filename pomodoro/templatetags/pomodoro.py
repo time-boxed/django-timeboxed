@@ -51,10 +51,15 @@ def breadcrumb(instance=None, active=None):
         ), dt.day
 
     def generator():
-        yield reverse("pomodoro:dashboard"), _("home")
+        yield reverse("pomodoro:dashboard"), _("Home")
         if isinstance(instance, models.Pomodoro):
             yield from dates(instance.start)
             yield instance.get_absolute_url(), instance.title
+        if isinstance(instance, models.Project):
+            yield reverse("pomodoro:project-list"), _("Projects")
+            yield instance.get_absolute_url(), instance.name
+        if instance == 'Projects':
+            yield reverse("pomodoro:project-list"), _("Projects")
 
     def to_tag():
         yield '<ol class="breadcrumb">'

@@ -1,24 +1,22 @@
 {% extends "base.html" %}
-{% load static %}
+{% load pomodoro %}
 {% block content %}
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Home</a></li>
-        <li class="breadcrumb-item active"><a href="{% url 'pomodoro:project-list' %}">Projects</a></li>
-    </ol>
-</nav>
+{% breadcrumb 'Projects' %}
 
 <div class="card">
     <h4 class="card-heading">Projects</h4>
-    <table class="table">
+    <table class="table table-sm">
         <tr>
-            <th>Name</th>
+            <th colspan="2">Name</th>
+            <th>Duration</th>
             <th>Link</th>
         </tr>
         {% for project in object_list %}
-        <tr style="border: solid #{{project.color}}">
+        <tr style="border-left: 10px solid #{{project.color}}">
             <td><a href="{{project.get_absolute_url}}">{{project.name}}</a></td>
+            <td><a class="badge badge-warning" href="{% url 'pomodoro:project-update' project.id %}">Edit</a></td>
+            <td>{{project.timedelta}}</td>
             <td>{{project.url|urlize}}</td>
         </tr>
         {% endfor %}

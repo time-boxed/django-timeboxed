@@ -1,39 +1,33 @@
 {% extends "base.html" %}
-{% load static %}
+{% load pomodoro %}
 {% block content %}
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'pomodoro:project-list' %}">Projects</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{object.name}}</li>
-    </ol>
-</nav>
+{% breadcrumb object %}
 
-<dl class="row" style="border: solid #{{project.color}}">
-    <dt class="col-sm-2">Title</dt>
-    <dd class="col-sm-9">{{object.name}}</dd>
-    <dt class="col-sm-2">URL</dt>
-    <dd class="col-sm-9">{{obj.url|urlize}}</dd>
-    <dt class="col-sm-2">Memo</dt>
-    <dd class="col-sm-9">{{object.memo}}</dd>
-</dl>
+<div>
+    <dl class="row" style="border-left: 10px solid #{{project.color}}">
+        <dt class="col-sm-2">Title</dt>
+        <dd class="col-sm-9">{{object.name}}</dd>
+        <dt class="col-sm-2">URL</dt>
+        <dd class="col-sm-9">{{obj.url|urlize}}</dd>
+        <dt class="col-sm-2">Memo</dt>
+        <dd class="col-sm-9">{{object.memo}}</dd>
+    </dl>
+    <a class="row badge badge-warning" href="{% url 'pomodoro:project-update' project.id %}">Edit</a>
+</div>
 
-<table class="table" style="border: solid #{{project.color}}">
+<table class="table table-sm">
     <tr>
         <th>Favorite</th>
         <th>Duration</th>
         <th>Count</th>
     </tr>
     {% for f in object.favorite_set.all %}
-    <tr>
+    <tr style="border-left: 10px solid #{{project.color}}">
         <td>
             <form action="{% url 'pomodoro:favorite-detail' f.pk %}" method="post">
                 {% csrf_token %}
-                <button class="btn btn-primary btn-block btn-social">
-                    {% if f.icon %}
-                    <img src="{{ MEDIA_PREFIX }}{{ f.icon }}" />
-                    {% endif %}
+                <button class="btn btn-primary btn-block">
                     {{f.title}}
                 </button>
             </form>
@@ -48,7 +42,7 @@
     {% endfor %}
 </table>
 
-<table class="table" style="border: solid #{{project.color}}">
+<table class="table table-sm">
     <tr>
         <th>Pomodoro</th>
         <th>Start</th>
@@ -56,7 +50,7 @@
         <th>Duration</th>
     </tr>
     {% for p in page_obj %}
-    <tr>
+    <tr style="border-left: 10px solid #{{project.color}}">
         <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
         <td>{{p.start}}</td>
         <td>{{p.end}}</td>
