@@ -6,7 +6,14 @@ from django.utils.translation import ugettext_lazy as _
 
 @admin.register(models.Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ("name", "color", "timedelta", "active", "owner")
+    list_display = (
+        "name",
+        "color",
+        "timedelta",
+        "active",
+        "owner",
+        "url",
+    )
     list_filter = ("owner", "active")
     list_filter = (("owner", admin.RelatedOnlyFieldListFilter),)
 
@@ -40,7 +47,14 @@ class PomodoroAdmin(admin.ModelAdmin):
 @admin.register(models.Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_select_related = ("project", "owner")
-    list_display = ("title", "project", "timedelta", "owner", "count")
+    list_display = (
+        "title",
+        "project",
+        "timedelta",
+        "owner",
+        "count",
+        "url",
+    )
     list_filter = (
         ("owner", admin.RelatedOnlyFieldListFilter),
         ("project", admin.RelatedOnlyFieldListFilter),
