@@ -5,6 +5,7 @@ on:
 
 jobs:
   docker:
+    name: Build Docker Container
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
