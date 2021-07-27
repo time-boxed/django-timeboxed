@@ -23,7 +23,7 @@ class Project(models.Model):
         verbose_name=_("owner"),
         on_delete=models.CASCADE,
     )
-    name = models.CharField(max_length=32, verbose_name=_("name"))
+    name = models.CharField(max_length=128, verbose_name=_("name"))
     color = models.CharField(max_length=6, default=util.color)
     url = models.URLField(blank=True, verbose_name=_("Optional link"))
     memo = models.TextField(blank=True)
@@ -62,7 +62,7 @@ class Pomodoro(models.Model):
     start = models.DateTimeField(default=timezone.now, verbose_name=_("start time"))
     end = models.DateTimeField(default=timezone.now, verbose_name=_("end time"))
 
-    title = models.CharField(max_length=32, verbose_name=_("title"))
+    title = models.CharField(max_length=128, verbose_name=_("title"))
     category = models.CharField(max_length=32, blank=True, verbose_name=_("category"))
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -93,7 +93,7 @@ class Pomodoro(models.Model):
 
 class Favorite(models.Model):
     duration = models.IntegerField(verbose_name=_("duration"))
-    title = models.CharField(max_length=32, verbose_name=_("title"))
+    title = models.CharField(max_length=128, verbose_name=_("title"))
     category = models.CharField(max_length=32, blank=True, verbose_name=_("category"))
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
