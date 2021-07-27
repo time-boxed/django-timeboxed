@@ -15,6 +15,7 @@ ${APP_BIN}: $(PIP_BIN)
 
 .PHONY:	pip
 pip:	$(PIP_BIN)
+	$(PIP_BIN) install pip -U
 	${PIP_BIN} install -r docker/requirements.txt
 	${PIP_BIN} install -e .[dev,standalone]
 

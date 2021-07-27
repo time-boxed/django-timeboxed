@@ -7,7 +7,7 @@ certifi==2019.9.11
 chardet==3.0.4
 defusedxml==0.6.0 ; python_version >= '3.0'
 django-environ==0.4.5
-django==2.2.18
+django==2.2.20
 djangorestframework==3.11.2
 gunicorn==19.9.0
 icalendar==4.0.3
@@ -27,6 +27,6 @@ requests==2.22.0
 sentry-sdk==0.12.2
 six==1.12.0
 sqlparse==0.3.0
-urllib3==1.25.6
+urllib3==1.25.8
 vine==1.3.0
 zipp==0.6.0
