@@ -14,7 +14,7 @@ class Prowl:
     def send(self, pomodoro):
         site = get_current_site(None)
         return self.publish(
-            apikey=self.apikey,
+            apikey=self.key,
             application=f"Pomodoro - {site.domain}",
             event="Pomodoro Complete",
             url=f"https://{site.domain}{pomodoro.get_absolute_url()}",
