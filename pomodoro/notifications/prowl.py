@@ -2,25 +2,28 @@ import requests
 
 from django.contrib.sites.shortcuts import get_current_site
 
+# https://www.prowlapp.com/api.php#add
+
 
 class Prowl:
+    endpoint = "https://api.prowlapp.com/publicapi/add"
+
     def __init__(self, config):
         self.key = config.key
 
     def send(self, pomodoro):
+        site = get_current_site(None)
+        return self.publish(
+            apikey=self.apikey,
+            application=f"Pomodoro - {site.domain}",
+            event="Pomodoro Complete",
+            url=f"https://{site.domain}{pomodoro.get_absolute_url()}",
+            description=f"{pomodoro.title} - {pomodoro.category} - {pomodoro.duration}",
+        )
+
+    def publish(self, **kwargs):
+        kwargs.setdefault("apikey", self.key)
         requests.post(
-            "https://api.prowlapp.com/publicapi/add",
-            data={
-                "apikey": self.key,
-                "application": "Pomodoro - {}".format(get_current_site(None)),
-                "event": "Pomodoro Complete",
-                "url": "https://{}{}".format(
-                    get_current_site(None), pomodoro.get_absolute_url()
-                ),
-                "description": "{} - {} - {}".format(
-                    pomodoro.title,
-                    pomodoro.category,
-                    pomodoro.duration,
-                ),
-            },
+            self.endpoint,
+            data=kwargs,
         ).raise_for_status()
