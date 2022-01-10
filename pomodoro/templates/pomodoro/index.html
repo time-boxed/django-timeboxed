@@ -1,20 +1,6 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block styles %}
-<link rel="apple-touch-icon" href="{% static "/images/pomodoro.png" %}">
-<meta name="apple-mobile-web-app-title" content="Pomodoro">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<link rel="stylesheet" href="{% static "/css/pomodoro.css" %}">
-{% endblock %}
-
-{% block javascript %}
-<script src="{% static "/js/pomodoro.js" %}"></script>
-{% endblock %}
+{% extends "pomodoro/base.html" %}
 
 {% block content %}
-
 <div class="card" data-countdown="{{ pomodoro.end.isoformat }}">
     <h4 class="card-title">
         {{ pomodoro.title }}

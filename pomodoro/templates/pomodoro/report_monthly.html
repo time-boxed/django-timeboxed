@@ -1,6 +1,9 @@
-{% extends "base.html" %}
+{% extends "pomodoro/base.html" %}
 {% load pomodoro %}
+
 {% block content %}
+
+{% include 'pomodoro/timer.html' %}
 
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">

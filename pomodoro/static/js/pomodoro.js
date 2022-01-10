@@ -59,7 +59,7 @@ class Countdown {
     this.updateElement(this.hoursSpan, t, t.hours, true);
     this.updateElement(this.minutesSpan, t, t.minutes, true);
     this.updateElement(this.secondsSpan, t, t.seconds, true);
-    this.clock.parentElement.className = `card card-${this.color(t.diff)}`;
+    this.clock.className = `card card-${this.color(t.diff)}`;
   }
 }
 

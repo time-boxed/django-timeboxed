@@ -1,67 +1,89 @@
-{% extends "base.html" %}
+{% extends "pomodoro/base.html" %}
 {% load pomodoro %}
+
 {% block content %}
 
 {% breadcrumb object %}
 
-<div>
-    <dl class="row" style="border-left: 10px solid #{{project.color}}">
-        <dt class="col-sm-2">Title</dt>
-        <dd class="col-sm-9">{{object.name}}</dd>
-        <dt class="col-sm-2">URL</dt>
-        <dd class="col-sm-9">{{obj.url|urlize}}</dd>
-        <dt class="col-sm-2">Memo</dt>
-        <dd class="col-sm-9">{{object.memo}}</dd>
-    </dl>
-    <a class="row badge badge-warning" href="{% url 'pomodoro:project-update' project.id %}">Edit</a>
+{% include 'pomodoro/timer.html' %}
+
+<div class="card">
+    <h4 class="card-header">{{object.name}}</h4>
+    <table class="table table-sm">
+        <tr style="border-left: 10px solid #{{project.color}}">
+            <th>Title</th>
+            <td>{{object.name}}</td>
+        </tr>
+        <tr style="border-left: 10px solid #{{project.color}}">
+            <th>URL</th>
+            <td>{{obj.url|urlize}}</td>
+        </tr>
+        <tr style="border-left: 10px solid #{{project.color}}">
+            <th>Memo</th>
+            <td>{{object.memo}}</td>
+        </tr>
+    </table>
+    <div class="card-footer">
+        <a class="row badge badge-warning" href="{% url 'pomodoro:project-update' project.id %}">Edit</a>
+    </div>
 </div>
+<br>
 
-<table class="table table-sm">
-    <tr>
-        <th>Favorite</th>
-        <th>Duration</th>
-        <th>Count</th>
-    </tr>
-    {% for f in object.favorite_set.all %}
-    <tr style="border-left: 10px solid #{{project.color}}">
-        <td>
-            <form action="{% url 'pomodoro:favorite-detail' f.pk %}" method="post">
-                {% csrf_token %}
-                <button class="btn btn-primary btn-sm btn-block">
-                    {{f.title}}
-                </button>
-            </form>
-        </td>
-        <td>{{f.timedelta}}</td>
-        <td>{{f.count}}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="3">No Favorites</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="card">
+    <h4 class="card-header">Favorites</h4>
 
-<table class="table table-sm">
-    <tr>
-        <th>Pomodoro</th>
-        <th>Start</th>
-        <th>End</th>
-        <th>Duration</th>
-    </tr>
-    {% for p in page_obj %}
-    <tr style="border-left: 10px solid #{{project.color}}">
-        <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
-        <td>{{p.start}}</td>
-        <td>{{p.end}}</td>
-        <td>{{p.duration}}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="3">No Pomodoros</td>
-    </tr>
-    {% endfor %}
-</table>
+    <table class="table table-sm">
+        <tr>
+            <th>Favorite</th>
+            <th>Duration</th>
+            <th>Count</th>
+        </tr>
+        {% for f in object.favorite_set.all %}
+        <tr style="border-left: 10px solid #{{project.color}}">
+            <td>
+                <form action="{% url 'pomodoro:favorite-detail' f.pk %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-primary btn-sm btn-block">
+                        {{f.title}}
+                    </button>
+                </form>
+            </td>
+            <td>{{f.timedelta}}</td>
+            <td>{{f.count}}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No Favorites</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<br>
+
+<div class="card">
+    <h4 class="card-header">Recent</h4>
+    <table class="table table-sm">
+        <tr>
+            <th>Pomodoro</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Duration</th>
+        </tr>
+        {% for p in page_obj %}
+        <tr style="border-left: 10px solid #{{project.color}}">
+            <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
+            <td>{{p.start}}</td>
+            <td>{{p.end}}</td>
+            <td>{{p.duration}}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No Pomodoros</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<br />
 
 {% include 'pomodoro/pagination.html' %}
 

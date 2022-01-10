@@ -1,11 +1,14 @@
-{% extends "base.html" %}
+{% extends "pomodoro/base.html" %}
 {% load pomodoro %}
+
 {% block content %}
 
 {% breadcrumb 'Projects' %}
 
+{% include 'pomodoro/timer.html' %}
+
+<h1>Projects</h1>
 <div class="card">
-    <h4 class="card-heading">Projects</h4>
     <table class="table table-sm">
         <tr>
             <th colspan="2">Name</th>

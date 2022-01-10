@@ -1,13 +1,13 @@
-{% extends "base.html" %}
+{% extends "pomodoro/base.html" %}
 {% load pomodoro %}
-{% load static %}
-{% block content %}
 
+{% block content %}
 {% breadcrumb 'Favorites' %}
 
-{% get_media_prefix as MEDIA_PREFIX %}
+{% include 'pomodoro/timer.html' %}
+
+<h1>Favorites</h1>
 <div class="card">
-    <h4 class="card-heading">Favorites</h4>
     <table class="table table-sm">
         <tr>
             <th>Quickstart</th>
@@ -32,7 +32,7 @@
                 <a href="{{f.project.get_absolute_url}}">{{f.project}}</a>
             </td>
             <td>{{f.count}}</td>
-            <td><a class="btn btn-warning btn-sm" href="{% url 'pomodoro:favorite-detail' f.pk %}">Edit</a></td>
+            <td><a class="badge badge-warning" href="{% url 'pomodoro:favorite-detail' f.pk %}">Edit</a></td>
         </tr>
         {% endfor %}
     </table>
