@@ -50,7 +50,7 @@
         </tr>
         {% for p in pomodoro_list %}
         <tr>
-            <td><a href="{{p.get_absoluete_url}}">{{p.title}}</a></td>
+            <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
             <td><a href="{{p.project.get_absolute_url}}">{{p.project.name}}</a></td>
             <td>{{p.category}}</td>
             <td>{{p.start}}</td>

@@ -33,7 +33,7 @@ def range_qs(**kwargs):
 def breadcrumb(instance=None, active=None):
     from pomodoro import models
 
-    def dates(dt):
+    def dates(dt: datetime.datetime):
         yield reverse("pomodoro:pomodoro-year", args=(dt.year,)), dt.year
         yield reverse("pomodoro:pomodoro-month", args=(dt.year, dt.month)), dt.month
         yield reverse("pomodoro:pomodoro-day", args=(dt.year, dt.month, dt.day)), dt.day
@@ -50,6 +50,8 @@ def breadcrumb(instance=None, active=None):
             yield reverse("pomodoro:project-list"), _("Projects")
         if instance == "Favorites":
             yield reverse("pomodoro:favorite-list"), _("Favorites")
+        if instance == "Shares":
+            yield reverse("pomodoro:share-list"), _("Shares")
 
     def to_tag():
         yield '<ol class="breadcrumb">'

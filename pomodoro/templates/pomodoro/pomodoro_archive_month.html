@@ -12,6 +12,8 @@
     </ol>
 </nav>
 
+{% include 'pomodoro/timer.html' %}
+
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
         {% if previous_month %}
@@ -35,8 +37,6 @@
         {% endif %}
     </ul>
 </nav>
-
-{% include 'pomodoro/timer.html' %}
 
 <div class="card">
     <h4 class="card-header">{{month|date:view.dtfmt}}</h4>

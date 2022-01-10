@@ -1,25 +1,27 @@
 {% extends "pomodoro/base.html" %}
 {% load static %}
+{% load pomodoro %}
+
 {% block content %}
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Shares</li>
-    </ol>
-</nav>
+{% breadcrumb 'Shares' %}
 
-<table class="table">
-    {% for share in object_list %}
-    <tr>
-        <td>
-            <a href="{% url 'pomodoro:share-calendar' share.pk %}">{{share.pk}}</a>
-        </td>
-        <td>
-            {{share.last_accessed}}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+{% include 'pomodoro/timer.html' %}
 
+<h1>Shares</h1>
+
+<div class="card">
+    <table class="table table-sm">
+        {% for share in object_list %}
+        <tr>
+            <td>
+                <a href="{% url 'pomodoro:share-calendar' share.pk %}">{{share.pk}}</a>
+            </td>
+            <td>
+                {{share.last_accessed}}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}

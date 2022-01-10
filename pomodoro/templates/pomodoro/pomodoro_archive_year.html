@@ -13,33 +13,32 @@
 
 {% include 'pomodoro/timer.html' %}
 
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if previous_year %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-year' previous_year.year %}">
+                <span aria-hidden="true">&laquo; {{previous_year.year}}</span>
+            </a>
+        </li>
+        {% endif %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-year' year.year %}">
+                <span aria-hidden="true">{{year.year}}</span>
+            </a>
+        </li>
+        {% if next_year %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:pomodoro-year' next_year.year %}">
+                <span aria-hidden="true">{{next_year.year}} &raquo;</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
 <div class="card">
     <h4 class="card-header">{{year|date:view.dtfmt}}</h4>
-    <div class="card-body">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                {% if previous_year %}
-                <li class="page-item">
-                    <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-year' previous_year.year %}">
-                        <span aria-hidden="true">&laquo; {{previous_year.year}}</span>
-                    </a>
-                </li>
-                {% endif %}
-                <li class="page-item">
-                    <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-year' year.year %}">
-                        <span aria-hidden="true">{{year.year}}</span>
-                    </a>
-                </li>
-                {% if next_year %}
-                <li class="page-item">
-                    <a class="page-link" aria-label="Next" href="{% url 'pomodoro:pomodoro-year' next_year.year %}">
-                        <span aria-hidden="true">{{next_year.year}} &raquo;</span>
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
     <table class="table">
         <tr>
             <th>Project</th>
