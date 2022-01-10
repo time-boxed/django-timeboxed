@@ -1,5 +1,6 @@
 import collections
 import datetime
+from urllib.parse import urlencode
 
 from django import template
 from django.shortcuts import resolve_url
@@ -26,11 +27,13 @@ def dateurl(context, to, dt):
     return resolve_url(to, **{key: getattr(dt, key) for key in context["kwargs"]})
 
 
-@register.filter
-def isoformat(dt, timespec="seconds"):
-    if isinstance(dt, datetime.date):
-        dt = datetime.datetime(dt.year, dt.month, dt.day)
-    return dt.isoformat(timespec=timespec)
+@register.simple_tag
+def range_qs(**kwargs):
+    for key, dt in kwargs.items():
+        if isinstance(dt, datetime.date):
+            dt = datetime.datetime(dt.year, dt.month, dt.day)
+        kwargs[key] = dt.astimezone().isoformat()
+    return urlencode(kwargs)
 
 
 @register.simple_tag
@@ -38,19 +41,9 @@ def breadcrumb(instance=None, active=None):
     from pomodoro import models
 
     def dates(dt):
-        yield reverse("pomodoro:pomodoro-list", args=(dt.year,)), dt.year
-        yield reverse(
-            "pomodoro:pomodoro-list",
-            args=(dt.year, dt.month),
-        ), dt.month
-        yield reverse(
-            "pomodoro:pomodoro-list",
-            args=(
-                dt.year,
-                dt.month,
-                dt.day,
-            ),
-        ), dt.day
+        yield reverse("pomodoro:pomodoro-year", args=(dt.year,)), dt.year
+        yield reverse("pomodoro:pomodoro-month", args=(dt.year, dt.month)), dt.month
+        yield reverse("pomodoro:pomodoro-day", args=(dt.year, dt.month, dt.day)), dt.day
 
     def generator():
         yield reverse("pomodoro:dashboard"), _("Home")
@@ -60,9 +53,9 @@ def breadcrumb(instance=None, active=None):
         if isinstance(instance, models.Project):
             yield reverse("pomodoro:project-list"), _("Projects")
             yield instance.get_absolute_url(), instance.name
-        if instance == 'Projects':
+        if instance == "Projects":
             yield reverse("pomodoro:project-list"), _("Projects")
-        if instance == 'Favorites':
+        if instance == "Favorites":
             yield reverse("pomodoro:favorite-list"), _("Favorites")
 
     def to_tag():

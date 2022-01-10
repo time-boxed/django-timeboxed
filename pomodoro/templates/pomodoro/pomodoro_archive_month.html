@@ -4,7 +4,13 @@
 
 {% block content %}
 
-{% include 'pomodoro/timer.html' %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-year' month.year %}">{{month.year}}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{month.month}}</li>
+    </ol>
+</nav>
 
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
@@ -30,8 +36,10 @@
     </ul>
 </nav>
 
+{% include 'pomodoro/timer.html' %}
+
 <div class="card">
-    <h4 class="card-heading">{{month|date:view.dtfmt}}</h4>
+    <h4 class="card-header">{{month|date:view.dtfmt}}</h4>
     <table class="table">
         <tr>
             <th>Project</th>
@@ -39,7 +47,7 @@
         </tr>
         {% for project, duration in object_list|project_report|dictsortreversed:1 %}
         <tr>
-            <td><a href="{{project.get_absolute_url}}?start={{previous_month|isoformat}}&end={{next_month|isoformat}}">{{project.name}}</a></td>
+            <td><a href="{{project.get_absolute_url}}?{% range_qs start=month end=next_month %}">{{project.name}}</a></td>
             <td>{{duration}}</td>
         </tr>
         {% endfor %}
