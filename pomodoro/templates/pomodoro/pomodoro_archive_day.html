@@ -1,0 +1,54 @@
+{% extends "pomodoro/base.html" %}
+{% load static %}
+{% block content %}
+
+{% include 'pomodoro/timer.html' %}
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if previous_day %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-day' previous_day.year previous_day.month previous_day.day %}">
+                <span aria-hidden="true">&laquo; {{previous_day|date}}</span>
+            </a>
+        </li>
+        {% endif %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:pomodoro-day' day.year day.month day.day %}">
+                <span aria-hidden="true">{{day|date}} &raquo;</span>
+            </a>
+        </li>
+        {% if next_day %}
+        <li class="page-item">
+            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:pomodoro-day' next_day.year next_day.month next_day.day %}">
+                <span aria-hidden="true">{{next_day|date}} &raquo;</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+<div class="card">
+    <h4 class="card-heading">{{date}}</h4>
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Project</th>
+            <th>Category</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Duration</th>
+        </tr>
+        {% for p in pomodoro_list %}
+        <tr>
+            <td><a href="{{p.get_absoluete_url}}">{{p.title}}</a></td>
+            <td><a href="{{p.project.get_absolute_url}}">{{p.project.name}}</a></td>
+            <td>{{p.category}}</td>
+            <td>{{p.start}}</td>
+            <td>{{p.end}}</td>
+            <td>{{p.duration}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

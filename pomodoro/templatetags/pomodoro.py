@@ -28,6 +28,8 @@ def dateurl(context, to, dt):
 
 @register.filter
 def isoformat(dt, timespec="seconds"):
+    if isinstance(dt, datetime.date):
+        dt = datetime.datetime(dt.year, dt.month, dt.day)
     return dt.isoformat(timespec=timespec)
 
 

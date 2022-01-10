@@ -2,7 +2,6 @@ import datetime
 import logging
 
 import icalendar
-from dateutil.relativedelta import relativedelta
 
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -12,12 +11,13 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic.base import View
+from django.views.generic import dates
+from django.views.generic.base import RedirectView, View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 
-from pomodoro import forms, mixins, models, util
+from pomodoro import forms, mixins, models
 
 logger = logging.getLogger(__name__)
 
@@ -128,50 +128,38 @@ class FavoriteList(LoginRequiredMixin, ListView):
         )
 
 
-class PomodoroReport(LoginRequiredMixin, ListView):
+class PomodoroArchiveView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse("pomodoro:pomodoro-year", kwargs={"year": timezone.now().year})
+
+
+class PomodoroArchiveOptions(LoginRequiredMixin):
+    allow_empty = True
     model = models.Pomodoro
-    template_name = "pomodoro/report_monthly.html"
+    make_object_list = True
+    allow_future = True
+    date_field = "start"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["start"] = self.start
-        context["end"] = self.end
-        context["date_prev"] = self.start - self.delta
-        context["date_next"] = self.start + self.delta
-        if context["date_next"] > self.today:
-            context.pop("date_next")
-        context["dtfmt"] = self.dtfmt
-        context["kwargs"] = self.kwargs
-
-        return context
-
-    def get_queryset(self):
-        self.today = timezone.now()
-        lookup = {
-            "year": self.kwargs.get("year", self.today.year),
-            "month": self.kwargs.get("month", 1),
-            "day": self.kwargs.get("day", 1),
-        }
-        if "day" in self.kwargs:
-            self.delta = datetime.timedelta(days=1)
-            self.dtfmt = "N j, Y"
-        elif "month" in self.kwargs:
-            self.delta = relativedelta(months=1)
-            self.dtfmt = "N Y"
-        else:
-            self.delta = relativedelta(years=1)
-            self.dtfmt = "Y"
-
-        today = timezone.make_aware(datetime.datetime(**lookup))
-        self.start = util.floor(today)
-        self.end = self.start + self.delta
-
+    def get_dated_queryset(self, **kwargs):
         return (
-            self.model.objects.filter(start__gte=self.start)
-            .filter(end__lte=self.end)
+            self.model.objects.filter(start__gte=kwargs["start__gte"])
+            .filter(end__lte=kwargs["start__lt"])
             .filter(owner=self.request.user)
             .prefetch_related("project")
         )
+
+
+class PomodoroYearView(PomodoroArchiveOptions, dates.YearArchiveView):
+    dtfmt = "Y"
+
+
+class PomodoroMonthView(PomodoroArchiveOptions, dates.MonthArchiveView):
+    month_format = "%m"
+    dtfmt = "N Y"
+
+
+class PomodoroDateView(PomodoroArchiveOptions, dates.DayArchiveView):
+    month_format = "%m"
 
 
 class PomodoroDetailView(mixins.OwnerRequiredMixin, UpdateView):

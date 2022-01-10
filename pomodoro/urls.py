@@ -4,10 +4,10 @@ from pomodoro import views
 
 app_name = "pomodoro"
 urlpatterns = [
-    path("report", views.PomodoroReport.as_view(), name="pomodoro-list"),
-    path("report/<int:year>", views.PomodoroReport.as_view(), name="pomodoro-list"),
-    path("report/<int:year>/<int:month>", views.PomodoroReport.as_view(), name="pomodoro-list"),
-    path("report/<int:year>/<int:month>/<int:day>", views.PomodoroReport.as_view(), name="pomodoro-list"),
+    path("report/", views.PomodoroArchiveView.as_view(), name="pomodoro-list"),
+    path("report/<int:year>/", views.PomodoroYearView.as_view(), name="pomodoro-year"),
+    path("report/<int:year>/<int:month>/", views.PomodoroMonthView.as_view(), name="pomodoro-month"),
+    path("report/<int:year>/<int:month>/<int:day>/", views.PomodoroDateView.as_view(), name="pomodoro-day"),
     path("pomodoro/<int:pk>", views.PomodoroDetailView.as_view(), name="pomodoro-detail"),
     path("favorite/<int:pk>", views.FavoriteDetail.as_view(), name="favorite-detail"),
     path("favorite", views.FavoriteList.as_view(), name="favorite-list"),
