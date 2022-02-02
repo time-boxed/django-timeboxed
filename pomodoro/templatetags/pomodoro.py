@@ -2,6 +2,8 @@ import collections
 import datetime
 from urllib.parse import urlencode
 
+from .. import models
+
 from django import template
 from django.urls import reverse
 from django.utils.html import format_html
@@ -66,3 +68,14 @@ def breadcrumb(instance=None, active=None):
         yield "</ol>"
 
     return mark_safe("".join(to_tag()))
+
+
+@register.inclusion_tag("pomodoro/timer.html", takes_context=True)
+def latest_pomodoro(context):
+    data = {}
+    user = context['request'].user
+    if user.is_authenticated:
+        data['latest_pomodoro'] = models.Pomodoro.objects.filter(owner=user).latest(
+            "start"
+        )
+    return data

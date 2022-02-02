@@ -1,3 +1,4 @@
+{% if latest_pomodoro %}
 <div class="text-center" data-countdown="{{ latest_pomodoro.end.isoformat }}">
     <div class="card-header">{{latest_pomodoro.title}} <small>{{latest_pomodoro.project}}</small></div>
     <div class="card-body countdown-body">
@@ -20,3 +21,4 @@
     </div>
 </div>
 <br />
+{% endif %}
