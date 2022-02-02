@@ -2,7 +2,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.settings import api_settings
 
-from . import models, permissions, renderers, serializers
+from . import filters, models, permissions, renderers, serializers
 
 from django.http import JsonResponse
 from django.utils import timezone
@@ -52,8 +52,9 @@ class FavoriteViewSet(BaseViewSet):
 
 
 class PomodoroViewSet(BaseViewSet):
-    queryset = models.Pomodoro.objects
+    queryset = models.Pomodoro.objects.prefetch_related("project")
     serializer_class = serializers.PomodoroSerializer
+    filter_backends = [filters.DateFilter]
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES + [
         renderers.CalendarRenderer
     ]
