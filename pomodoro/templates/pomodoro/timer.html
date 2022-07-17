@@ -1,5 +1,5 @@
 {% if latest_pomodoro %}
-<div class="text-center mb-4" data-countdown="{{ latest_pomodoro.end.isoformat }}">
+<div class="text-center mb-5 card" data-countdown="{{ latest_pomodoro.end.isoformat }}">
     <div class="card-header">
         <a href="{{latest_pomodoro.get_absolute_url}}">{{latest_pomodoro.title}}</a>
         <small>(<a href="{{latest_pomodoro.project.get_absolute_url}}">{{latest_pomodoro.project.name}}</a>)</small>

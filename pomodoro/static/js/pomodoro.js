@@ -6,6 +6,8 @@
 class Countdown {
   constructor(ele, endtime) {
     this.clock = ele;
+    this.defaultClass = this.clock.className;
+
     this.endtime = new Date(ele.dataset.countdown);
 
     this.daysSpan = this.clock.querySelector(".days");
@@ -59,8 +61,7 @@ class Countdown {
     this.updateElement(this.hoursSpan, t, t.hours, true);
     this.updateElement(this.minutesSpan, t, t.minutes, true);
     this.updateElement(this.secondsSpan, t, t.seconds, true);
-    // Add mb to add some margin to the bottom only
-    this.clock.className = `mb-4 card card-${this.color(t.diff)}`;
+    this.clock.className = `${this.defaultClass} card-${this.color(t.diff)}`;
   }
 }
 
