@@ -14,43 +14,73 @@
 
 {% latest_pomodoro %}
 
-<nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-        {% if previous_month %}
-        <li class="page-item">
-            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-month' previous_month.year previous_month.month %}">
-                <span aria-hidden="true">&laquo; {{previous_month|date:view.dtfmt}}</span>
-            </a>
-        </li>
-        {% endif %}
-        <li class="page-item">
-            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-month' month.year month.month %}">
-                <span aria-hidden="true">{{month|date:view.dtfmt}}</span>
-            </a>
-        </li>
-        {% if next_month %}
-        <li class="page-item">
-            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:pomodoro-month' next_month.year next_month.month %}">
-                <span aria-hidden="true">{{next_month|date:view.dtfmt}} &raquo;</span>
-            </a>
-        </li>
-        {% endif %}
-    </ul>
-</nav>
-
-<div class="card">
-    <h4 class="card-header">{{month|date:view.dtfmt}}</h4>
-    <table class="table">
-        <tr>
-            <th>Project</th>
-            <th>Duration</th>
-        </tr>
-        {% for project, duration in object_list|project_report|dictsortreversed:1 %}
-        <tr>
-            <td><a href="{{project.get_absolute_url}}?{% range_qs start=month end=next_month %}">{{project.name}}</a></td>
-            <td>{{duration}}</td>
-        </tr>
-        {% endfor %}
-    </table>
+<div class="row mx-3">
+    <div class="col-10">
+        <div class="card">
+            <h4 class="card-header">{{month|date:view.dtfmt}}</h4>
+            <table class="table">
+                <tr>
+                    <th>Project</th>
+                    <th>Duration</th>
+                </tr>
+                {% for project, duration in object_list|project_report|dictsortreversed:1 %}
+                <tr>
+                    <td><a href="{{project.get_absolute_url}}?{% range_qs start=month end=next_month %}">{{project.name}}</a></td>
+                    <td>{{duration}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="col-2">
+        {% spaceless %}
+        <table class="table table-sm">
+            <tr>
+                <th colspan="2" class="text-left">
+                    <span aria-hidden="true">&laquo;</span>
+                    <a
+                       {% if previous_month > today %}class="text-secondary"{% endif %}
+                        href="{% url 'pomodoro:pomodoro-month' previous_month.year previous_month.month %}">{{previous_month|date:'F'}}</a>
+                </th>
+                <th colspan="4" class="text-center">
+                    <a
+                       {% if this_month > today %}class="text-secondary"{% endif %}
+                        href="{% url 'pomodoro:pomodoro-month' year=this_month.year month=this_month.month %}">{{this_month|date:'F'}}</a>
+                </th>
+                <th colspan="2" class="text-right">
+                    <a
+                       {% if next_month > today %}class="text-secondary"{% endif %}
+                        href="{% url 'pomodoro:pomodoro-month' next_month.year next_month.month %}">{{next_month|date:'F'}}</a>
+                    <span aria-hidden="true">&raquo;</span>
+                </th>
+            </tr>
+            <tr>
+                <th>&nbsp;</th>
+                <th>{{calendar.0.0|date:'D'}}</th>
+                <th>{{calendar.0.1|date:'D'}}</th>
+                <th>{{calendar.0.2|date:'D'}}</th>
+                <th>{{calendar.0.3|date:'D'}}</th>
+                <th>{{calendar.0.4|date:'D'}}</th>
+                <th>{{calendar.0.5|date:'D'}}</th>
+                <th>{{calendar.0.6|date:'D'}}</th>
+            </tr>
+            {% for week in calendar %}
+            <tr>
+                <td class="table-secondary">
+                    <span class=" text-secondary">{{week.0.isocalendar.1}}</a>
+                </td>
+                {% for d in week %}
+                <td>
+                    <a
+                       {% if d > today %}class="text-secondary"{% endif %}
+                        href="{% url 'pomodoro:pomodoro-day' d.year d.month d.day %}">{{d.day}}</a>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+        {% endspaceless %}
+    </div>
 </div>
+
 {% endblock %}

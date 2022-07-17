@@ -2,6 +2,7 @@ import datetime
 import logging
 
 import icalendar
+import calendar
 
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -184,6 +185,17 @@ class PomodoroYearView(PomodoroArchiveOptions, dates.YearArchiveView):
 class PomodoroMonthView(PomodoroArchiveOptions, dates.MonthArchiveView):
     month_format = "%m"
     dtfmt = "N Y"
+
+    def get_context_data(self, **kwargs):
+        cal = calendar.Calendar()
+        context = super().get_context_data(**kwargs)
+        context["this_month"] = datetime.date(
+            self.kwargs["year"], self.kwargs["month"], 1
+        )
+        context["calendar"] = cal.monthdatescalendar(
+            self.kwargs["year"], self.kwargs["month"]
+        )
+        return context
 
 
 class PomodoroDateView(PomodoroArchiveOptions, dates.DayArchiveView):
