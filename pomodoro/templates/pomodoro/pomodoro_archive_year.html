@@ -7,65 +7,43 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{year.year}}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{year|date:view.dtfmt}}</li>
     </ol>
 </nav>
 
 {% latest_pomodoro %}
 
-<nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-        {% if previous_year %}
-        <li class="page-item">
-            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-year' previous_year.year %}">
-                <span aria-hidden="true">&laquo; {{previous_year.year}}</span>
-            </a>
-        </li>
-        {% endif %}
-        <li class="page-item">
-            <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-year' year.year %}">
-                <span aria-hidden="true">{{year.year}}</span>
-            </a>
-        </li>
-        {% if next_year %}
-        <li class="page-item {% if today <= next_year %}disabled{% endif %}">
-            <a class="page-link" aria-label="Next" href="{% url 'pomodoro:pomodoro-year' next_year.year %}">
-                <span aria-hidden="true">{{next_year.year}} &raquo;</span>
-            </a>
-        </li>
-        {% endif %}
-    </ul>
-</nav>
-
-<div class="card">
-    <h4 class="card-header">{{year|date:view.dtfmt}}</h4>
-    <table class="table">
-        <tr>
-            <th>Project</th>
-            <th>Duration</th>
-        </tr>
-        {% for project, duration in object_list|project_report|dictsortreversed:1 %}
-        <tr>
-            <td><a href="{{project.get_absolute_url}}?{% range_qs start=year end=next_year %}">{{project.name}}</a></td>
-            <td>{{duration}}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    <div class="card-footer">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                    <span class="page-link">Month</span>
-                </li>
-                {% for month in this_year %}
-                <li class="page-item {% if today <= month %}disabled{% endif %}">
-                    <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-month' month.year month.month %}">
-                        <span aria-hidden="true">{{month.month}}</span>
-                    </a>
-                </li>
+<div class="row mx-3">
+    <div class="col-10">
+        <div class="card">
+            <h4 class="card-header">{{year|date:view.dtfmt}}</h4>
+            <table class="table">
+                <tr>
+                    <th>Project</th>
+                    <th>Duration</th>
+                </tr>
+                {% for project, duration in object_list|project_report|dictsortreversed:1 %}
+                <tr>
+                    <td><a href="{{project.get_absolute_url}}?{% range_qs start=year end=next_year %}">{{project.name}}</a></td>
+                    <td>{{duration}}</td>
+                </tr>
                 {% endfor %}
-            </ul>
-        </nav>
+            </table>
+
+        </div>
+    </div>
+    <div class="col-2">
+        <ul class="list-unstyled">
+            {% for month in this_year %}
+            <li>
+                <a
+                   {% if today <= month %}class="text-secondary" {% endif %}"
+                   href="{% url 'pomodoro:pomodoro-month' month.year month.month %}">
+                    {{month|date:"F"}}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 

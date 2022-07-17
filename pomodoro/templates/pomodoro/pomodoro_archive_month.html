@@ -7,8 +7,8 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-year' month.year %}">{{month.year}}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{month.month}}</li>
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-year' month.year %}">{{month|date:"Y"}}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{month|date:"m"}}</li>
     </ol>
 </nav>
 
@@ -35,6 +35,12 @@
     <div class="col-2">
         {% spaceless %}
         <table class="table table-sm">
+            <tr>
+                <th colspan="8" class="text-center">
+                    <a
+                       href="{% url 'pomodoro:pomodoro-year' year=today.year %}">{{this_month|date:'Y'}}</a>
+                </th>
+            </tr>
             <tr>
                 <th colspan="2" class="text-left">
                     <span aria-hidden="true">&laquo;</span>
