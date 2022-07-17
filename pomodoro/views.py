@@ -11,11 +11,14 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import dates
-from django.views.generic.base import RedirectView, View
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView
-from django.views.generic.list import ListView
+from django.views.generic import (
+    DetailView,
+    ListView,
+    RedirectView,
+    UpdateView,
+    View,
+    dates,
+)
 
 from pomodoro import forms, mixins, models
 
@@ -67,6 +70,19 @@ class Index(LoginRequiredMixin, UpdateView):
             pomodoro.save()
             return redirect(self.get_success_url())
         return super().post(self, request)
+
+
+class HistoryRedirect(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        today = timezone.localdate()
+        return reverse(
+            "pomodoro:pomodoro-day",
+            kwargs={
+                "year": today.year,
+                "month": today.month,
+                "day": today.day,
+            },
+        )
 
 
 class ProjectList(LoginRequiredMixin, ListView):

@@ -5,6 +5,7 @@ from pomodoro import views
 app_name = "pomodoro"
 urlpatterns = [
     path("report/", views.PomodoroArchiveView.as_view(), name="pomodoro-list"),
+    path("today", views.HistoryRedirect.as_view(), name="pomodoro-today"),
     path("report/<int:year>/", views.PomodoroYearView.as_view(), name="pomodoro-year"),
     path("report/<int:year>/<int:month>/", views.PomodoroMonthView.as_view(), name="pomodoro-month"),
     path("report/<int:year>/<int:month>/<int:day>/", views.PomodoroDateView.as_view(), name="pomodoro-day"),
