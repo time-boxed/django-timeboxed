@@ -59,7 +59,8 @@ class Countdown {
     this.updateElement(this.hoursSpan, t, t.hours, true);
     this.updateElement(this.minutesSpan, t, t.minutes, true);
     this.updateElement(this.secondsSpan, t, t.seconds, true);
-    this.clock.className = `card card-${this.color(t.diff)}`;
+    // Add mb to add some margin to the bottom only
+    this.clock.className = `mb-4 card card-${this.color(t.diff)}`;
   }
 }
 

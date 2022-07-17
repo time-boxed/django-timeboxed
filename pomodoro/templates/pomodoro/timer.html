@@ -1,6 +1,9 @@
 {% if latest_pomodoro %}
-<div class="text-center" data-countdown="{{ latest_pomodoro.end.isoformat }}">
-    <div class="card-header">{{latest_pomodoro.title}} <small>{{latest_pomodoro.project}}</small></div>
+<div class="text-center mb-4" data-countdown="{{ latest_pomodoro.end.isoformat }}">
+    <div class="card-header">
+        <a href="{{latest_pomodoro.get_absolute_url}}">{{latest_pomodoro.title}}</a>
+        <small>(<a href="{{latest_pomodoro.project.get_absolute_url}}">{{latest_pomodoro.project.name}}</a>)</small>
+    </div>
     <div class="card-body countdown-body">
         <div class="days">
             <span></span>
@@ -19,6 +22,6 @@
             <div>Seconds</div>
         </div>
     </div>
+    <div class="card-footer"><a href="{% url 'pomodoro:pomodoro-today' %}">Today</a></div>
 </div>
-<br />
 {% endif %}
