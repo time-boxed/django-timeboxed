@@ -1,12 +1,14 @@
 {% extends "pomodoro/base.html" %}
-{% load static %}
+{% load i18n %}
 {% load pomodoro %}
+{% load static %}
 
 {% block content %}
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">{% trans 'Home' %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-list' %}">{% trans 'Archive' %}</a></li>
         <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-year' month.year %}">{{month|date:"Y"}}</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{month|date:"m"}}</li>
     </ol>
