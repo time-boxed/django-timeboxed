@@ -28,7 +28,7 @@
             </a>
         </li>
         {% if next_year %}
-        <li class="page-item">
+        <li class="page-item {% if today <= next_year %}disabled{% endif %}">
             <a class="page-link" aria-label="Next" href="{% url 'pomodoro:pomodoro-year' next_year.year %}">
                 <span aria-hidden="true">{{next_year.year}} &raquo;</span>
             </a>
@@ -57,10 +57,10 @@
                 <li class="page-item disabled">
                     <span class="page-link">Month</span>
                 </li>
-                {% for month in '123456789012'|make_list %}
-                <li class="page-item">
-                    <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-month' year.year forloop.counter %}">
-                        <span aria-hidden="true">{{forloop.counter}}</span>
+                {% for month in this_year %}
+                <li class="page-item {% if today <= month %}disabled{% endif %}">
+                    <a class="page-link" aria-label="Previous" href="{% url 'pomodoro:pomodoro-month' month.year month.month %}">
+                        <span aria-hidden="true">{{month.month}}</span>
                     </a>
                 </li>
                 {% endfor %}

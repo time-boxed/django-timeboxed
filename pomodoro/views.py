@@ -156,6 +156,11 @@ class PomodoroArchiveOptions(LoginRequiredMixin):
     allow_future = True
     date_field = "start"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["today"] = timezone.localdate()
+        return context
+
     def get_dated_queryset(self, **kwargs):
         return (
             self.model.objects.filter(start__gte=kwargs["start__gte"])
@@ -167,6 +172,13 @@ class PomodoroArchiveOptions(LoginRequiredMixin):
 
 class PomodoroYearView(PomodoroArchiveOptions, dates.YearArchiveView):
     dtfmt = "Y"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["this_year"] = [
+            datetime.date(self.kwargs["year"], month, 1) for month in range(1, 13)
+        ]
+        return context
 
 
 class PomodoroMonthView(PomodoroArchiveOptions, dates.MonthArchiveView):
