@@ -7,9 +7,9 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'pomodoro:dashboard' %}">Pomodoros</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-year' day.year %}">{{day.year}}</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-month' day.year day.month %}">{{day.month}}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{day.day}}</li>
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-year' day.year %}">{{day|date:"Y"}}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'pomodoro:pomodoro-month' day.year day.month %}">{{day|date:"m"}}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{day|date:"d"}}</li>
     </ol>
 </nav>
 

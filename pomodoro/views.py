@@ -2,6 +2,7 @@ import datetime
 import logging
 
 import icalendar
+import calendar
 
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -11,11 +12,14 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import dates
-from django.views.generic.base import RedirectView, View
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView
-from django.views.generic.list import ListView
+from django.views.generic import (
+    DetailView,
+    ListView,
+    RedirectView,
+    UpdateView,
+    View,
+    dates,
+)
 
 from pomodoro import forms, mixins, models
 
@@ -67,6 +71,19 @@ class Index(LoginRequiredMixin, UpdateView):
             pomodoro.save()
             return redirect(self.get_success_url())
         return super().post(self, request)
+
+
+class HistoryRedirect(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        today = timezone.localdate()
+        return reverse(
+            "pomodoro:pomodoro-day",
+            kwargs={
+                "year": today.year,
+                "month": today.month,
+                "day": today.day,
+            },
+        )
 
 
 class ProjectList(LoginRequiredMixin, ListView):
@@ -140,6 +157,11 @@ class PomodoroArchiveOptions(LoginRequiredMixin):
     allow_future = True
     date_field = "start"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["today"] = timezone.localdate()
+        return context
+
     def get_dated_queryset(self, **kwargs):
         return (
             self.model.objects.filter(start__gte=kwargs["start__gte"])
@@ -152,10 +174,28 @@ class PomodoroArchiveOptions(LoginRequiredMixin):
 class PomodoroYearView(PomodoroArchiveOptions, dates.YearArchiveView):
     dtfmt = "Y"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["this_year"] = [
+            datetime.date(self.kwargs["year"], month, 1) for month in range(1, 13)
+        ]
+        return context
+
 
 class PomodoroMonthView(PomodoroArchiveOptions, dates.MonthArchiveView):
     month_format = "%m"
     dtfmt = "N Y"
+
+    def get_context_data(self, **kwargs):
+        cal = calendar.Calendar()
+        context = super().get_context_data(**kwargs)
+        context["this_month"] = datetime.date(
+            self.kwargs["year"], self.kwargs["month"], 1
+        )
+        context["calendar"] = cal.monthdatescalendar(
+            self.kwargs["year"], self.kwargs["month"]
+        )
+        return context
 
 
 class PomodoroDateView(PomodoroArchiveOptions, dates.DayArchiveView):
