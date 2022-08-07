@@ -1,0 +1,58 @@
+{% extends "pomodoro/base.html" %}
+{% load pomodoro %}
+{% load i18n %}
+
+{% block content %}
+{% breadcrumb 'Favorites' %}
+
+{% latest_pomodoro %}
+
+<h1>Favorites</h1>
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-9">{{object.title}}</dd>
+
+            <dt class="col-sm-2">Project</dt>
+            <dd class="col-sm-9" style="border-left: 10px solid #{{object.project.color}}">
+                <a href="{{object.project.get_absolute_url}}">{{object.project}}</a>
+            </dd>
+
+            <dt class="col-sm-2">Duration</dt>
+            <dd class="col-sm-9">{{object.timedelta}}</dd>
+
+            <dt class="col-sm-2">Count</dt>
+            <dd class="col-sm-9">{{object.count}}</dd>
+
+            <dt class="col-sm-2">URL</dt>
+            <dd class="col-sm-9">{{object.url}}</dd>
+        </dl>
+    </div>
+
+    <table class="table table-sm">
+        <tr>
+            <th>Pomodoro</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Duration</th>
+            <th>&nbsp;</th>
+        </tr>
+        {% for p in page_obj %}
+        <tr style="border-left: 10px solid #{{project.color}}">
+            <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
+            <td>{{p.start}}</td>
+            <td>{{p.end}}</td>
+            <td>{{p.duration}}</td>
+            <td>
+                <a class="row badge badge-warning" href="{% url 'pomodoro:pomodoro-detail' p.id %}">{% trans 'Change' %}</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No Pomodoros</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
