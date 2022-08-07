@@ -38,6 +38,7 @@
             <th>Favorite</th>
             <th>Duration</th>
             <th>Count</th>
+            <th>&nbsp;</th>
         </tr>
         {% for f in object.favorite_set.all %}
         <tr style="border-left: 10px solid #{{project.color}}">
@@ -51,6 +52,9 @@
             </td>
             <td>{{f.timedelta}}</td>
             <td>{{f.count}}</td>
+            <td>
+                <a class="row badge badge-warning" href="{% url 'pomodoro:favorite-detail' f.id %}">{% trans 'Change' %}</a>
+            </td>
         </tr>
         {% empty %}
         <tr>
@@ -69,6 +73,7 @@
             <th>Start</th>
             <th>End</th>
             <th>Duration</th>
+            <th>&nbsp;</th>
         </tr>
         {% for p in page_obj %}
         <tr style="border-left: 10px solid #{{project.color}}">
@@ -76,6 +81,9 @@
             <td>{{p.start}}</td>
             <td>{{p.end}}</td>
             <td>{{p.duration}}</td>
+            <td>
+                <a class="row badge badge-warning" href="{% url 'pomodoro:pomodoro-detail' p.id %}">{% trans 'Change' %}</a>
+            </td>
         </tr>
         {% empty %}
         <tr>
