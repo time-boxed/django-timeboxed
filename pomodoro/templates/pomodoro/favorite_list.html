@@ -1,4 +1,5 @@
 {% extends "pomodoro/base.html" %}
+{% load i18n %}
 {% load pomodoro %}
 
 {% block content %}
@@ -32,7 +33,7 @@
                 <a href="{{f.project.get_absolute_url}}">{{f.project}}</a>
             </td>
             <td>{{f.count}}</td>
-            <td><a class="badge badge-warning" href="{% url 'pomodoro:favorite-detail' f.pk %}">Edit</a></td>
+            <td><a class="badge badge-warning" href="{% url 'pomodoro:favorite-detail' f.pk %}">{% trans 'Change' %}</a></td>
         </tr>
         {% endfor %}
     </table>
