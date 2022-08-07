@@ -95,7 +95,7 @@ class ProjectList(LoginRequiredMixin, ListView):
 
 class ProjectUpdate(mixins.OwnerRequiredMixin, UpdateView):
     model = models.Project
-    fields = ["name", "color", "url", "memo", "active", "duration"]
+    fields = ["name", "color", "url", "memo", "active", ]
 
 
 class ProjectDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailView):
@@ -111,13 +111,22 @@ class ProjectDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailVie
         return context
 
 
-class FavoriteDetail(mixins.OwnerRequiredMixin, DetailView):
+class FavoriteDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailView):
     model = models.Favorite
 
     def get_success_url(self):
         if REDIRECT_FIELD_NAME in self.request.POST:
             return self.request.POST[REDIRECT_FIELD_NAME]
         return reverse("pomodoro:dashboard")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = Paginator(
+            self.get_date_qs(context["object"].pomodoro_set.order_by("-start")), 25
+        )
+        context["paginator"] = paginator
+        context["page_obj"] = paginator.get_page(self.request.GET.get("page") or 1)
+        return context
 
     def post(self, request, pk):
         pomodoro = models.Pomodoro.objects.filter(owner=self.request.user).latest(

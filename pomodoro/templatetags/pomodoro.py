@@ -37,12 +37,13 @@ def breadcrumb(instance=None, active=None):
 
     def dates(dt: datetime.datetime):
         yield reverse("pomodoro:pomodoro-year", args=(dt.year,)), dt.year
-        yield reverse("pomodoro:pomodoro-month", args=(dt.year, dt.month)), dt.month
-        yield reverse("pomodoro:pomodoro-day", args=(dt.year, dt.month, dt.day)), dt.day
+        yield reverse("pomodoro:pomodoro-month", args=(dt.year, dt.month)), dt.strftime('%m')
+        yield reverse("pomodoro:pomodoro-day", args=(dt.year, dt.month, dt.day)), dt.strftime('%d')
 
     def generator():
         yield reverse("pomodoro:dashboard"), _("Home")
         if isinstance(instance, models.Pomodoro):
+            yield reverse("pomodoro:pomodoro-list"), _("Archive")
             yield from dates(instance.start)
             yield instance.get_absolute_url(), instance.title
         if isinstance(instance, models.Project):

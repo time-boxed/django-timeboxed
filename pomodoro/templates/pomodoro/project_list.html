@@ -1,4 +1,5 @@
 {% extends "pomodoro/base.html" %}
+{% load i18n %}
 {% load pomodoro %}
 
 {% block content %}
@@ -18,7 +19,7 @@
         {% for project in object_list %}
         <tr style="border-left: 10px solid #{{project.color}}">
             <td><a href="{{project.get_absolute_url}}">{{project.name}}</a></td>
-            <td><a class="badge badge-warning" href="{% url 'pomodoro:project-update' project.id %}">Edit</a></td>
+            <td><a class="badge badge-warning" href="{% url 'pomodoro:project-update' project.id %}">{% trans 'Change' %}</a></td>
             <td>{{project.timedelta}}</td>
             <td>{{project.url|urlize}}</td>
         </tr>

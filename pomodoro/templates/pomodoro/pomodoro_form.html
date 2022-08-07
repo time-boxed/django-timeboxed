@@ -1,5 +1,7 @@
 {% extends "pomodoro/base.html" %}
+{% load i18n %}
 {% load pomodoro %}
+
 {% block content %}
 
 {% breadcrumb pomodoro %}
@@ -26,7 +28,7 @@
     <dd class="col-sm-9">{{object.url|urlize}}</dd>
     {% endif %}
   </dl>
-  <button name="duration" type="submit" value="25" class="btn btn-warning">Update</button>
+  <button name="duration" type="submit" value="25" class="btn btn-warning">{% trans 'Save' %}</button>
 </form>
 
 {% endblock %}
