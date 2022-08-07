@@ -45,8 +45,8 @@ class Project(models.Model):
 
     timedelta.admin_order_field = "duration"
 
-    def refresh(self):
-        limit = timezone.now() - datetime.timedelta(days=30)
+    def refresh(self, lookback=90):
+        limit = timezone.now() - datetime.timedelta(days=lookback)
         duration = datetime.timedelta()
         for pomodoro in Pomodoro.objects.filter(
             start__gte=limit,
@@ -118,8 +118,9 @@ class Favorite(models.Model):
     def get_absolute_url(self):
         return reverse("pomodoro:favorite-detail", kwargs={"pk": self.pk})
 
-    def refresh(self):
-        self.count = self.pomodoro_set.count()
+    def refresh(self, lookback=90):
+        search = timezone.now() - datetime.timedelta(days=lookback)
+        self.count = self.pomodoro_set.filter(end__gte=search).count()
         self.save(update_fields=("count",))
 
     def timedelta(self):
