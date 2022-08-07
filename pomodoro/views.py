@@ -95,7 +95,7 @@ class ProjectList(LoginRequiredMixin, ListView):
 
 class ProjectUpdate(mixins.OwnerRequiredMixin, UpdateView):
     model = models.Project
-    fields = ["name", "color", "url", "memo", "active", "duration"]
+    fields = ["name", "color", "url", "memo", "active", ]
 
 
 class ProjectDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailView):

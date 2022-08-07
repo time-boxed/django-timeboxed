@@ -1,11 +1,34 @@
 {% extends "pomodoro/base.html" %}
+{% load i18n %}
 {% load pomodoro %}
+
 {% block content %}
 
-{% breadcrumb object %}
+{% breadcrumb object "Change" %}
 
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
+<form method="POST">
+    {% csrf_token %}
+
+    <dl class="row">
+        <dt class="col-sm-2">{{form.name.label}}</dt>
+        <dd class="col-sm-9">{{form.name}}</dd>
+
+        <dt class="col-sm-2">{{form.color.label}}</dt>
+        <dd class="col-sm-9">{{form.color}}</dd>
+
+        <dt class="col-sm-2">{{form.url.label}}</dt>
+        <dd class="col-sm-9">{{form.url}}</dd>
+
+        <dt class="col-sm-2">{{form.active.label}}</dt>
+        <dd class="col-sm-9">{{form.active}}</dd>
+
+        <dt class="col-sm-2">{{form.duration.label}}</dt>
+        <dd class="col-sm-9">{{object.duration}}</dd>
+
+        <dt class="col-sm-2">{{form.memo.label}}</dt>
+        <dd class="col-sm-9">{{form.memo}}</dd>
+    </dl>
+    <button name="duration" type="submit" value="25" class="btn btn-warning">{% trans 'Save' %}</button>
 </form>
 
 {% endblock %}
