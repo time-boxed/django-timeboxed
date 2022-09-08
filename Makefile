@@ -2,6 +2,7 @@ PKG_NAME = pomodoro
 CLI_NAME = pomodoro
 PKG_OPTS = .[standalone,dev]
 
+SYSTEM_PYTHON ?= python3.6
 VENV_PATH := .venv
 APP_BIN := $(VENV_PATH)/bin/$(CLI_NAME)
 PIP_BIN := $(VENV_PATH)/bin/pip
@@ -43,7 +44,7 @@ PIPDEPTREE := $(VENV_PATH)/bin/pipdeptree
 PIP_COMPILE := $(VENV_PATH)/bin/pip-compile
 
 $(PIP_BIN):
-	python3 -m venv $(VENV_PATH)
+	$(SYSTEM_PYTHON) -m venv $(VENV_PATH)
 
 $(APP_BIN): $(PIP_BIN)
 	$(PIP_BIN) install -r docker/requirements.txt -e $(PKG_OPTS)

@@ -44,5 +44,6 @@ jobs:
       - name: Run tests
         run: make test
         env:
-          SECRET_KEY: github-actions
           DATABASE_URL: postgres://postgres:postgres@localhost/${{ matrix.python-version }}
+          SECRET_KEY: github-actions
+          SYSTEM_PYTHON: python${{ matrix.python-version }}
