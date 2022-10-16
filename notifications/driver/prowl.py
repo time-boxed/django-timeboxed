@@ -11,19 +11,16 @@ class Prowl:
     def __init__(self, config):
         self.key = config.key
 
-    def send(self, pomodoro):
+    def send(self, **kwargs):
         site = get_current_site(None)
-        return self.publish(
-            apikey=self.key,
-            application=f"Pomodoro - {site.domain}",
-            event="Pomodoro Complete",
-            url=f"https://{site.domain}{pomodoro.get_absolute_url()}",
-            description=f"{pomodoro.title} - {pomodoro.category} - {pomodoro.duration}",
-        )
+        payload = {
+            "apikey": self.key,
+            "application": kwargs.get("application", site.domain),
+            "event": kwargs.get("title", "Event Title"),
+            "description": kwargs.get("body", "Message body"),
+            "priority": kwargs.get("priority", 0),
+        }
+        if "url" in kwargs:
+            payload["url"] = kwargs["url"]
 
-    def publish(self, **kwargs):
-        kwargs.setdefault("apikey", self.key)
-        requests.post(
-            self.endpoint,
-            data=kwargs,
-        ).raise_for_status()
+        requests.post(self.endpoint, data=payload).raise_for_status()

@@ -1,23 +1,22 @@
 import requests
 
-from django.contrib.sites.shortcuts import get_current_site
+# https://notify-bot.line.me/doc/en/
 
 
 class Line:
     def __init__(self, config):
         self.key = config.key
 
-    def send(self, pomodoro):
+    def send(self, **kwargs):
+        message = kwargs.get("title")
+        message += "\n"
+        message += kwargs.get("body")
+        if "url" in kwargs:
+            message += "\n"
+            message += kwargs["url"]
+
         requests.post(
             "https://notify-api.line.me/api/notify",
-            data={
-                "message": "{} - {} - {}\n{}{}".format(
-                    pomodoro.title,
-                    pomodoro.category,
-                    pomodoro.duration,
-                    get_current_site(None).domain,
-                    pomodoro.get_absolute_url(),
-                )
-            },
+            data={"message": message},
             headers={"Authorization": "Bearer {}".format(self.key)},
         ).raise_for_status()
