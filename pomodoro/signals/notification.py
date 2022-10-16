@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender="pomodoro.Pomodoro")
-def schedule_notification(sender, instance, created, **kwargs):
+def schedule_notification(instance, created, **kwargs):
     if created is False:
         logger.debug("Skipping notification for modified pomodoro")
         return
@@ -33,6 +33,7 @@ def schedule_notification(sender, instance, created, **kwargs):
         owner=instance.owner,
         title=instance.title,
         body=f"{instance.title} {instance.duration}",
+        url=instance.get_absolute_url(),
         eta=instance.end,
     )
 
