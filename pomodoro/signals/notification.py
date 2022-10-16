@@ -1,12 +1,10 @@
 import logging
 
-from celery import shared_task
+from notifications.shortcuts import dequeue, queue
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.utils import timezone
-
-from pomodoro import models
 
 logger = logging.getLogger(__name__)
 
@@ -29,16 +27,16 @@ def schedule_notification(sender, instance, created, **kwargs):
         return
 
     logger.debug("Queuring notification for %s", instance)
-    send_notification.s(instance.id).apply_async(eta=instance.end)
+
+    queue(
+        id=f"pomodoro:{instance.pk}",
+        owner=instance.owner,
+        title=instance.title,
+        body=f"{instance.title} {instance.duration}",
+        eta=instance.end,
+    )
 
 
-@shared_task
-def send_notification(pomodoro_id):
-    try:
-        pomodoro = models.Pomodoro.objects.get(pk=pomodoro_id)
-    except models.Pomodoro.DoesNotExist:
-        logger.debug("Skipping missing pomodoro")
-        return
-
-    for notification in models.Notification.objects.filter(owner=pomodoro.owner):
-        notification.driver.send(pomodoro)
+@receiver(post_delete, sender="pomodoro.Pomodoro")
+def unschedule_notification(instance, **kwargs):
+    dequeue(id=f"pomodoro:{instance.pk}")

@@ -10,7 +10,8 @@ class PomodoroConfig(AppConfig):
 
     def ready(self):
         import pomodoro.signals  # NOQA
-        import pomodoro.signals.notification  # NOQA
 
         if self.apps.is_installed("dmqtt"):
             import pomodoro.signals.mqtt  # NOQA
+        if self.apps.is_installed("notifications"):
+            import pomodoro.signals.notification  # NOQA
