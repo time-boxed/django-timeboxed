@@ -1,10 +1,12 @@
 import logging
 
-from . import tasks
+from celery import shared_task
 
-from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
+
+from pomodoro import models
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +29,16 @@ def schedule_notification(sender, instance, created, **kwargs):
         return
 
     logger.debug("Queuring notification for %s", instance)
-    tasks.send_notification.s(instance.id).apply_async(eta=instance.end)
+    send_notification.s(instance.id).apply_async(eta=instance.end)
 
 
-@receiver(post_save, sender="pomodoro.Pomodoro")
-def refresh_count_from_pomodoro(sender, instance, **kwargs):
-    tasks.refresh_favorite.delay(owner_id=instance.owner_id)
-    if instance.project_id:
-        tasks.refresh_project.delay(pk=instance.project_id)
-    tasks.most_recent_pomodoro.delay(owner_id=instance.owner_id)
+@shared_task
+def send_notification(pomodoro_id):
+    try:
+        pomodoro = models.Pomodoro.objects.get(pk=pomodoro_id)
+    except models.Pomodoro.DoesNotExist:
+        logger.debug("Skipping missing pomodoro")
+        return
+
+    for notification in models.Notification.objects.filter(owner=pomodoro.owner):
+        notification.driver.send(pomodoro)
