@@ -243,7 +243,7 @@ class ShareCalendar(View):
         for pomodoro in models.Pomodoro.objects.filter(
             owner=share.owner,
             start__gte=share.last_accessed - datetime.timedelta(days=30),
-        ):
+        ).prefetch_related("project"):
             event = icalendar.Event()
             url = request.build_absolute_uri(pomodoro.get_absolute_url())
             event.add("uid", pomodoro.pk)
