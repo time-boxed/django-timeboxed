@@ -25,7 +25,7 @@ jobs:
         python-version: ["3.6", "3.7", "3.8"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: local-fix
         run: |
           # Hack to get setup-python to work on act
