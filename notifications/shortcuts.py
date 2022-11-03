@@ -20,7 +20,7 @@ def queue(owner, driver=None, eta=None, id=None, **kwargs):
 
     qs = models.Notification.objects.filter(owner=owner)
     if driver:
-        qs = qs.filter(driver=driver)
+        qs = qs.filter(type=driver)
 
     for notifier in qs:
         kwargs["pk"] = notifier.pk
