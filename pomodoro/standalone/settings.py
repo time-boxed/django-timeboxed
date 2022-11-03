@@ -39,6 +39,10 @@ ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["*"])
 # Application definition
 
 INSTALLED_APPS = [
+    "notifications",
+    "pomodoro",
+    "pomodoro.standalone",
+    # Django Default
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -46,10 +50,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
-    "pomodoro.standalone",
+    # Third Party
     "rest_framework",
     "rest_framework.authtoken",
-    "pomodoro.apps.PomodoroConfig",
 ]
 
 MIDDLEWARE = [

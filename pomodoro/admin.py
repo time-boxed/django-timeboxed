@@ -68,11 +68,6 @@ class FavoriteAdmin(admin.ModelAdmin):
     actions = ["refresh"]
 
 
-@admin.register(models.Notification)
-class NotificationAdmin(admin.ModelAdmin):
-    list_display = ("owner", "type")
-
-
 @admin.register(models.Share)
 class ShareAdmin(admin.ModelAdmin):
     list_display = ("pk", "owner", "last_accessed")

@@ -1,16 +1,16 @@
 import logging
 
-from . import tasks
+from notifications.shortcuts import dequeue, queue
 
-from django.utils import timezone
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender="pomodoro.Pomodoro")
-def schedule_notification(sender, instance, created, **kwargs):
+def schedule_notification(instance, created, **kwargs):
     if created is False:
         logger.debug("Skipping notification for modified pomodoro")
         return
@@ -27,12 +27,17 @@ def schedule_notification(sender, instance, created, **kwargs):
         return
 
     logger.debug("Queuring notification for %s", instance)
-    tasks.send_notification.s(instance.id).apply_async(eta=instance.end)
+
+    queue(
+        id=f"pomodoro:{instance.pk}",
+        owner=instance.owner,
+        title=instance.title,
+        body=f"{instance.title} {instance.duration}",
+        url=instance.get_absolute_url(),
+        eta=instance.end,
+    )
 
 
-@receiver(post_save, sender="pomodoro.Pomodoro")
-def refresh_count_from_pomodoro(sender, instance, **kwargs):
-    tasks.refresh_favorite.delay(owner_id=instance.owner_id)
-    if instance.project_id:
-        tasks.refresh_project.delay(pk=instance.project_id)
-    tasks.most_recent_pomodoro.delay(owner_id=instance.owner_id)
+@receiver(post_delete, sender="pomodoro.Pomodoro")
+def unschedule_notification(instance, **kwargs):
+    dequeue(id=f"pomodoro:{instance.pk}")
