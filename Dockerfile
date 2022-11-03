@@ -28,9 +28,13 @@ RUN set -ex \
 # Finish installing app
 WORKDIR ${APP_DIR}
 COPY pomodoro ${APP_DIR}/pomodoro
+COPY notifications ${APP_DIR}/notifications
 COPY docker ${APP_DIR}/docker
 COPY setup.* ${APP_DIR}/
-RUN set -ex && pip install --no-cache-dir -r ${APP_DIR}/docker/requirements.txt
+RUN set -ex ;\
+    apk add --no-cache --virtual build-deps build-base ;\
+    pip install --no-cache-dir -r ${APP_DIR}/docker/requirements.txt -e .[standalone] ;\
+    apk del build-deps
 RUN SECRET_KEY=1 pomodoro collectstatic --noinput
 
 USER nobody
