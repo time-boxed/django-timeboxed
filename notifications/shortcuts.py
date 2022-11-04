@@ -18,7 +18,12 @@ def queue(owner, driver=None, eta=None, id=None, **kwargs):
             site = get_current_site(None)
             kwargs["url"] = "https://" + site.domain + kwargs["url"]
 
-    qs = models.Notification.objects.filter(owner=owner)
+    # Start with our default filters
+    qs = models.Notification.objects.filter(
+        owner=owner,
+        enabled=True,
+    )
+    # if we want to only send using a specific driver
     if driver:
         qs = qs.filter(type=driver)
 
