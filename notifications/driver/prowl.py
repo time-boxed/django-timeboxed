@@ -11,13 +11,13 @@ class Prowl:
     def __init__(self, config):
         self.key = config.key
 
-    def send(self, **kwargs):
+    def send(self, title, body, **kwargs):
         site = get_current_site(None)
         payload = {
             "apikey": self.key,
             "application": kwargs.get("application", site.domain),
-            "event": kwargs.get("title", "Event Title"),
-            "description": kwargs.get("body", "Message body"),
+            "event": title,
+            "description": body,
             "priority": kwargs.get("priority", 0),
         }
         if "url" in kwargs:

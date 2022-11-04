@@ -7,16 +7,16 @@ class Line:
     def __init__(self, config):
         self.key = config.key
 
-    def send(self, **kwargs):
-        message = kwargs.get("title")
+    def send(self, title, body, **kwargs):
+        message = title
         message += "\n"
-        message += kwargs.get("body")
+        message += body
         if "url" in kwargs:
             message += "\n"
             message += kwargs["url"]
 
         requests.post(
             "https://notify-api.line.me/api/notify",
-            data={"message": message},
+            data={"message": message.strip()},
             headers={"Authorization": "Bearer {}".format(self.key)},
         ).raise_for_status()
