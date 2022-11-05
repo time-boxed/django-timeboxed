@@ -40,4 +40,7 @@ def schedule_notification(instance, created, **kwargs):
 
 @receiver(post_delete, sender="pomodoro.Pomodoro")
 def unschedule_notification(instance, **kwargs):
-    dequeue(id=f"pomodoro:{instance.pk}")
+    dequeue(
+        id=f"pomodoro:{instance.pk}",
+        owner=instance.owner,
+    )
