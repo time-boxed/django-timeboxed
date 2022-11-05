@@ -28,11 +28,17 @@ def schedule_notification(instance, created, **kwargs):
 
     logger.debug("Queuring notification for %s", instance)
 
+    body = f"Duration: {instance.duration}"
+    if instance.url:
+        body += f"\nURL: {instance.url}"
+    if instance.memo:
+        body += f"\n{instance.memo}"
+
     queue(
         id=f"pomodoro:{instance.pk}",
         owner=instance.owner,
-        title=instance.title,
-        body=f"{instance.title} {instance.duration}",
+        title=f"{instance.title} - {instance.project.name}",
+        body=body,
         url=instance.get_absolute_url(),
         eta=instance.end,
     )
