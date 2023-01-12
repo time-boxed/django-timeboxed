@@ -21,20 +21,22 @@ jobs:
         options: --mount type=tmpfs,destination=/var/lib/postgresql/data --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     strategy:
-      max-parallel: 4
+      fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        # https://endoflife.date/python
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
+          cache: pip
           cache-dependency-path: |
             setup.cfg
             docker/requirements.txt
+
       - name: Run Tests
         run: make test
         env:

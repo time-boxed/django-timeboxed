@@ -22,7 +22,9 @@ def refresh_project(pk):
 
 
 @receiver(post_save, sender="pomodoro.Pomodoro")
-def refresh_count_from_pomodoro(instance, **kwargs):
+def refresh_count_from_pomodoro(instance, raw, **kwargs):
+    if raw:
+        return
     refresh_favorite.delay(owner_id=instance.owner_id)
     if instance.project_id:
         refresh_project.delay(pk=instance.project_id)
