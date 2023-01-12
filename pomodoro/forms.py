@@ -18,7 +18,7 @@ class PomodoroForm(forms.ModelForm):
 class PomodoroEdit(forms.ModelForm):
     class Meta:
         model = models.Pomodoro
-        fields = ["title", "project", "start", "end"]
+        fields = ["title", "project", "start", "end", "memo"]
 
     def __init__(self, owner, *args, **kwargs):
         super().__init__(*args, **kwargs)

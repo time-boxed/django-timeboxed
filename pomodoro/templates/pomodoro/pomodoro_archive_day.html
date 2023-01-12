@@ -43,20 +43,20 @@
 
 <div class="card">
     <h4 class="card-header">{{day}}</h4>
-    <table class="table">
+    <table class="table table-sm">
         <tr>
             <th>Title</th>
             <th>Project</th>
-            <th>Category</th>
+            <th>Memo</th>
             <th>Start</th>
             <th>End</th>
             <th>Duration</th>
         </tr>
-        {% for p in pomodoro_list %}
-        <tr>
+        {% for p in pomodoro_list|dictsort:'start' %}
+        <tr style="border-left: 10px solid #{{p.project.color}}">
             <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
             <td><a href="{{p.project.get_absolute_url}}">{{p.project.name}}</a></td>
-            <td>{{p.category}}</td>
+            <td>{{p.memo}}</td>
             <td>{{p.start}}</td>
             <td>{{p.end}}</td>
             <td>{{p.duration}}</td>

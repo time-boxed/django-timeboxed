@@ -47,18 +47,18 @@
                 <th colspan="2" class="text-left">
                     <span aria-hidden="true">&laquo;</span>
                     <a
-                       {% if previous_month > today %}class="text-secondary"{% endif %}
-                        href="{% url 'pomodoro:pomodoro-month' previous_month.year previous_month.month %}">{{previous_month|date:'F'}}</a>
+                       {% if previous_month > today %}class="text-secondary" {% endif %}
+                       href="{% url 'pomodoro:pomodoro-month' previous_month.year previous_month.month %}">{{previous_month|date:'F'}}</a>
                 </th>
                 <th colspan="4" class="text-center">
                     <a
-                       {% if this_month > today %}class="text-secondary"{% endif %}
-                        href="{% url 'pomodoro:pomodoro-month' year=this_month.year month=this_month.month %}">{{this_month|date:'F'}}</a>
+                       {% if this_month > today %}class="text-secondary" {% endif %}
+                       href="{% url 'pomodoro:pomodoro-month' year=this_month.year month=this_month.month %}">{{this_month|date:'F'}}</a>
                 </th>
                 <th colspan="2" class="text-right">
                     <a
-                       {% if next_month > today %}class="text-secondary"{% endif %}
-                        href="{% url 'pomodoro:pomodoro-month' next_month.year next_month.month %}">{{next_month|date:'F'}}</a>
+                       {% if next_month > today %}class="text-secondary" {% endif %}
+                       href="{% url 'pomodoro:pomodoro-month' next_month.year next_month.month %}">{{next_month|date:'F'}}</a>
                     <span aria-hidden="true">&raquo;</span>
                 </th>
             </tr>
@@ -80,8 +80,8 @@
                 {% for d in week %}
                 <td>
                     <a
-                       {% if d > today %}class="text-secondary"{% endif %}
-                        href="{% url 'pomodoro:pomodoro-day' d.year d.month d.day %}">{{d.day}}</a>
+                       {% if d > today %}class="text-secondary" {% endif %}
+                       href="{% url 'pomodoro:pomodoro-day' d.year d.month d.day %}">{{d.day}}</a>
                 </td>
                 {% endfor %}
             </tr>
