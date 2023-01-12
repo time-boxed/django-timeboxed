@@ -2,7 +2,7 @@ PKG_NAME = pomodoro
 CLI_NAME = pomodoro
 PKG_OPTS = .[standalone,dev]
 
-SYSTEM_PYTHON ?= python3.6
+SYSTEM_PYTHON ?= python3.9
 VENV_PATH := .venv
 APP_BIN := $(VENV_PATH)/bin/$(CLI_NAME)
 PIP_BIN := $(VENV_PATH)/bin/pip
