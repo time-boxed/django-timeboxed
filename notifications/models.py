@@ -1,6 +1,10 @@
 import logging
 
-import pkg_resources
+
+try:
+    from importlib_metadata import entry_points
+except ImportError:
+    from importlib.metadata import entry_points
 
 from django.conf import settings
 from django.db import models
@@ -22,7 +26,7 @@ class Notification(models.Model):
 
     drivers = {
         ep.name: ep.load()
-        for ep in pkg_resources.iter_entry_points("pomodoro.notification")
+        for ep in entry_points(group="pomodoro.notification")
     }
 
     @property
