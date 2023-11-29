@@ -21,7 +21,7 @@ class Notification(models.Model):
         on_delete=models.CASCADE,
     )
     type = models.CharField(max_length=32)
-    key = models.CharField(max_length=128)
+    key = models.CharField(max_length=256)
     enabled = models.BooleanField(default=True)
 
     drivers = {
