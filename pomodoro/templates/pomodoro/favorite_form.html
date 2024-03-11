@@ -1,0 +1,17 @@
+{% extends "pomodoro/base.html" %}
+{% load i18n %}
+{% load pomodoro %}
+
+{% block content %}
+
+{% breadcrumb project "New Favorite" %}
+
+<form method="POST">
+    {% csrf_token %}
+    <table>
+        {{form.as_table}}
+    </table>
+    <button name="duration" type="submit" value="25" class="btn btn-warning">{% trans 'Save' %}</button>
+</form>
+
+{% endblock %}
