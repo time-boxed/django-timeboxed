@@ -1,7 +1,6 @@
 import icalendar
-from rest_framework import renderers
-
 from django.conf import settings
+from rest_framework import renderers
 
 
 class CalendarRenderer(renderers.BaseRenderer):

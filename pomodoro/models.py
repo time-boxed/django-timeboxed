@@ -2,13 +2,13 @@ import datetime
 import logging
 import uuid
 
-from . import util
-
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from . import util
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +80,7 @@ class Pomodoro(models.Model):
     duration.fget.short_description = _("duration")
 
     def __str__(self):
-        return "{}:{}".format(self.start, self.title)
+        return f"{self.start}:{self.title}"
 
     def get_absolute_url(self):
         return reverse("pomodoro:pomodoro-detail", kwargs={"pk": self.pk})

@@ -4,22 +4,20 @@ import json
 import logging
 
 from dateutil.parser import parse
+from django.http import JsonResponse
+from django.urls import path
+from django.utils import timezone
+from django.views.generic.base import TemplateView
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from . import models, util
 
-from django.http import JsonResponse
-from django.urls import path
-from django.utils import timezone
-from django.views.generic.base import TemplateView
-
 logger = logging.getLogger(__name__)
 
 
 class Help(TemplateView):
-
     template_name = "pomodoro/grafana/help.html"
 
 
@@ -33,9 +31,7 @@ class Search(APIView):
         return JsonResponse(
             [
                 project.name
-                for project in models.Project.objects.filter(
-                    owner=self.request.user, active=True
-                )
+                for project in models.Project.objects.filter(owner=self.request.user, active=True)
             ],
             safe=False,
         )
@@ -46,9 +42,7 @@ class Query(APIView):
     permission_classes = (IsAuthenticated,)
 
     def datapoints(self, targets, start, end):
-        durations = collections.defaultdict(
-            lambda: collections.defaultdict(datetime.timedelta)
-        )
+        durations = collections.defaultdict(lambda: collections.defaultdict(datetime.timedelta))
         # Define our buckets here, so that any days without metrics
         # are shown as 0
         buckets = sorted(
@@ -117,9 +111,7 @@ class Query(APIView):
 
         logger.debug("%s %s %s", query, start, end)
 
-        return JsonResponse(
-            list(self.datapoints(query["targets"], start, end)), safe=False
-        )
+        return JsonResponse(list(self.datapoints(query["targets"], start, end)), safe=False)
 
 
 app_name = "grafana"

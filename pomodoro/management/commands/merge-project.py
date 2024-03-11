@@ -15,9 +15,7 @@ class Command(BaseCommand):
 
     def project(self, username, name):
         try:
-            return models.Project.objects.get(
-                owner__username=username, name__iexact=name
-            )
+            return models.Project.objects.get(owner__username=username, name__iexact=name)
         except ObjectDoesNotExist:
             raise CommandError("No Project %s" % name)
 

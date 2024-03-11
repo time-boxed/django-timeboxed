@@ -1,11 +1,10 @@
+from django.http import JsonResponse
+from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.settings import api_settings
 
 from . import filters, models, permissions, renderers, serializers
-
-from django.http import JsonResponse
-from django.utils import timezone
 
 
 class BaseViewSet(viewsets.ModelViewSet):
@@ -27,9 +26,7 @@ class FavoriteViewSet(BaseViewSet):
         """Quickstart a Pomodoro"""
         now = timezone.now().replace(microsecond=0)
         try:
-            pomodoro = models.Pomodoro.objects.filter(owner=request.user).latest(
-                "start"
-            )
+            pomodoro = models.Pomodoro.objects.filter(owner=request.user).latest("start")
         except models.Pomodoro.DoesNotExist:
             # Handle the case for a new user that does not have any
             # pomodoros at all
@@ -55,9 +52,7 @@ class PomodoroViewSet(BaseViewSet):
     queryset = models.Pomodoro.objects.prefetch_related("project")
     serializer_class = serializers.PomodoroSerializer
     filter_backends = [filters.DateFilter]
-    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES + [
-        renderers.CalendarRenderer
-    ]
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES + [renderers.CalendarRenderer]
 
 
 class ProjectViewSet(BaseViewSet):

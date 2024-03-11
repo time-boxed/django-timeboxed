@@ -24,14 +24,10 @@ class Command(BaseCommand):
                 __project_cache[obj.owner][obj.category] = project
                 return project
 
-        for pomodoro in models.Pomodoro.objects.filter(
-            owner__username=username, project=None
-        ):
+        for pomodoro in models.Pomodoro.objects.filter(owner__username=username, project=None):
             pomodoro.project = project(pomodoro)
             pomodoro.save(update_fields=["project"])
 
-        for favorite in models.Favorite.objects.filter(
-            owner__username=username, project=None
-        ):
+        for favorite in models.Favorite.objects.filter(owner__username=username, project=None):
             favorite.project = project(favorite)
             favorite.save(update_fields=["project"])

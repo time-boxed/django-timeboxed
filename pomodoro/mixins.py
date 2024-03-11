@@ -1,5 +1,4 @@
 from dateutil.parser import parse as dateparser
-
 from django.contrib.auth.mixins import AccessMixin
 from django.contrib.auth.views import redirect_to_login
 

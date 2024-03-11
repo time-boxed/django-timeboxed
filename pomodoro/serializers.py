@@ -1,8 +1,7 @@
+from django.contrib.sites.shortcuts import get_current_site
 from rest_framework import serializers
 
 from . import models
-
-from django.contrib.sites.shortcuts import get_current_site
 
 
 class PermalinkField(serializers.Field):

@@ -1,11 +1,11 @@
+import datetime
 import os
 import random
-import datetime
 
 
 def _upload_to_path(instance, filename):
     _, ext = os.path.splitext(filename)
-    return "pomodoro/favorites/{}{}".format(instance.pk, ext)
+    return f"pomodoro/favorites/{instance.pk}{ext}"
 
 
 def color():
