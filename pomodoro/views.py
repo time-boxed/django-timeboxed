@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
+    CreateView,
     DetailView,
     ListView,
     RedirectView,
@@ -83,6 +84,21 @@ class HistoryRedirect(RedirectView):
                 "day": today.day,
             },
         )
+
+
+class ProjectCreate(LoginRequiredMixin, CreateView):
+    model = models.Project
+    fields = [
+        "name",
+        "color",
+        "url",
+        "memo",
+        "active",
+    ]
+
+    def form_valid(self, form):
+        form.instance.owner_id = self.request.user.id
+        return super().form_valid(form)
 
 
 class ProjectList(LoginRequiredMixin, ListView):

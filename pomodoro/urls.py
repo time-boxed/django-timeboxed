@@ -13,6 +13,7 @@ urlpatterns = [
     path("favorite/<int:pk>", views.FavoriteDetail.as_view(), name="favorite-detail"),
     path("favorite", views.FavoriteList.as_view(), name="favorite-list"),
     path("projects", views.ProjectList.as_view(), name="project-list"),
+    path("projects/new", views.ProjectCreate.as_view(), name="project-create"),
     path("projects/<pk>", views.ProjectDetail.as_view(), name="project-detail"),
     path("projects/<pk>/update", views.ProjectUpdate.as_view(), name="project-update"),
     path("", views.Index.as_view(), name="dashboard"),
