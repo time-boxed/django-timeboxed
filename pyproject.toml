@@ -1,0 +1,87 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "timeboxed"
+version = "0.1"
+authors = [{ name = "Paul Traylor" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Django",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python",
+]
+description = "Render Pomodoro Calendars"
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.8"
+dependencies = [
+    "Pillow",
+    "django>=3.2",
+    "djangorestframework",
+    "icalendar",
+    "importlib-metadata; python_version < \"3.10\"",
+    "python-dateutil",
+    "requests",
+]
+
+[project.urls]
+Source = "https://github.com/time-boxed/django-timeboxed"
+Tracker = "https://github.com/time-boxed/django-timeboxed/issues"
+
+[project.optional-dependencies]
+dev = [
+    "psycopg2",
+]
+standalone = [
+    "celery<5",
+    "django-environ",
+    "paho-mqtt",
+    "sentry-sdk",
+]
+
+[project.scripts]
+pomodoro = "pomodoro.standalone.manage:main[standalone]"
+
+[project.entry-points."pomodoro.notification"]
+line = "notifications.driver.line:Line"
+prowl = "notifications.driver.prowl:Prowl"
+mqtt = "notifications.driver.mqtt:MQTT"
+
+[tool.setuptools.packages.find]
+exclude = ["test"]
+namespaces = false
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+exclude = [
+    "*migrations*",
+    "urls.py",
+]
+
+[tool.ruff.lint]
+# https://beta.ruff.rs/docs/rules/
+select = [
+    "C",       # complexity
+    "E",       # pycodestyle
+    "F",       # Unused imports
+    "I",       # isort
+    "PGH004",  # Use specific rule codes when using noqa
+    "PLC0414", # Useless import alias. Import alias does not rename original package.
+    "S103",    # bad-file-permissions
+    "TRY004",  # Prefer TypeError exception for invalid type
+    "UP",      # pyupgrade
+    "W",       # pycodestyle
+]
+ignore = [
+    "E501", # Ignore line length
+]
