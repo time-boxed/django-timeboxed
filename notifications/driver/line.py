@@ -1,4 +1,4 @@
-import requests
+from zakka.http import client
 
 # https://notify-bot.line.me/doc/en/
 
@@ -15,7 +15,7 @@ class Line:
             message += "\n"
             message += kwargs["url"]
 
-        requests.post(
+        client.post(
             "https://notify-api.line.me/api/notify",
             data={"message": message.strip()},
             headers={"Authorization": f"Bearer {self.key}"},

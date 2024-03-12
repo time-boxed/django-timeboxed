@@ -1,5 +1,5 @@
-import requests
 from django.contrib.sites.shortcuts import get_current_site
+from zakka.http import client
 
 # https://www.prowlapp.com/api.php#add
 
@@ -22,4 +22,4 @@ class Prowl:
         if "url" in kwargs:
             payload["url"] = kwargs["url"]
 
-        requests.post(self.endpoint, data=payload).raise_for_status()
+        client.post(self.endpoint, data=payload).raise_for_status()
