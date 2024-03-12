@@ -1,9 +1,8 @@
+import calendar
 import datetime
 import logging
 
 import icalendar
-import calendar
-
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -95,7 +94,13 @@ class ProjectList(LoginRequiredMixin, ListView):
 
 class ProjectUpdate(mixins.OwnerRequiredMixin, UpdateView):
     model = models.Project
-    fields = ["name", "color", "url", "memo", "active", ]
+    fields = [
+        "name",
+        "color",
+        "url",
+        "memo",
+        "active",
+    ]
 
 
 class ProjectDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailView):
@@ -129,9 +134,7 @@ class FavoriteDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailVi
         return context
 
     def post(self, request, pk):
-        pomodoro = models.Pomodoro.objects.filter(owner=self.request.user).latest(
-            "start"
-        )
+        pomodoro = models.Pomodoro.objects.filter(owner=self.request.user).latest("start")
         now = timezone.now().replace(microsecond=0)
 
         favorite = get_object_or_404(models.Favorite, pk=pk)
@@ -141,7 +144,7 @@ class FavoriteDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailVi
             return redirect(self.get_success_url())
 
         pomodoro = favorite.start(now)
-        messages.warning(request, "Starting Pomodoro {}".format(pomodoro.title))
+        messages.warning(request, f"Starting Pomodoro {pomodoro.title}")
         return redirect(self.get_success_url())
 
 
@@ -198,12 +201,8 @@ class PomodoroMonthView(PomodoroArchiveOptions, dates.MonthArchiveView):
     def get_context_data(self, **kwargs):
         cal = calendar.Calendar()
         context = super().get_context_data(**kwargs)
-        context["this_month"] = datetime.date(
-            self.kwargs["year"], self.kwargs["month"], 1
-        )
-        context["calendar"] = cal.monthdatescalendar(
-            self.kwargs["year"], self.kwargs["month"]
-        )
+        context["this_month"] = datetime.date(self.kwargs["year"], self.kwargs["month"], 1)
+        context["calendar"] = cal.monthdatescalendar(self.kwargs["year"], self.kwargs["month"])
         return context
 
 

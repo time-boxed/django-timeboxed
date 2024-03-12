@@ -2,13 +2,13 @@ import collections
 import datetime
 from urllib.parse import urlencode
 
-from .. import models
-
 from django import template
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
+
+from .. import models
 
 register = template.Library()
 
@@ -37,8 +37,8 @@ def breadcrumb(instance=None, active=None):
 
     def dates(dt: datetime.datetime):
         yield reverse("pomodoro:pomodoro-year", args=(dt.year,)), dt.year
-        yield reverse("pomodoro:pomodoro-month", args=(dt.year, dt.month)), dt.strftime('%m')
-        yield reverse("pomodoro:pomodoro-day", args=(dt.year, dt.month, dt.day)), dt.strftime('%d')
+        yield reverse("pomodoro:pomodoro-month", args=(dt.year, dt.month)), dt.strftime("%m")
+        yield reverse("pomodoro:pomodoro-day", args=(dt.year, dt.month, dt.day)), dt.strftime("%d")
 
     def generator():
         yield reverse("pomodoro:dashboard"), _("Home")
@@ -74,9 +74,7 @@ def breadcrumb(instance=None, active=None):
 @register.inclusion_tag("pomodoro/timer.html", takes_context=True)
 def latest_pomodoro(context):
     data = {}
-    user = context['request'].user
+    user = context["request"].user
     if user.is_authenticated:
-        data['latest_pomodoro'] = models.Pomodoro.objects.filter(owner=user).latest(
-            "start"
-        )
+        data["latest_pomodoro"] = models.Pomodoro.objects.filter(owner=user).latest("start")
     return data

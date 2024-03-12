@@ -1,5 +1,4 @@
 import requests
-
 from django.contrib.sites.shortcuts import get_current_site
 
 # https://www.prowlapp.com/api.php#add

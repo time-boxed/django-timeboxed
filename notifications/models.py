@@ -1,6 +1,5 @@
 import logging
 
-
 try:
     from importlib_metadata import entry_points
 except ImportError:
@@ -24,10 +23,7 @@ class Notification(models.Model):
     key = models.CharField(max_length=256)
     enabled = models.BooleanField(default=True)
 
-    drivers = {
-        ep.name: ep.load()
-        for ep in entry_points(group="pomodoro.notification")
-    }
+    drivers = {ep.name: ep.load() for ep in entry_points(group="pomodoro.notification")}
 
     @property
     def driver(self):

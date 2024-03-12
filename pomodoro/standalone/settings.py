@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-import environ
 import pathlib
+
+import environ
 
 env = environ.Env()
 
@@ -121,21 +122,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = env.path(
-    "STATIC_ROOT", default=(pathlib.Path.home() / ".cache" / "pomodoro")
-)
+STATIC_ROOT = env.path("STATIC_ROOT", default=(pathlib.Path.home() / ".cache" / "pomodoro"))
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = env.path(
-    "MEDIA_ROOT", default=(pathlib.Path.home() / ".local" / "pomodoro" / "media")
-)
+MEDIA_ROOT = env.path("MEDIA_ROOT", default=(pathlib.Path.home() / ".local" / "pomodoro" / "media"))
 
 # Enable Sentry
 if "SENTRY_DSN" in os.environ:
     try:
         import sentry_sdk
-        from sentry_sdk.integrations.django import DjangoIntegration
         from sentry_sdk.integrations.celery import CeleryIntegration
+        from sentry_sdk.integrations.django import DjangoIntegration
 
         sentry_sdk.init(
             dsn=os.environ["SENTRY_DSN"],

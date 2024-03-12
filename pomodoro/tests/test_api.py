@@ -17,9 +17,7 @@ class ApiTest(TestCase):
         response = self.client.post(reverse("api:favorite-start", args=[1]))
         self.assertEqual(response.status_code, 201, response.content)
         self.assertEqual(Favorite.objects.count(), 1)
-        self.assertEqual(
-            FavoritePomodoro.objects.count(), 1, "Linked favorite to pomodoro"
-        )
+        self.assertEqual(FavoritePomodoro.objects.count(), 1, "Linked favorite to pomodoro")
 
     def test_create_pomodoro(self):
         """Test creating pomodoro with just project id"""
@@ -32,9 +30,7 @@ class ApiTest(TestCase):
             },
         )
         self.assertEqual(response.status_code, 201, response.content)
-        self.assertEqual(
-            Pomodoro.objects.count(), 2, "Created pomodoro with project id"
-        )
+        self.assertEqual(Pomodoro.objects.count(), 2, "Created pomodoro with project id")
 
     def test_create_pomodoro_nested(self):
         """Test creating pomodoro with nested project"""
@@ -48,9 +44,7 @@ class ApiTest(TestCase):
             },
         )
         self.assertEqual(response.status_code, 201, response.content)
-        self.assertEqual(
-            Pomodoro.objects.count(), 2, "Created a pomodoro with nested project"
-        )
+        self.assertEqual(Pomodoro.objects.count(), 2, "Created a pomodoro with nested project")
 
     def test_create_pomodoro_no_project(self):
         """Test creating pomodoro without project"""
@@ -61,9 +55,7 @@ class ApiTest(TestCase):
             data={"title": "Test without project"},
         )
         self.assertEqual(response.status_code, 201, response.content)
-        self.assertEqual(
-            Pomodoro.objects.count(), 2, "Created a pomodoro without project"
-        )
+        self.assertEqual(Pomodoro.objects.count(), 2, "Created a pomodoro without project")
 
     def test_remove_project(self):
         response = self.client.put(
@@ -84,9 +76,7 @@ class ApiTest(TestCase):
             },
         )
         self.assertEqual(response.status_code, 200, response.content)
-        self.assertEqual(
-            Pomodoro.objects.count(), 1, "Changed the project of an existing pomodoro"
-        )
+        self.assertEqual(Pomodoro.objects.count(), 1, "Changed the project of an existing pomodoro")
 
     def test_create_favorite(self):
         """Test creating favorite with just project id"""
@@ -100,6 +90,4 @@ class ApiTest(TestCase):
             },
         )
         self.assertEqual(response.status_code, 201, response.content)
-        self.assertEqual(
-            Favorite.objects.count(), 2, "Created favorite with project id"
-        )
+        self.assertEqual(Favorite.objects.count(), 2, "Created favorite with project id")

@@ -18,5 +18,5 @@ class Line:
         requests.post(
             "https://notify-api.line.me/api/notify",
             data={"message": message.strip()},
-            headers={"Authorization": "Bearer {}".format(self.key)},
+            headers={"Authorization": f"Bearer {self.key}"},
         ).raise_for_status()

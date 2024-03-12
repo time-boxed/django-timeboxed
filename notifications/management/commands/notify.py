@@ -1,10 +1,9 @@
-from zakka.mixins.command import LoggingMixin
-
-from notifications import shortcuts
-
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.test import override_settings
+from zakka.mixins.command import LoggingMixin
+
+from notifications import shortcuts
 
 
 class Command(LoggingMixin, BaseCommand):

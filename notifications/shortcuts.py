@@ -1,9 +1,9 @@
 import logging
 
-from . import models, tasks
-
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
+
+from . import models, tasks
 
 logger = logging.getLogger(__name__)
 

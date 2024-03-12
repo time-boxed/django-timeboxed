@@ -30,7 +30,7 @@ WORKDIR ${APP_DIR}
 COPY pomodoro ${APP_DIR}/pomodoro
 COPY notifications ${APP_DIR}/notifications
 COPY docker ${APP_DIR}/docker
-COPY setup.* ${APP_DIR}/
+COPY pyproject.toml ${APP_DIR}/
 RUN set -ex ;\
     apk add --no-cache --virtual build-deps build-base ;\
     pip install --no-cache-dir -r ${APP_DIR}/docker/requirements.txt -e .[standalone] ;\

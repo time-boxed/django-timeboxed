@@ -1,7 +1,6 @@
-from . import models
-
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
+
+from . import models
 
 
 @admin.register(models.Notification)

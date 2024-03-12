@@ -1,6 +1,6 @@
-from . import shortcuts
-
 from django import test
+
+from . import shortcuts
 
 
 class NotificationTest(test.TestCase):
