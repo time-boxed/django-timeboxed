@@ -53,7 +53,7 @@
             <th>Duration</th>
         </tr>
         {% for p in pomodoro_list|dictsort:'start' %}
-        <tr style="border-left: 10px solid #{{p.project.color}}">
+        <tr style="border-left: 10px solid {{p.project.color}}">
             <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
             <td><a href="{{p.project.get_absolute_url}}">{{p.project.name}}</a></td>
             <td>{{p.memo}}</td>

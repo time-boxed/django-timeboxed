@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from . import util
+from . import fields, util
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ class Project(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=128, verbose_name=_("name"))
-    color = models.CharField(max_length=6, default=util.color)
+    color = fields.ColorField()
     url = models.URLField(blank=True, verbose_name=_("Optional link"))
     memo = models.TextField(blank=True)
     active = models.BooleanField(default=True)

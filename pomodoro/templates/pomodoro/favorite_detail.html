@@ -15,7 +15,7 @@
             <dd class="col-sm-9">{{object.title}}</dd>
 
             <dt class="col-sm-2">Project</dt>
-            <dd class="col-sm-9" style="border-left: 10px solid #{{object.project.color}}">
+            <dd class="col-sm-9" style="border-left: 10px solid {{object.project.color}}">
                 <a href="{{object.project.get_absolute_url}}">{{object.project}}</a>
             </dd>
 
@@ -39,7 +39,7 @@
             <th>&nbsp;</th>
         </tr>
         {% for p in page_obj %}
-        <tr style="border-left: 10px solid #{{project.color}}">
+        <tr style="border-left: 10px solid {{project.color}}">
             <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
             <td>{{p.start}}</td>
             <td>{{p.end}}</td>
