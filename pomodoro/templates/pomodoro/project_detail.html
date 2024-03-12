@@ -11,21 +11,21 @@
 <div class="card">
     <h4 class="card-header">{{object.name}}</h4>
     <table class="table table-sm">
-        <tr style="border-left: 10px solid #{{project.color}}">
+        <tr style="border-left: 10px solid {{project.color}}">
             <th>Title</th>
             <td>{{object.name}}</td>
         </tr>
-        <tr style="border-left: 10px solid #{{project.color}}">
+        <tr style="border-left: 10px solid {{project.color}}">
             <th>URL</th>
             <td>{{obj.url|urlize}}</td>
         </tr>
-        <tr style="border-left: 10px solid #{{project.color}}">
+        <tr style="border-left: 10px solid {{project.color}}">
             <th>Memo</th>
             <td>{{object.memo}}</td>
         </tr>
     </table>
     <div class="card-footer">
-        <a class="row badge badge-warning" href="{% url 'pomodoro:project-update' project.id %}">{% trans 'Change' %}</a>
+        <a class="btn btn-sm btn-warning" href="{% url 'pomodoro:project-update' project.id %}">{% trans 'Change' %}</a>
     </div>
 </div>
 <br>
@@ -41,7 +41,7 @@
             <th>&nbsp;</th>
         </tr>
         {% for f in object.favorite_set.all %}
-        <tr style="border-left: 10px solid #{{project.color}}">
+        <tr style="border-left: 10px solid {{project.color}}">
             <td>
                 <form action="{% url 'pomodoro:favorite-detail' f.pk %}" method="post">
                     {% csrf_token %}
@@ -53,7 +53,7 @@
             <td>{{f.timedelta}}</td>
             <td>{{f.count}}</td>
             <td>
-                <a class="row badge badge-warning" href="{% url 'pomodoro:favorite-detail' f.id %}">{% trans 'Change' %}</a>
+                <a class="btn btn-sm btn-warning" href="{% url 'pomodoro:favorite-detail' f.id %}">{% trans 'Change' %}</a>
             </td>
         </tr>
         {% empty %}
@@ -62,6 +62,9 @@
         </tr>
         {% endfor %}
     </table>
+    <div class="card-footer">
+        <a class="btn btn-sm btn-primary" href="{% url 'pomodoro:project-favorite-create' project.id %}">{% trans 'Add' %}</a>
+    </div>
 </div>
 <br>
 
@@ -76,7 +79,7 @@
             <th>&nbsp;</th>
         </tr>
         {% for p in page_obj %}
-        <tr style="border-left: 10px solid #{{project.color}}">
+        <tr style="border-left: 10px solid {{project.color}}">
             <td><a href="{{p.get_absolute_url}}">{{p.title}}</a></td>
             <td>{{p.start}}</td>
             <td>{{p.end}}</td>

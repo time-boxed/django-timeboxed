@@ -9,6 +9,7 @@
 {% latest_pomodoro %}
 
 <h1>Projects</h1>
+<a class="btn btn-sm btn-primary" href="{% url 'pomodoro:project-create'  %}">{% trans 'Add' %}</a>
 <div class="card">
     <table class="table table-sm">
         <tr>
@@ -17,7 +18,7 @@
             <th>Link</th>
         </tr>
         {% for project in object_list %}
-        <tr style="border-left: 10px solid #{{project.color}}">
+        <tr style="border-left: 10px solid {{project.color}}">
             <td><a href="{{project.get_absolute_url}}">{{project.name}}</a></td>
             <td><a class="badge badge-warning" href="{% url 'pomodoro:project-update' project.id %}">{% trans 'Change' %}</a></td>
             <td>{{project.timedelta}}</td>

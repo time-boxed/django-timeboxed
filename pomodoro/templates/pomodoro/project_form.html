@@ -11,18 +11,18 @@
 
     <dl class="row">
         <dt class="col-sm-2">{{form.name.label}}</dt>
-        <dd class="col-sm-9">{{form.name}}</dd>
+        <dd class="col-sm-9">{{form.name}} {{form.name.errors}}</dd>
 
         <dt class="col-sm-2">{{form.color.label}}</dt>
-        <dd class="col-sm-9">{{form.color}}</dd>
+        <dd class="col-sm-9">{{form.color}} {{form.color.errors}}</dd>
 
         <dt class="col-sm-2">{{form.url.label}}</dt>
-        <dd class="col-sm-9">{{form.url}}</dd>
+        <dd class="col-sm-9">{{form.url}} {{form.url.errors}}</dd>
 
         <dt class="col-sm-2">{{form.active.label}}</dt>
         <dd class="col-sm-9">{{form.active}}</dd>
 
-        <dt class="col-sm-2">{{form.duration.label}}</dt>
+        <dt class="col-sm-2">Duration</dt>
         <dd class="col-sm-9">{{object.duration}}</dd>
 
         <dt class="col-sm-2">{{form.memo.label}}</dt>

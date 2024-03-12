@@ -5,13 +5,18 @@ import logging
 import icalendar
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UserPassesTestMixin,
+)
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
+    CreateView,
     DetailView,
     ListView,
     RedirectView,
@@ -85,6 +90,22 @@ class HistoryRedirect(RedirectView):
         )
 
 
+class ProjectCreate(PermissionRequiredMixin, CreateView):
+    permission_required = "pomodoro.add_project"
+    model = models.Project
+    fields = [
+        "name",
+        "color",
+        "url",
+        "memo",
+        "active",
+    ]
+
+    def form_valid(self, form):
+        form.instance.owner_id = self.request.user.id
+        return super().form_valid(form)
+
+
 class ProjectList(LoginRequiredMixin, ListView):
     model = models.Project
 
@@ -116,6 +137,36 @@ class ProjectDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailVie
         return context
 
 
+class ProjectFavoriteCreate(UserPassesTestMixin, CreateView):
+    model = models.Favorite
+    fields = [
+        "title",
+        "duration",
+        "icon",
+        "url",
+    ]
+
+    def test_func(self):
+        try:
+            self.project = models.Project.objects.get(
+                pk=self.kwargs["pk"], owner=self.request.user
+            )
+        except models.Project.DoesNotExist:
+            return False
+        else:
+            return True
+        
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['project'] = self.project
+        return data
+
+    def form_valid(self, form):
+        form.instance.owner_id = self.request.user.id
+        form.instance.project = self.project
+        return super().form_valid(form)
+
+
 class FavoriteDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailView):
     model = models.Favorite
 
@@ -134,7 +185,9 @@ class FavoriteDetail(mixins.OwnerRequiredMixin, mixins.DateFilterMixin, DetailVi
         return context
 
     def post(self, request, pk):
-        pomodoro = models.Pomodoro.objects.filter(owner=self.request.user).latest("start")
+        pomodoro = models.Pomodoro.objects.filter(owner=self.request.user).latest(
+            "start"
+        )
         now = timezone.now().replace(microsecond=0)
 
         favorite = get_object_or_404(models.Favorite, pk=pk)
@@ -201,8 +254,12 @@ class PomodoroMonthView(PomodoroArchiveOptions, dates.MonthArchiveView):
     def get_context_data(self, **kwargs):
         cal = calendar.Calendar()
         context = super().get_context_data(**kwargs)
-        context["this_month"] = datetime.date(self.kwargs["year"], self.kwargs["month"], 1)
-        context["calendar"] = cal.monthdatescalendar(self.kwargs["year"], self.kwargs["month"])
+        context["this_month"] = datetime.date(
+            self.kwargs["year"], self.kwargs["month"], 1
+        )
+        context["calendar"] = cal.monthdatescalendar(
+            self.kwargs["year"], self.kwargs["month"]
+        )
         return context
 
 
