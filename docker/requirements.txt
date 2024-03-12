@@ -12,7 +12,7 @@ billiard==3.6.4.0
     # via celery
 celery==4.4.7
     # via timeboxed (pyproject.toml)
-certifi==2022.12.7
+certifi==2024.2.2
     # via
     #   requests
     #   sentry-sdk
@@ -42,7 +42,7 @@ kombu==4.6.11
     # via celery
 paho-mqtt==1.6.1
     # via timeboxed (pyproject.toml)
-pillow==9.5.0
+pillow==10.2.0
     # via timeboxed (pyproject.toml)
 python-dateutil==2.8.2
     # via
